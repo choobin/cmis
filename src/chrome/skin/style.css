@@ -1,0 +1,80 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+.up {
+  min-width: 16px;
+  list-style-image: url("chrome://cmis/skin/up.png");
+}
+
+.up[disabled="true"] {
+  min-width: 16px;
+  list-style-image: url("chrome://cmis/skin/up.png");
+  opacity: 0.5;
+}
+
+.down {
+  min-width: 16px;
+  list-style-image: url("chrome://cmis/skin/down.png");
+}
+
+.down[disabled="true"] {
+  min-width: 16px;
+  list-style-image: url("chrome://cmis/skin/down.png");
+  opacity: 0.5;
+}
+
+.new {
+  min-width: 16px;
+  list-style-image: url("chrome://cmis/skin/new.png");
+}
+
+.edit {
+  min-width: 16px;
+  list-style-image: url("chrome://cmis/skin/edit.png");
+}
+
+.edit[disabled="true"] {
+  min-width: 16px;
+  list-style-image: url("chrome://cmis/skin/edit.png");
+  opacity: 0.5;
+}
+
+.delete {
+  min-width: 16px;
+  list-style-image: url("chrome://cmis/skin/delete.png");
+}
+
+.delete[disabled="true"] {
+  min-width: 16px;
+  list-style-image: url("chrome://cmis/skin/delete.png");
+  opacity: 0.5;
+}
+
+.separator {
+  min-width: 16px;
+  list-style-image: url("chrome://cmis/skin/separator.png");
+}
+
+.browse {
+  min-width: 16px;
+  list-style-image: url("chrome://cmis/skin/browse.png");
+}
+
+/* https://developer.mozilla.org/en-US/docs/XUL_Tutorial/Styling_a_Tree */
+
+treechildren::-moz-tree-indentation {
+    width: 20px;
+}
+
+/*
+treechildren::-moz-tree-image {
+  list-style-image: url("chrome://cmis/skin/browse.png");
+}
+
+treechildren::-moz-tree-twisty {
+  list-style-image: url("chrome://cmis/skin/tree-closed.png");
+}
+
+treechildren::-moz-tree-twisty(open) {
+  list-style-image: url("chrome://cmis/skin/tree-open.png");
+}
+*/

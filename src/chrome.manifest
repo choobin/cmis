@@ -1,0 +1,3 @@
+content cmis             chrome/content/
+skin    cmis classic/1.0 chrome/skin/
+locale  cmis en-US       chrome/locale/en-US/

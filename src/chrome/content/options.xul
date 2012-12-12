@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE vbox SYSTEM "chrome://cmis/locale/cmis.dtd">
+
+<vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <setting
+      type="control">
+    <button 
+        id="cmis-settings-button"
+        label="&cmis.settings.title;"/>
+  </setting>
+
+  <setting
+      pref="extensions.cmis@moongiraffe.net.itemPlacement"
+      type="menulist"
+      title="&cmis.settings.itemPlacement;">
+    <menulist sizetopopup="always">
+      <menupopup>
+        <menuitem value="0" label="&cmis.settings.itemPlacementTopOfMenu;"/>
+        <menuitem value="1" label="&cmis.settings.itemPlacementBottomOfMenu;"/>
+        <menuitem value="2" label="&cmis.settings.itemPlacementAboveSaveAs;"/>
+        <menuitem value="3" label="&cmis.settings.itemPlacementBellowSaveAs;"/>
+      </menupopup>
+    </menulist>
+  </setting>
+
+  <setting
+      pref="extensions.cmis@moongiraffe.net.overwriteAction"
+      type="menulist"
+      title="&cmis.settings.overwriteAction;">
+    <menulist sizetopopup="always">
+      <menupopup>
+        <menuitem value="0" label="&cmis.settings.overwriteActionPrompt;"/>
+        <menuitem value="1" label="&cmis.settings.overwriteActionSaveUnique;"/>
+        <menuitem value="2" label="&cmis.settings.overwriteActionOverwrite;"/>
+      </menupopup>
+    </menulist>
+  </setting>
+
+  <setting
+      pref="extensions.cmis@moongiraffe.net.quickSaveEnabled"
+      type="bool"
+      title="&cmis.settings.quickSaveEnabled;" />
+
+  <setting
+      pref="extensions.cmis@moongiraffe.net.saveLinks"
+      type="bool"
+      title="&cmis.settings.saveLinks;" />
+
+</vbox>

@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://cmis/skin/style.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://cmis/locale/cmis.dtd">
+
+<dialog 
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    title="&cmis.items.title;"
+    minwidth="900"
+    onload="moongiraffe.Cmis.menu.items.load();">
+
+  <script src="items.js"/>
+
+  <groupbox orient="horizontal" flex="1">
+    <hbox flex="1">
+      <tree id="tree"
+            hidecolumnpicker="true"
+            flex="1"
+            rows="12"
+            treelines="true"
+            onselect="moongiraffe.Cmis.menu.items.select();">
+
+        <treecols>
+          <treecol id="name"
+                   label="&cmis.items.name;"
+                   tooltiptext="&cmis.items.nameTooltip;"
+                   primary="true"
+                   editable="true"
+                   flex="1"/>
+          <splitter class="tree-splitter"/>
+          <treecol id="path"
+                   label="&cmis.items.path;"
+                   tooltiptext="&cmis.items.pathTooltip;"
+                   editable="false"
+                   flex="1"/>
+          <splitter class="tree-splitter"/>
+          <treecol id="prefix"
+                   label="&cmis.items.prefix;"
+                   tooltiptext="&cmis.items.prefixTooltip;"
+                   editable="true" />
+        </treecols>
+
+        <treechildren/>
+      </tree>
+
+      <vbox>
+        <button class="new"
+                label="  &cmis.items.item;"
+                id="button-item"
+                oncommand="moongiraffe.Cmis.menu.items.newitem(false);"/>
+        <button class="new"
+                label="  &cmis.items.submenu;"
+                id="button-submenu"
+                oncommand="moongiraffe.Cmis.menu.items.newitem(true);"/>
+        <button class="edit"
+                label="  &cmis.items.edit;"
+                id="button-edit"
+                oncommand="moongiraffe.Cmis.menu.items.edit();"/>
+        <button class="delete"
+                label="  &cmis.items.delete;" 
+               id="button-delete"
+                oncommand="moongiraffe.Cmis.menu.items.delete();"/>
+        <button class="separator"
+                label="  &cmis.items.separator;"
+                id="button-separator"
+                oncommand="moongiraffe.Cmis.menu.items.separator();"/>
+        <hbox>
+          <button class="up"
+                  id="button-up"
+                  label=" &cmis.items.up;"
+                  oncommand="moongiraffe.Cmis.menu.items.move(true);"/>
+          <button class="down"
+                  id="button-down"
+                  label=" &cmis.items.down;"
+                  oncommand="moongiraffe.Cmis.menu.items.move(false);"/>
+        </hbox>
+
+      </vbox> <!-- buttons -->
+
+    </hbox> <!-- tree w/buttons -->
+
+  </groupbox>
+
+</dialog>

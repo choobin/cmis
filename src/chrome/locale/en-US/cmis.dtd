@@ -1,0 +1,28 @@
+<!ENTITY cmis.settings.title "Menu Item Settings">
+<!ENTITY cmis.settings.itemPlacement "New menu items will be placed">
+<!ENTITY cmis.settings.itemPlacementTopOfMenu "at the top of the context menu">
+<!ENTITY cmis.settings.itemPlacementBottomOfMenu "at the bottom of the context menu">
+<!ENTITY cmis.settings.itemPlacementAboveSaveAs "above the 'Save As' menu item">
+<!ENTITY cmis.settings.itemPlacementBellowSaveAs "bellow the 'Save As' menu item">
+<!ENTITY cmis.settings.overwriteAction "If the image already exists the save action will">
+<!ENTITY cmis.settings.overwriteActionPrompt "prompt the user">
+<!ENTITY cmis.settings.overwriteActionSaveUnique "save as a unique file">
+<!ENTITY cmis.settings.overwriteActionOverwrite "overwrite the existing file">
+<!ENTITY cmis.settings.quickSaveEnabled "Quick save to last used directory (Ctrl-RMB)">
+<!ENTITY cmis.settings.saveLinks "Save links not just images (Experimental)">
+<!ENTITY cmis.items.title "Edit Menu Items">
+<!ENTITY cmis.items.path "Save path">
+<!ENTITY cmis.items.name "Menu label">
+<!ENTITY cmis.items.prefix "File prefix">
+<!ENTITY cmis.items.pathTooltip "Configure the save path for a menu item">
+<!ENTITY cmis.items.nameTooltip "Configure the string that appears in the context menu">
+<!ENTITY cmis.items.prefixTooltip "Specify a prefix string to add to each filename before saving">
+<!ENTITY cmis.items.new "New">
+<!ENTITY cmis.items.item "Item">
+<!ENTITY cmis.items.submenu "Submenu">
+<!ENTITY cmis.items.edit "Edit">
+<!ENTITY cmis.items.delete "Delete">
+<!ENTITY cmis.items.separator "Separator">
+<!ENTITY cmis.items.up "Up">
+<!ENTITY cmis.items.down "Down"> 
+<!ENTITY cmis.items.edit.title "Edit Menu Item">

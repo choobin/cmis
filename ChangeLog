@@ -1,0 +1,175 @@
+2012-11-30  Christopher Hoobin  <hsirhc@gmail.com>
+
+	* bootstrap.js Prepending file name prefix was indexing the wrong
+	element fromm directory_data
+
+2012-11-29  Christopher Hoobin  <hsirhc@gmail.com>
+
+	* bootstrap.js nsIWebBrowserPersist.saveURI takes a seventh
+	argument which was neglected. This was causing a hang-up on FF18b2
+	and preventing it from saving anything.
+
+2012-08-28  Christopher Hoobin  <hsirhc@gmail.com>
+
+	* bootstrap.js
+	* edit.js
+	Replaced all calls to FileUtils.jsm with a call to
+	Cc[@mozilla.org/file/local;1].createInstance(Ci.nsILocalFile).
+	Pre Gecko 9.0 does not support FileUtils.File.
+
+	* bootstrap.js (startup/shutdown) Post Gecko 10.0 manifest
+	registration is performed automatically. Added code to startup and
+	shutdown functions for manifest registration if the addon is
+	running on older versions.
+
+	* items.xul Set treelines="true" on the tree XUL element. This
+	shows lines bellow hierarchical item elements and make things much
+	easier on the eyes.
+
+	* install.rdf Updated minVersion to 8.0. Previous versions does
+	not handle manifest registration correctly.
+
+2012-08-27  Christopher Hoobin  <hsirhc@gmail.com>
+
+	* bootstrap.js Updated Cmis.menu.inject and Cmis.prefs functions
+	to deal with submenus.
+
+	* items.js Added load, save, move and delete functionality for
+	submenus. Updated items.select() to deal with submenus.
+
+	* items.xul Added new submenu button. Treeview now adjusts size
+	when window is adjusted instead of being stuck at 12 items.
+
+2012-08-24  Christopher Hoobin  <hsirhc@gmail.com>
+
+	* bootstrap.js (Cmis.prefs) Fixed issue where preference branch
+	was being deleted on application upgrade. Now it will only delete
+	the branch when the uninstall function reason argument is
+	ADDON_INSTALL.
+
+	* bootstrap.js (Cmis.prefs) directoryList was changed from a basic
+	char preference type to a complex Ci.nsISupportsString type so we
+	can support unicode directories and menu labels.
+
+2012-08-22  Christopher Hoobin  <hsirhc@gmail.com>
+
+	* bootstrap.js (Cmis.io) Replaced call to Services.downloads with
+	Cc[nsIdownloadManager]...  Services.jsm states that it was
+	introduced in Firefox 4.0. I assumed that Services.downloads was
+	also included at that point; since nsIDownloadManager was
+	introduced in Firefox 3.5. However, on older versions of Firefox
+	(tested with v10 and v13) died on error.
+
+	* bootstrap.js (Cmis.util) Added an extra step in util.filename
+	that cleans up the source URL string removing HTTP GET parameters
+	beofre extracting a filename.
+
+	* bootstrap.js (Cmis.util) Added a filename validation function
+	which is relatively similar to the validateFileName function found
+	in contentAreaUtils.js. It replaces characters that do not belong
+	in filenames with valid characters.
+
+2012-08-16  Christopher Hoobin  <hsirhc@gmail.com>
+
+	* bootstrap.js (Cmis.io) Abstracted file name creation code to
+	Cmis.util.filename.
+
+	* bootstrap.js (Cmis.util) New function filename will first check
+	for a Content-Disposition HTTP header with a 'filename' parameter
+	before extracting the name from the URL string.
+
+2012-08-01  Christopher Hoobin  <hsirhc@gmail.com>
+
+	* bootstrap.js (Cmis.io) Using nsIWebBrowserPersist.saveURI instead
+	of the internalSave function from .../global/contentAreaUtils.js.
+
+	* bootstrap.js (Cmis.utility) Using Services.prompt.confirmEx instead
+	of a custom xul file and a window.openDialog call.
+
+2012-07-20  Christopher Hoobin  <hsirhc@gmail.com>
+
+	* Cmis Project is now a bootstrapped (no restart) add on.
+
+	* options.xul Preference dialog moved to the add-on manager screen.
+
+	* options.xul New preference added, "Save links (not just images)".
+
+	* Update Minimum version requirement changed to 7.0.
+
+	* Update Version string changed to a more appropriate format.
+
+2011-10-27  Christopher Hoobin  <hsirhc@gmail.com>
+
+	* options.xul Replaced confirmOverwrite checkbox with
+	overwriteAction menu selection.
+
+	* overlay.js (saveImage) Updated function to deal with three save
+	options. Prompt user, save and overwrite file, and save to a
+	unique file.
+
+	* overlay.xul Removed string-bundle from overlay. No longer needed.
+
+	* overlay.js (confirmOverwrite) Renamed to promptOverwrite. No
+	longer using confirmEx dialog option. I use a custom dialog to
+	keep option buttons relatively consistent across operating
+	systems. See bug 345067.
+
+	* cmis.dtd Added new ENTITY elements for new prompt.xul dialog.
+
+	* prompt.js
+	* prompt.xul
+	* prompt.properties
+	* prompt.css
+	* question.svg
+	New files to deal with prompt dialog to deal with overwriting scenario.
+
+	* install.rdf Updated em:version.
+
+2011-08-28  Christopher Hoobin  <hsirhc@gmail.com>
+
+	* editietm.js (onPickFolder) Updates menu item label on every
+	folder change (issue #1).
+
+	* overlay.js (showContextMenu) gContextMenu.imageURL does not need to
+	be an argument to the closure as it never changes.
+
+	* install.rdf Update em:version for submission to AMO
+
+	* install.rdf em:iconURL image renamed to icon.png
+
+2011-08-25  Christopher Hoobin  <hsirhc@gmail.com>
+
+	* overlay.js (showContextMenu) Using addEventListener in place of
+	setAtttribute to add oncommand callback.
+
+	* overlay.js (saveImage) Added code to confirm from user before
+	saveImage is about to overwrite a file.
+
+	* overlay.js (getUniqueFilename) Replaced getUniqueFilename with
+	uniqueFile function found in firefox/omni/.../contentAreaUtils.js
+
+	* overlay.xul Added stringbundleset for use in confirm prompt code
+	in overlay.js.
+
+	* options.xul Added option to toggle user prompt that deals with
+	saveImage overwriting files.
+
+	* pref.js Added confirmOverwite default preference set to bool:true
+
+	* about.xul Removed about dialog. It is too hard to naivigate
+	to. Everything on there can be found on the AMO page.
+
+2011-08-07  Christopher Hoobin  <hsirhc@gmail.com>
+
+	* overlay.js (onQuickSave) Fixed event propagation issue during
+	quick save.
+
+	* overlay.js (showContextMenu) Updated placement of new menu items
+	using itemPlacement preference.
+
+	* options.xul Updated tree column header text in options dialog.
+
+	* options.xul Added tooltips for each column header.
+
+	* options.xul Added option control to specify position of new
+	context menu items.
