@@ -1,9 +1,16 @@
 ZIP=$(shell which zip)
 
-all:
-	$(ZIP) -r cmis@moongiraffe.net.xpi bootstrap.js chrome/ chrome.manifest install.rdf ../ChangeLog ../LICENSE ../README
+XPI=cmis@moongiraffe.net.xpi
+
+all: zip
+
+install: zip
+	firefox $(XPI) &
+
+zip:
+	$(ZIP) -r $(XPI) bootstrap.js chrome/ chrome.manifest install.rdf ../ChangeLog ../LICENSE ../README
 
 clean:
-	$(RM) *.xpi
+	$(RM) $(XPI)
 
-.PHONY: all clean
+.PHONY: clean
