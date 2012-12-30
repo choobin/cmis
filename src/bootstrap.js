@@ -1,33 +1,33 @@
 /*
-Copyright 2012 Christopher Hoobin. All rights reserved.
+  Copyright 2012 Christopher Hoobin. All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are
+  met:
 
-   1. Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
+  1. Redistributions of source code must retain the above copyright
+  notice, this list of conditions and the following disclaimer.
 
-   2. Redistributions in binary form must reproduce the above
-      copyright notice, this list of conditions and the following
-      disclaimer in the documentation and/or other materials provided
-      with the distribution.
+  2. Redistributions in binary form must reproduce the above
+  copyright notice, this list of conditions and the following
+  disclaimer in the documentation and/or other materials provided
+  with the distribution.
 
-THIS SOFTWARE IS PROVIDED BY CHRISTOPHER HOOBIN ''AS IS'' AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL CHRISTOPHER HOOBIN OR
-CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  THIS SOFTWARE IS PROVIDED BY CHRISTOPHER HOOBIN ''AS IS'' AND ANY
+  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL CHRISTOPHER HOOBIN OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-The views and conclusions contained in the software and documentation
-are those of the authors and should not be interpreted as representing
-official policies, either expressed or implied, of Christopher Hoobin.
+  The views and conclusions contained in the software and documentation
+  are those of the authors and should not be interpreted as representing
+  official policies, either expressed or implied, of Christopher Hoobin.
 */
 
 Components.utils.import("resource://gre/modules/Services.jsm");
@@ -306,9 +306,9 @@ moongiraffe.Cmis.menu = {
 
             Services.strings.flushBundles();
 
-	    event.stopPropagation();
+            event.stopPropagation();
 
-	    event.preventDefault();
+            event.preventDefault();
 
             return;
         }
@@ -317,9 +317,9 @@ moongiraffe.Cmis.menu = {
 
         moongiraffe.Cmis.io.save(window, index, source);
 
-	event.stopPropagation();
+        event.stopPropagation();
 
-	event.preventDefault();
+        event.preventDefault();
     },
 
     observe: function(subject, topic, data) {
@@ -541,15 +541,26 @@ moongiraffe.Cmis.utils = {
     filename: function(window, source) {
         let name = null;
 
+        let cache = null;
+
+        // Check for Content-Disposition and Content-Type HTTP headers
+        if (Services.vc.compare(Services.appinfo.platformVersion, "18.0") < 0) {
+            cache = Components.classes["@mozilla.org/image/cache;1"]
+                .getService(Components.interfaces.imgICache)
+        }
+        else {
+            // As of Firefox 18, there is no longer a single image cache.
+            // https://developer.mozilla.org/en-US/docs/XPCOM_Interface_Reference/imgICache
+            cache = Components.classes["@mozilla.org/image/tools;1"]
+                .getService(Components.interfaces.imgITools)
+                .getImgCacheForDocument(window.document);
+        }
+
+        let content_type = null;
+
+        let content_disposition = null;
+
         try {
-            // Check for Content-Disposition HTTP header
-            let cache = Components.classes["@mozilla.org/image/cache;1"]
-                .getService(Components.interfaces.imgICache);
-
-            let content_type = null;
-
-            let content_disposition = null;
-
             let properties = cache.findEntryProperties(source);
 
             if (properties) {
@@ -562,34 +573,45 @@ moongiraffe.Cmis.utils = {
 
             let unused = {value : null};
 
-            name = decoder.getParameter(content_disposition, "filename", window.content.document.characterSet, true, unused);
+            name = decoder.getParameter(content_disposition, "filename", window.document.characterSet, true, unused);
 
-            return moongiraffe.Cmis.utils.validate(name);
+            return moongiraffe.Cmis.utils.validate(name, content_type);
         }
         catch (e) {
+            // It is OK to fail fetching Content-Type and Content-Disposition headers
         }
 
         try {
-            let texttosuburi = Components.classes["@mozilla.org/intl/texttosuburi;1"]
-                .getService(Components.interfaces.nsITextToSubURI);
-
             // https://developer.mozilla.org/en-US/docs/XPCOM_Interface_Reference/nsIURL
             let url = source.QueryInterface(Components.interfaces.nsIURL);
 
-            name = texttosuburi.unEscapeURIForUI(url.originCharset || "UTF-8", url.fileName);
+            if (url.fileName != "") { // XXX
+                let texttosuburi = Components.classes["@mozilla.org/intl/texttosuburi;1"]
+                    .getService(Components.interfaces.nsITextToSubURI);
 
-            return moongiraffe.Cmis.utils.validate(name);
+                name = texttosuburi.unEscapeURIForUI(url.originCharset || "UTF-8", url.fileName);
+
+                return moongiraffe.Cmis.utils.validate(name, content_type);
+            }
         }
         catch (e) {
+            // It is OK to fail parsing the URL
         }
 
-        // Otherwise we can extract the filename from the url string
+        // If this is a directory, use the last directory name
+        let data = source.path.match(/\/([^\/]+)\/$/);
+
+        if (data && data.length > 1) {
+            return moongiraffe.Cmis.utils.validate(data[1], content_type);
+        }
+
+        // Otherwise we can extract the filename from the URL (and cross our fingers)
         name = source.path.replace(/.*\//, "");
 
-        return moongiraffe.Cmis.utils.validate(name);
+        return moongiraffe.Cmis.utils.validate(name, content_type);
     },
 
-    validate: function(name) {
+    validate: function(name, content_type) { // XXX
         // firefox-5.0/omni/chrome/toolkit/content/global/contentAreaUtils.js:883
         name = name.replace(/[\\]+/g, "_");
         name = name.replace(/[\/]+/g, "_");
@@ -600,6 +622,27 @@ moongiraffe.Cmis.utils = {
         name = name.replace(/[\<]+/g, "(");
         name = name.replace(/[\>]+/g, ")");
         name = name.replace(/[\|]+/g, "_");
+
+        let mimeService = Components.classes["@mozilla.org/mime;1"]
+            .getService(Components.interfaces.nsIMIMEService);
+
+        let extension = mimeService.getPrimaryExtension(content_type, null);
+
+        // Note: Linux FF18 getPrimaryExtension("image/jpeg", null) returns "jpe"
+        if (extension === "jpe") {
+            extension = "jpe?g";
+        }
+
+        // Check for a correct file suffix
+        if (!name.match(new RegExp("\." + extension + "$", "i"))) {
+            // If content_type is image/jpeg but the file suffix is missing we append jpg (removing e?)
+            if (extension === "jpe?g") {
+                extension = "jpg";
+            }
+
+            name = name + "." + extension;
+        }
+
         return name;
     },
 
@@ -621,16 +664,18 @@ moongiraffe.Cmis.utils = {
 
 function startup(data, reason) {
     // As of Gecko 10.0, manifest registration is performed automatically.
-    if (Services.vc.compare(Services.appinfo.platformVersion, "10.0") < 0)
+    if (Services.vc.compare(Services.appinfo.platformVersion, "10.0") < 0) {
         Components.manager.addBootstrappedManifestLocation(data.installPath);
+    }
 
     moongiraffe.Cmis.prefs.startup();
     moongiraffe.Cmis.window.startup();
 }
 
 function shutdown(data, reason) {
-    if (Services.vc.compare(Services.appinfo.platformVersion, "10.0") < 0)
-      Components.manager.removeBootstrappedManifestLocation(data.installPath);
+    if (Services.vc.compare(Services.appinfo.platformVersion, "10.0") < 0) {
+        Components.manager.removeBootstrappedManifestLocation(data.installPath);
+    }
 
     moongiraffe.Cmis.prefs.shutdown();
     moongiraffe.Cmis.window.shutdown();
