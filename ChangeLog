@@ -1,3 +1,15 @@
+2012-12-29  Christopher Hoobin  <hsirhc@gmail.com>
+
+	* Cmis.util.filename
+	- As of FF18 there is no longer a single image cache. Cmis checks
+	  the browsers version string and deals with this correctly.
+	- @mozilla.org/initl/texttosuburi;1 was not using the correct URI.
+	- Added a check to determine if the source URI looks like a directory.
+
+	* Cmis.util.validate Checks for a correct file suffix. If it is
+	missing it will append one acording to its Content-Type HTTP
+	header.
+
 2012-11-30  Christopher Hoobin  <hsirhc@gmail.com>
 
 	* bootstrap.js Prepending file name prefix was indexing the wrong
