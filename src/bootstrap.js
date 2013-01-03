@@ -628,10 +628,11 @@ moongiraffe.Cmis.utils = {
 
         let extension = mimeService.getPrimaryExtension(content_type, null);
 
-        // Note: Linux FF18 getPrimaryExtension("image/jpeg", null) returns "jpe"
-        if (extension === "jpe" ||
-            extension === "jpg") {
-            // Sometimes jpeg is used as the suffix
+                                    // Goodie goodie gumdrops!
+        if (extension === "jpe" ||  // Linux FF18 getPrimaryExtension("image/jpeg", null) returns "jpe"
+            extension === "jpg" ||  // Windows 7 x86_64 FF18 returns "jpg"
+            extension === "jpeg") { // Windows XP x86_64 FF17.1 returns "jpeg"
+            // In obscure parallel worlds .jpeg is sometimes used as the suffix
             extension = "jpe?g";
         }
 
