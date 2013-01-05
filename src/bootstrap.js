@@ -482,6 +482,15 @@ moongiraffe.Cmis.io = {
 
         let name = path.leafName;
 
+        let privacy_context = null;
+
+        // As of Firefox 18, the `addDownload` and `saveURL` functions have changed to support per-window private browsing.
+        if (Services.vc.compare(Services.appinfo.platformVersion, "18.0") >= 0) {
+            privacy_context = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+                .getInterface(Components.interfaces.nsIWebNavigation)
+                .QueryInterface(Components.interfaces.nsILoadContext);
+        }
+
         // https://developer.mozilla.org/en/nsIWebBrowserPersist
         let persist = Components
             .classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"]
@@ -498,11 +507,11 @@ moongiraffe.Cmis.io = {
         let manager = Components.classes["@mozilla.org/download-manager;1"]
             .getService(Components.interfaces.nsIDownloadManager);
 
-        let listener = manager.addDownload(0, source, target, name, null, null, null, null, persist);
+        let listener = manager.addDownload(0, source, target, name, null, null, null, null, persist, privacy_context);
 
         persist.progressListener = listener;
 
-        persist.saveURI(source, null, null, null, null, target, null);
+        persist.saveURI(source, null, null, null, null, target, null, privacy_context);
 
         moongiraffe.Cmis.prefs.value("previousDirectoryIndex", index);
     },
