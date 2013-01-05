@@ -1,9 +1,14 @@
+2013-01-05  Christopher Hoobin  <hsirhc@gmail.com>
+
+	* Cmis.io.save Updated addDownload and saveURL functions to deal
+	with FF18's per-window private browsing context.
+
 2013-01-03  Christopher Hoobin  <hsirhc@gmail.com>
 
-	* Cmis.util.filename Fixed issue where 
-         nsIMIMEService.getPrimaryExtension("image/jpg", null) running XP x86_64
-         was returning a different value to FF builds on Linux and later versions 
-         of Windows.
+	* Cmis.util.filename Fixed issue where
+	nsIMIMEService.getPrimaryExtension("image/jpg", null) running XP
+	x86_64 was returning a different value to FF builds on Linux and
+	later versions of Windows.
 
 2012-12-29  Christopher Hoobin  <hsirhc@gmail.com>
 
