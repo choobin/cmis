@@ -432,12 +432,14 @@ moongiraffe.Cmis.io = {
         if (directory_data[0] === "=") {
             let gContextMenu = window.gContextMenu;
 
-            // Note that there is no way to check if the user canceled
-            // the save operation using saveImage or saveMedia. Setting
-            // previousDirectoryIndex here could piss some people off.
             gContextMenu.saveImage();
 
-            moongiraffe.Cmis.prefs.value("previousDirectoryIndex", index);
+            // Note that there is no way to check if the user canceled
+            // the save operation using saveImage or saveMedia.
+
+            // Setting previousDirectoryIndex will not work here as
+            // there there is no instance on gContextMenu when quick
+            // saving.
 
             return;
         }
