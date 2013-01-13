@@ -97,7 +97,7 @@ moongiraffe.Cmis.menu.items = {
 
             list += "!" + this.treeview.items[i].depth;
 
-            if (this.treeview.items[i].separator || this.treeview.items[i].saveas)
+            if (this.treeview.items[i].separator)
                 continue;
 
             list += "!" + this.treeview.getCellText(i, "name");
