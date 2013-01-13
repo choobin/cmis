@@ -59,6 +59,10 @@
   list-style-image: url("chrome://cmis/skin/browse.png");
 }
 
+.small {
+    font-size: 0.8em;
+}
+
 /* https://developer.mozilla.org/en-US/docs/XUL_Tutorial/Styling_a_Tree */
 
 treechildren::-moz-tree-indentation {

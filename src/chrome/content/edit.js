@@ -41,9 +41,9 @@ moongiraffe.Cmis.menu.edit = {
         var item = window.arguments[0];
 
         document.getElementById("name").value = item.name;
-        
-        // We only want a name input field when we edit submenu items
-        if (item.container) {
+
+        // We only want a name input field when we edit submenu items or a save as button
+        if (item.container || item.saveas) {
             document.getElementById("path").hidden = true;
             document.getElementById("pathlabel").hidden = true;
             document.getElementById("browse").hidden = true;
@@ -53,6 +53,13 @@ moongiraffe.Cmis.menu.edit = {
         else {
             document.getElementById("path").value = item.path;
             document.getElementById("prefix").value = item.prefix;
+        }
+
+        if (item.saveas) {
+            document.getElementById("saveas-explanation").hidden = false;
+        }
+        else {
+            document.getElementById("saveas-explanation").hidden = true;
         }
     },
 
@@ -140,8 +147,8 @@ moongiraffe.Cmis.menu.edit = {
 
         var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
 
-        picker.init(window, 
-                    bundle.GetStringFromName("selectDirectory"), 
+        picker.init(window,
+                    bundle.GetStringFromName("selectDirectory"),
                     Components.interfaces.nsIFilePicker.modeGetFolder);
 
         var ret = picker.show();
@@ -161,7 +168,7 @@ moongiraffe.Cmis.menu.edit = {
 
     valid: function(string) {
         var item = document.getElementById(string).value;
-        
+
         if (item.indexOf("|") != -1 || item.indexOf("!") != -1) {
             return false;
         }
@@ -172,10 +179,10 @@ moongiraffe.Cmis.menu.edit = {
     error: function(string) {
         var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
 
-        Services.prompt.alert(null, 
+        Services.prompt.alert(null,
                               bundle.GetStringFromName("errorPromptTitle"),
                               bundle.GetStringFromName(string));
-        
+
         Services.strings.flushBundles();
     },
 

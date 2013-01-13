@@ -15,6 +15,10 @@
 
   <script src="edit.js"/>
 
+  <vbox align="center">
+    <label id="saveas-explanation" class="small" value="&cmis.items.saveasExplanation;"/>
+  </vbox>
+
   <grid>
     <columns>
       <column/>
@@ -50,4 +54,5 @@
       </row>
     </rows>
   </grid>
+
 </dialog>

@@ -429,6 +429,19 @@ moongiraffe.Cmis.io = {
 
         let directory_data = directories[index].split("!");
 
+        if (directory_data[0] === "=") {
+            let gContextMenu = window.gContextMenu;
+
+            // Note that there is no way to check if the user canceled
+            // the save operation using saveImage or saveMedia. Setting
+            // previousDirectoryIndex here could piss some people off.
+            gContextMenu.saveImage();
+
+            moongiraffe.Cmis.prefs.value("previousDirectoryIndex", index);
+
+            return;
+        }
+
         let path = Components.classes["@mozilla.org/file/local;1"]
             .createInstance(Components.interfaces.nsILocalFile);
 

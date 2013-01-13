@@ -90,17 +90,20 @@ moongiraffe.Cmis.menu.items = {
                 list += ">";
             else if (this.treeview.items[i].separator)
                 list += "-";
+            else if (this.treeview.items[i].saveas)
+                list += "=";
             else
                 list += ".";
 
             list += "!" + this.treeview.items[i].depth;
 
-            if (this.treeview.items[i].separator)
+            if (this.treeview.items[i].separator || this.treeview.items[i].saveas)
                 continue;
 
             list += "!" + this.treeview.getCellText(i, "name");
 
-            if (this.treeview.items[i].container) // submenu
+            // submenu and default 'save as' buttons do not contain path or prefix fields
+            if (this.treeview.items[i].container || this.treeview.items[i].saveas)
                 continue;
 
             list += "!" + this.treeview.getCellText(i, "path") + "!" + this.treeview.getCellText(i, "prefix");
@@ -179,6 +182,12 @@ moongiraffe.Cmis.menu.items = {
         this.update();
     },
 
+    saveas: function() {
+        var label = document.getElementById("button-saveas").label.trim();
+        this.treeview.insert(new Item("=!0!" + label)); // 'save as', depth 0, no path or prefix
+        this.update();
+    },
+
     edit: function() {
         var index = this.treeview.selection.currentIndex;
 
@@ -243,6 +252,7 @@ moongiraffe.Cmis.menu.items = {
 function Item(string) {
     this.container = false;
     this.separator = false;
+    this.saveas = false;
     this.depth = 0;
     this.name = "";
     this.path = "";
@@ -259,43 +269,24 @@ function Item(string) {
             return;
         }
 
-        // Submenu and item elements have a name field.
+        // Submenu, Save As and item elements have a name field.
         this.name = data[2];
+
+        if (data[0] === '=') {
+            this.saveas = true;
+            return;
+        }
 
         if (data[0] === '>') {
             this.container = true;
             return;
         }
 
+
         // Only item elements have a path and prefix field.
         this.path = data[3];
         this.prefix = data[4];
     }
-}
-
-Item.prototype.toString = function() {
-    var str = "[ ";
-
-    if (this.separator) {
-        str += "- ";
-        str += this.depth;
-    }
-    else if (this.container) {
-        str += "> ";
-        str += this.depth + ", ";
-        str += this.name;
-    }
-    else  {
-        str += ". ";
-        str += this.depth + ", ";
-        str += this.name + ", ";
-        str += this.path + ", ";
-        str += this.prefix;
-    }
-
-    str += " ]";
-
-    return str;
 }
 
 function Treeview(items) {

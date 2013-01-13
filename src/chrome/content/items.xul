@@ -2,9 +2,14 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://cmis/skin/style.css" type="text/css"?>
 
-<!DOCTYPE dialog SYSTEM "chrome://cmis/locale/cmis.dtd">
+<!DOCTYPE dialog [
+ <!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd">
+ %browserDTD;
+ <!ENTITY % cmisDTD SYSTEM "chrome://cmis/locale/cmis.dtd">
+ %cmisDTD;
+]>
 
-<dialog 
+<dialog
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     title="&cmis.items.title;"
     minwidth="900"
@@ -58,13 +63,18 @@
                 id="button-edit"
                 oncommand="moongiraffe.Cmis.menu.items.edit();"/>
         <button class="delete"
-                label="  &cmis.items.delete;" 
+                label="  &cmis.items.delete;"
                id="button-delete"
                 oncommand="moongiraffe.Cmis.menu.items.delete();"/>
         <button class="separator"
                 label="  &cmis.items.separator;"
                 id="button-separator"
                 oncommand="moongiraffe.Cmis.menu.items.separator();"/>
+        <button class="new"
+                label="  &saveImageCmd.label;"
+                id="button-saveas"
+                oncommand="moongiraffe.Cmis.menu.items.saveas();"/>
+
         <hbox>
           <button class="up"
                   id="button-up"
