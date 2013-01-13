@@ -3,8 +3,10 @@
 	* bootstrap.js
 	* item.[js|xul]
 	* edit.[js|xul]
-	Included option to add a default 'Save As...' menu item to
+	- Included option to add a default 'Save As...'  menu item to
 	anywhere in the CMIS context menu.
+	- Added %DATE, %DATE{FORMAT} and %ALT variables to prefix string
+	creation.
 
 2013-01-05  Christopher Hoobin  <hsirhc@gmail.com>
 

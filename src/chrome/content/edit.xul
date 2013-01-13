@@ -55,4 +55,45 @@
     </rows>
   </grid>
 
+  <grid id="prefixguide">
+    <columns>
+      <column/>
+      <column flex="1"/>
+    </columns>
+    <rows>
+      <row>
+        <hbox>
+          <label class="small" value="&cmis.items.format.header;"/>
+        </hbox>
+        <hbox>
+          <label class="small" value="" flex="1"/>
+        </hbox>
+      </row>
+      <row>
+        <hbox>
+          <label class="small" value="%DATE"/>
+        </hbox>
+        <hbox>
+          <label class="small" value="&cmis.items.format.date;" flex="1"/>
+        </hbox>
+      </row>
+      <row>
+        <hbox>
+          <label class="small" value="%DATE{FORMAT}"/>
+        </hbox>
+        <hbox>
+          <label class="small" value="&cmis.items.format.dateformat;" flex="1"/>
+        </hbox>
+      </row>
+      <row>
+        <hbox>
+          <label class="small" value="%ALT"/>
+        </hbox>
+        <hbox>
+          <label class="small" value="&cmis.items.format.alt;" flex="1"/>
+        </hbox>
+      </row>
+    </rows>
+  </grid>
+
 </dialog>

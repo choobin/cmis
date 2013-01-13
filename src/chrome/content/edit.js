@@ -49,6 +49,7 @@ moongiraffe.Cmis.menu.edit = {
             document.getElementById("browse").hidden = true;
             document.getElementById("prefix").hidden = true;
             document.getElementById("prefixlabel").hidden = true;
+            document.getElementById("prefixguide").hidden = true;
         }
         else {
             document.getElementById("path").value = item.path;
@@ -200,5 +201,5 @@ moongiraffe.Cmis.menu.edit = {
         }
 
         return base;
-    },
+    }
 };

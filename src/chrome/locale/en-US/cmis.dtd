@@ -27,3 +27,7 @@
 <!ENTITY cmis.items.up "Up">
 <!ENTITY cmis.items.down "Down">
 <!ENTITY cmis.items.edit.title "Edit Menu Item">
+<!ENTITY cmis.items.format.header "Prefix variables">
+<!ENTITY cmis.items.format.date "ISO8601 style date string YYYY-MM-DD-HHMMSS">
+<!ENTITY cmis.items.format.dateformat "A custom date string, e.g., &#37;DATE{YYYY-MM}. Use yy for abbreviated year.">
+<!ENTITY cmis.items.format.alt "The &lt;IMG&gt; alt tag text (if it exists).">

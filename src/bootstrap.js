@@ -457,7 +457,15 @@ moongiraffe.Cmis.io = {
         path.append(filename);
 
         if (directory_data[4].length > 0) {
-            path.leafName = directory_data[4] + path.leafName;
+            let prefix = moongiraffe.Cmis.utils.date(directory_data[4]);
+
+            if (prefix.match(/%ALT/)) {
+                let gContextMenu = window.gContextMenu;
+
+                prefix = prefix.replace(/%ALT/g, gContextMenu.target.alt);
+            }
+
+            path.leafName = prefix + path.leafName;
         }
 
         if (path.exists()) {
@@ -687,6 +695,51 @@ moongiraffe.Cmis.utils = {
         }
         return path;
     },
+
+    date: function(str) {
+        function pad(value) {
+            let str = "";
+
+            if (value < 10.0)
+                str += "0";
+
+            str += value.toString();
+
+            return str;
+        }
+
+        let date = new Date(),
+            year = pad(date.getFullYear()),   // YYYY
+            yy = year.substring(2,4),         // yy
+            month = pad(date.getMonth() + 1), // 0 - 11
+            day = pad(date.getDate()),        // 1 - 31
+            hours = pad(date.getHours()),     // 0 - 23
+            minutes = pad(date.getMinutes()), // 0 - 59
+            seconds = pad(date.getSeconds()); // 0 - 59
+
+        let format = str.match(/%DATE{(.*?)}/);
+
+        // There is a possibility that a prefix string contains more
+        // than one custom %DATE{} format string.
+        while (format && format.length == 2) {
+            str = str.replace(/%DATE{.*?}/, format[1]);
+
+            format = str.match(/%DATE{(.*?)}/);
+        }
+
+        if (str.match(/%DATE/)) {
+            str = str.replace(/%DATE/g, "YYYY-MM-DD-HHMMSS");
+        }
+
+        return str
+            .replace(/YYYY/g, year)
+            .replace(/yy/g, yy)
+            .replace(/MM/g, month)
+            .replace(/DD/g, day)
+            .replace(/HH/g, hours)
+            .replace(/MM/g, minutes)
+            .replace(/SS/g, seconds);
+    }
 };
 
 function startup(data, reason) {
