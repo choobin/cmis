@@ -1,3 +1,11 @@
+2013-01-13  Christopher Hoobin  <hsirhc@gmail.com>
+
+	* bootstrap.js
+	* item.[js|xul]
+	* edit.[js|xul]
+	Included option to add a default 'Save As...' menu item to
+	anywhere in the CMIS context menu.
+
 2013-01-05  Christopher Hoobin  <hsirhc@gmail.com>
 
 	* Cmis.io.save Updated addDownload and saveURL functions to deal
