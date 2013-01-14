@@ -32,18 +32,19 @@
                    tooltiptext="&cmis.items.nameTooltip;"
                    primary="true"
                    editable="true"
-                   flex="1"/>
+                   flex="3"/>
           <splitter class="tree-splitter"/>
           <treecol id="path"
                    label="&cmis.items.path;"
                    tooltiptext="&cmis.items.pathTooltip;"
                    editable="false"
-                   flex="1"/>
+                   flex="3"/>
           <splitter class="tree-splitter"/>
           <treecol id="prefix"
                    label="&cmis.items.prefix;"
                    tooltiptext="&cmis.items.prefixTooltip;"
-                   editable="true" />
+                   editable="true"
+                   flex="1"/>
         </treecols>
 
         <treechildren/>
