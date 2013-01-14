@@ -728,7 +728,7 @@ moongiraffe.Cmis.utils = {
         }
 
         if (str.match(/%DATE/)) {
-            str = str.replace(/%DATE/g, "YYYY-MM-DD-HHMMSS");
+            str = str.replace(/%DATE/g, "YYYY-MM-DD-hhmmss");
         }
 
         return str
@@ -736,9 +736,9 @@ moongiraffe.Cmis.utils = {
             .replace(/yy/g, yy)
             .replace(/MM/g, month)
             .replace(/DD/g, day)
-            .replace(/HH/g, hours)
-            .replace(/MM/g, minutes)
-            .replace(/SS/g, seconds);
+            .replace(/hh/g, hours)
+            .replace(/mm/g, minutes)
+            .replace(/ss/g, seconds);
     }
 };
 
