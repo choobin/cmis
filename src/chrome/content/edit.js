@@ -40,7 +40,7 @@ moongiraffe.Cmis.menu.edit = {
     load: function() {
         var item = window.arguments[0];
 
-        $("name").value = item.name;
+        $("name").value = item.name || "";
 
         // We only want a name input field when we edit submenu items or a save as button
         if (item.type === "submenu" || item.type === "saveas") {
