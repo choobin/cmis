@@ -30,8 +30,12 @@ are those of the authors and should not be interpreted as representing
 official policies, either expressed or implied, of Christopher Hoobin.
 */
 
+Components.utils.import("resource://gre/modules/FileUtils.jsm");
+Components.utils.import("resource://gre/modules/NetUtil.jsm");
 Components.utils.import("resource://gre/modules/Services.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
+const PREFBRANCH = "extensions.cmis@moongiraffe.net.";
 
 if (!moongiraffe) var moongiraffe = {};
 if (!moongiraffe.Cmis) moongiraffe.Cmis = {};
@@ -42,83 +46,40 @@ moongiraffe.Cmis.menu.items = {
     treeview: null,
 
     load: function() {
-        var branch = Services.prefs.getBranch("extensions.cmis@moongiraffe.net.");
-
-        var list = branch.getComplexValue("directoryList", Components.interfaces.nsISupportsString).data;
-
-        var data = this.loaddata(list);
-
-        this.tree = document.getElementById("tree");
+        var data = this.loaddata();
 
         this.treeview = new Treeview(data);
+
+        this.tree = $("tree");
 
         this.tree.view = this.treeview;
 
         this.treeview.invalidate();
-
-        this.select();
     },
 
-    loaddata: function(list) {
-        var items = [];
+    loaddata: function() {
+        var branch = Services.prefs.getBranch(PREFBRANCH);
 
-        if (list === "")
-            return items;
+        var list = branch.getComplexValue("directoryList", Components.interfaces.nsISupportsString).data;
 
-        var data = list.split("|");
-
-        for (var i = 0; i < data.length; i++)
-            items.push(new Item(data[i]));
-
-        return items;
+        return JSON.parse(list);
     },
 
     update: function() {
-        var list = "";
-
-        var count = this.treeview.rowCount;
-
-        var first = true;
-
-        for(var i = 0; i < count; i++) {
-            if (first)
-                first = false;
-            else
-                list += "|";
-
-            if (this.treeview.items[i].container)
-                list += ">";
-            else if (this.treeview.items[i].separator)
-                list += "-";
-            else if (this.treeview.items[i].saveas)
-                list += "=";
-            else
-                list += ".";
-
-            list += "!" + this.treeview.items[i].depth;
-
-            if (this.treeview.items[i].separator)
-                continue;
-
-            list += "!" + this.treeview.getCellText(i, "name");
-
-            // submenu and default 'save as' buttons do not contain path or prefix fields
-            if (this.treeview.items[i].container || this.treeview.items[i].saveas)
-                continue;
-
-            list += "!" + this.treeview.getCellText(i, "path") + "!" + this.treeview.getCellText(i, "prefix");
-        }
-
-        var branch = Services.prefs.getBranch("extensions.cmis@moongiraffe.net.");
+        var list = JSON.stringify(this.treeview.items, function (key, value) {
+            if (key === "menu") // The menu field is only need for import/export calls.
+                return undefined;
+            return value;
+        }, "");
 
         var string = Components.classes["@mozilla.org/supports-string;1"]
             .createInstance(Components.interfaces.nsISupportsString);
 
         string.data = list;
 
-        branch.setComplexValue("directoryList", Components.interfaces.nsISupportsString, string);
+        var branch = Services.prefs.getBranch(PREFBRANCH);
 
-        return true;
+        branch.setComplexValue("directoryList", Components.interfaces.nsISupportsString, string);
     },
 
     select: function() {
@@ -126,37 +87,44 @@ moongiraffe.Cmis.menu.items = {
 
         var count = this.treeview.rowCount;
 
-        document.getElementById("button-up").disabled = false;
+        $("button-up").disabled = false;
 
         if (index == 0 && this.treeview.items[0].depth == 0) {
-            document.getElementById("button-up").disabled = true;
+            $("button-up").disabled = true;
         }
 
-        document.getElementById("button-down").disabled = false;
+        $("button-down").disabled = false;
 
         if (index < 0) {
-            document.getElementById("button-down").disabled = true;
+            $("button-down").disabled = true;
         }
         else if (this.treeview.items[index].container) {
             var children = this.treeview.containerchildren(index);
             if (index + children == count - 1 && this.treeview.items[index].depth == 0)
-                document.getElementById("button-down").disabled = true;
+                $("button-down").disabled = true;
         }
         else if (index == count - 1 && this.treeview.items[count - 1].depth == 0) {
-            document.getElementById("button-down").disabled = true;
+            $("button-down").disabled = true;
         }
 
-        document.getElementById("button-delete").disabled = index < 0;
+        $("button-delete").disabled = index < 0;
 
-        document.getElementById("button-edit").disabled = index < 0 || this.treeview.isSeparator(index);
+        $("button-edit").disabled = index < 0 || this.treeview.isSeparator(index);
 
         return true;
     },
 
-    newitem: function(container) {
+    insert: function(items) {
+        this.treeview.items = this.treeview.items.concat(items);
+        this.update();
+    },
+
+    newitem: function(type, name) {
         var item = new Item();
 
-        item.container = container;
+        item.type = type;
+
+        item.name = name;
 
         window.openDialog(
             "chrome://cmis/content/edit.xul",
@@ -167,7 +135,10 @@ moongiraffe.Cmis.menu.items = {
         if (item.name === "")
             return;
 
-        if (!item.container && item.path === "")
+        // Note: 'Save As' with a blank path acts as generic Save As.
+        if (item.type !== "submenu" &&
+            item.type !== "saveas" &&
+            item.path === "")
             return;
 
         this.treeview.insert(item);
@@ -178,14 +149,14 @@ moongiraffe.Cmis.menu.items = {
     },
 
     separator: function() {
-        this.treeview.insert(new Item("-!0")); // new separator at depth 0
+        this.treeview.insert(new Separator());
         this.update();
     },
 
     saveas: function() {
-        var label = document.getElementById("button-saveas").label.trim();
-        this.treeview.insert(new Item("=!0!" + label)); // 'save as', depth 0, no path or prefix
-        this.update();
+        // The label will be localized.
+        var label = $("button-saveas").label.trim();
+        this.newitem("saveas", label);
     },
 
     edit: function() {
@@ -241,6 +212,12 @@ moongiraffe.Cmis.menu.items = {
         this.treeview.invalidate();
 
         this.update();
+    },
+
+    export_settings: function() {
+    },
+
+    import_settings: function() {
     }
 };
 
@@ -249,45 +226,40 @@ moongiraffe.Cmis.menu.items = {
 // https://developer.mozilla.org/en-US/docs/XUL_Tutorial/More_Tree_Features
 // https://developer.mozilla.org/en-US/docs/XPCOM_Interface_Reference/nsITreeView
 
-function Item(string) {
-    this.container = false;
-    this.separator = false;
-    this.saveas = false;
-    this.depth = 0;
-    this.name = "";
-    this.path = "";
-    this.prefix = "";
-
-    if (string !== undefined) {
-        var data = string.split("!");
-
-        // All items have a depth field.
-        this.depth = parseInt(data[1]);
-
-        if (data[0] === "-") {
-            this.separator = true;
-            return;
-        }
-
-        // Submenu, Save As and item elements have a name field.
-        this.name = data[2];
-
-        if (data[0] === '=') {
-            this.saveas = true;
-            return;
-        }
-
-        if (data[0] === '>') {
-            this.container = true;
-            return;
-        }
-
-
-        // Only item elements have a path and prefix field.
-        this.path = data[3];
-        this.prefix = data[4];
-    }
+function Item(depth, name, path, prefix) {
+    this.type = "item";
+    this.depth = depth || 0;
+    this.name = name || "";
+    this.path = path || "";
+    this.prefix = prefix || "";
 }
+
+function Saveas(depth, name, path) {
+    this.type = "saveas";
+    this.depth = depth || 0;
+    this.name = name || "";
+    this.path = path || "";
+}
+
+function Separator(depth) {
+    this.type = "separator";
+    this.depth = depth || 0;
+}
+
+function Submenu(depth, name) {
+    this.type = "submenu";
+    this.depth = depth || 0;
+    this.name = name || "";
+    this.menu = [];
+}
+
+/*
+function Edit(depth, name) {
+    this.type = "edit";
+    this.depth = depth || 0;
+    this.name = name || "";
+}
+*/
 
 function Treeview(items) {
     this.items = items;
@@ -441,6 +413,7 @@ Treeview.prototype = {
         }
 
         this.selection.select(from);
+
         moongiraffe.Cmis.menu.items.select();
     },
 
@@ -457,8 +430,9 @@ Treeview.prototype = {
     delete: function() {
         var index = this.selection.currentIndex;
 
-        if (index < 0)
+        if (index < 0) {
             return;
+        }
 
         var nitems = this.containerchildren(index) + 1;
 
@@ -466,10 +440,10 @@ Treeview.prototype = {
 
         this.treebox.rowCountChanged(index, -nitems);
 
-        if (this.items.length > 0)
-            this.selection.select(index == 0 ? 0 : index - 1);
+        // Keep the same index, unless we deleted the last item.
+        if (this.items.length > 0 && index > 0)
+            this.selection.select(index == this.items.length ? index - 1 : index);
 
-        //this.selection.select(index);
         moongiraffe.Cmis.menu.items.select();
     },
 
@@ -497,11 +471,11 @@ Treeview.prototype = {
     },
 
     isSeparator: function(row) {
-        return this.items[row].separator;
+        return this.items[row].type === "separator";
     },
 
     isContainer: function(row) {
-        return this.items[row].container;
+        return this.items[row].type === "submenu";
     },
 
     getParentIndex: function(row) {
@@ -541,7 +515,6 @@ Treeview.prototype = {
     isContainerOpen: function(row) { return true; },
     isContainerEmpty: function(row) { return false; },
     toggleOpenState: function(row) { return; },
-
     isSorted: function(row) { return false; },
     isEditable: function(row) { return false; },
     cycleHeader: function(col, elem) {},
@@ -556,4 +529,8 @@ Treeview.prototype = {
 
     // https://bugzilla.mozilla.org/show_bug.cgi?id=654998
     QueryInterface: XPCOMUtils.generateQI([Components.interfaces.nsITreeView]),
+};
+
+function $(x) {
+    return document.getElementById(x);
 };

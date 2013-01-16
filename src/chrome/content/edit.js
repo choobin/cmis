@@ -40,55 +40,44 @@ moongiraffe.Cmis.menu.edit = {
     load: function() {
         var item = window.arguments[0];
 
-        document.getElementById("name").value = item.name;
+        $("name").value = item.name;
 
         // We only want a name input field when we edit submenu items or a save as button
-        if (item.container || item.saveas) {
-            document.getElementById("path").hidden = true;
-            document.getElementById("pathlabel").hidden = true;
-            document.getElementById("browse").hidden = true;
-            document.getElementById("prefix").hidden = true;
-            document.getElementById("prefixlabel").hidden = true;
-            document.getElementById("prefixguide").hidden = true;
+        if (item.type === "submenu" || item.type === "saveas") {
+            $("path").hidden = true;
+            $("pathlabel").hidden = true;
+            $("browse").hidden = true;
+            $("prefix").hidden = true;
+            $("prefixlabel").hidden = true;
+            $("prefixguide").hidden = true;
         }
         else {
-            document.getElementById("path").value = item.path;
-            document.getElementById("prefix").value = item.prefix;
+            $("path").value = item.path;
+            $("prefix").value = item.prefix;
         }
 
-        if (item.saveas) {
-            document.getElementById("saveas-explanation").hidden = false;
+        if (item.type === "saveas") {
+            $("saveas-explanation").hidden = false;
         }
         else {
-            document.getElementById("saveas-explanation").hidden = true;
+            $("saveas-explanation").hidden = true;
         }
     },
 
     accept: function() {
-        if (document.getElementById("name").value.length == 0)
+        if ($("name").value.length == 0)
             return false
 
-        if (!this.valid("name")) {
-            this.error("errorPromptItemName");
-            return false;
-        }
-
         // If path is hidden we are a submenu item, so we can just return the name value
-        if (document.getElementById("path").hidden === true) {
+        if ($("path").hidden === true) {
             var item = window.arguments[0];
-            item.name = document.getElementById("name").value;
+            item.name = $("name").value;
             return true;
         }
 
-        if (document.getElementById("path").hidden === false &&
-            document.getElementById("path").value.length == 0)
+        if ($("path").hidden === false &&
+            $("path").value.length == 0)
             return false
-
-        // Otherwise we have to validate the path and the other input fields
-        if (!this.valid("path")) {
-            this.error("errorPromptItemPath");
-            return false;
-        }
 
         var file;
 
@@ -96,7 +85,7 @@ moongiraffe.Cmis.menu.edit = {
             var file = Components.classes["@mozilla.org/file/local;1"]
                 .createInstance(Components.interfaces.nsILocalFile);
 
-            file.initWithPath(document.getElementById("path").value);
+            file.initWithPath($("path").value);
 
             if (!file.isDirectory() || !file.isWritable()) {
                 this.error("errorPromptItemPath");
@@ -107,17 +96,11 @@ moongiraffe.Cmis.menu.edit = {
             return false;
         }
 
-        if (document.getElementById("prefix").value.length > 0 &&
-            !this.valid("prefix")) {
-            this.error("errorPromptItemPrefix");
-            return false;
-        }
-
         var item = window.arguments[0];
 
-        item.name = document.getElementById("name").value;
-        item.path = document.getElementById("path").value;
-        item.prefix = document.getElementById("prefix").value;
+        item.name = $("name").value;
+        item.path = $("path").value;
+        item.prefix = $("prefix").value;
 
         return true;
     },
@@ -130,7 +113,7 @@ moongiraffe.Cmis.menu.edit = {
         var picker = Components.classes["@mozilla.org/filepicker;1"]
             .createInstance(Components.interfaces.nsIFilePicker);
 
-        var path = document.getElementById("path").value;
+        var path = $("path").value;
 
         if (path !== "") {
             var file = Components.classes["@mozilla.org/file/local;1"]
@@ -155,24 +138,14 @@ moongiraffe.Cmis.menu.edit = {
         var ret = picker.show();
 
         if (ret == Components.interfaces.nsIFilePicker.returnOK) {
-            document.getElementById("path").value = picker.file.path;
+            $("path").value = picker.file.path;
         }
 
         var label = bundle.GetStringFromName("saveImage") + " \"" + this.basename(picker.file.path) + "\"";
 
-        document.getElementById("name").value = label;
+        $("name").value = label;
 
         Services.strings.flushBundles();
-
-        return true;
-    },
-
-    valid: function(string) {
-        var item = document.getElementById(string).value;
-
-        if (item.indexOf("|") != -1 || item.indexOf("!") != -1) {
-            return false;
-        }
 
         return true;
     },
@@ -180,9 +153,10 @@ moongiraffe.Cmis.menu.edit = {
     error: function(string) {
         var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
 
-        Services.prompt.alert(null,
-                              bundle.GetStringFromName("errorPromptTitle"),
-                              bundle.GetStringFromName(string));
+        Services.prompt.alert(
+            null,
+            bundle.GetStringFromName("errorPromptTitle"),
+            bundle.GetStringFromName(string));
 
         Services.strings.flushBundles();
     },
@@ -202,4 +176,8 @@ moongiraffe.Cmis.menu.edit = {
 
         return base;
     }
+};
+
+function $(x) {
+    return document.getElementById(x);
 };

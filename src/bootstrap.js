@@ -105,7 +105,7 @@ moongiraffe.Cmis.menu = {
             return;
         }
 
-        let items = list.split("|");
+        let items = JSON.parse(list);
 
         let placement = moongiraffe.Cmis.prefs.value("itemPlacement");
 
@@ -124,17 +124,17 @@ moongiraffe.Cmis.menu = {
         let depth = 0;
 
         for (let i = 0; i < items.length; i++) {
-            let data = items[i].split("!");
+            let data = items[i];
 
-            if (data[1] < depth) {
+            if (data.depth < depth) {
                 stack.pop();
             }
 
-            depth = data[1];
+            depth = data.depth;
 
-            if (data[0] === ">") {
+            if (data.type === "submenu") {
                 item = document.createElement("menu");
-                item.setAttribute("label", data[2]);
+                item.setAttribute("label", data.name);
 
                 let popup = document.createElement("menupopup");
 
@@ -150,13 +150,13 @@ moongiraffe.Cmis.menu = {
 
                 stack.push(popup);
             }
-            else if (data[0] === "-") {
+            else if (data.type === "separator") {
                 item = document.createElement("menuseparator");
             }
             else {
                 item = document.createElement("menuitem");
 
-                item.setAttribute("label", data[2]);
+                item.setAttribute("label", data.name);
 
                 item.addEventListener("command", moongiraffe.Cmis.menu.save, false);
             }
@@ -331,31 +331,33 @@ moongiraffe.Cmis.menu = {
     },
 };
 
+const PREFBRANCH = "extensions.cmis@moongiraffe.net.";
+
 moongiraffe.Cmis.prefs = {
     startup: function() {
         moongiraffe.Cmis.prefs.defaults();
 
         moongiraffe.Cmis.prefs.value("previousDirectoryIndex", -1);
 
-        Services.prefs.addObserver("extensions.cmis@moongiraffe.net.directoryList", moongiraffe.Cmis.menu, false);
-        Services.prefs.addObserver("extensions.cmis@moongiraffe.net.itemPlacement", moongiraffe.Cmis.menu, false);
+        Services.prefs.addObserver(PREFBRANCH + "directoryList", moongiraffe.Cmis.menu, false);
+        Services.prefs.addObserver(PREFBRANCH + "itemPlacement", moongiraffe.Cmis.menu, false);
 
         Services.obs.addObserver(moongiraffe.Cmis.prefs, "addon-options-displayed", false);
     },
 
     shutdown: function() {
-        Services.prefs.removeObserver("extensions.cmis@moongiraffe.net.directoryList", moongiraffe.Cmis.menu);
-        Services.prefs.removeObserver("extensions.cmis@moongiraffe.net.itemPlacement", moongiraffe.Cmis.menu);
+        Services.prefs.removeObserver(PREFBRANCH + "directoryList", moongiraffe.Cmis.menu);
+        Services.prefs.removeObserver(PREFBRANCH + "itemPlacement", moongiraffe.Cmis.menu);
 
         Services.obs.removeObserver(moongiraffe.Cmis.prefs, "addon-options-displayed");
     },
 
     uninstall: function() {
-        Services.prefs.deleteBranch("extensions.cmis@moongiraffe.net.");
+        Services.prefs.deleteBranch(PREFBRANCH);
     },
 
     defaults: function() {
-        let branch = Services.prefs.getDefaultBranch("extensions.cmis@moongiraffe.net.");
+        let branch = Services.prefs.getDefaultBranch(PREFBRANCH);
 
         let string = Components.classes["@mozilla.org/supports-string;1"]
             .createInstance(Components.interfaces.nsISupportsString);
@@ -363,7 +365,6 @@ moongiraffe.Cmis.prefs = {
         string.data = "";
 
         branch.setComplexValue("directoryList", Components.interfaces.nsISupportsString, string);
-
         branch.setIntPref("itemPlacement", 0);
         branch.setIntPref("overwriteAction", 0);
         branch.setIntPref("previousDirectoryIndex", -1);
@@ -372,7 +373,7 @@ moongiraffe.Cmis.prefs = {
     },
 
     value: function(key, value) {
-        let branch = Services.prefs.getBranch("extensions.cmis@moongiraffe.net.");
+        let branch = Services.prefs.getBranch(PREFBRANCH);
 
         if (key === "directoryList") {
             if (value !== undefined) {
@@ -425,11 +426,11 @@ moongiraffe.Cmis.io = {
     save: function(window, index, source) {
         let list = moongiraffe.Cmis.prefs.value("directoryList");
 
-        let directories = list.split("|");
+        let items = JSON.parse(list);
 
-        let directory_data = directories[index].split("!");
+        let data = items[index];
 
-        if (directory_data[0] === "=") {
+        if (data.type === "saveas") {
             let gContextMenu = window.gContextMenu;
 
             gContextMenu.saveImage();
@@ -447,7 +448,7 @@ moongiraffe.Cmis.io = {
         let path = Components.classes["@mozilla.org/file/local;1"]
             .createInstance(Components.interfaces.nsILocalFile);
 
-        path.initWithPath(directory_data[3]);
+        path.initWithPath(data.path);
 
         if (!path.exists())
             path.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, parseInt("0700", 8));
@@ -456,8 +457,8 @@ moongiraffe.Cmis.io = {
 
         path.append(filename);
 
-        if (directory_data[4].length > 0) {
-            let prefix = moongiraffe.Cmis.utils.date(directory_data[4]);
+        if (data.prefix.length > 0) {
+            let prefix = moongiraffe.Cmis.utils.date(data.prefix);
 
             if (prefix.match(/%ALT/)) {
                 let gContextMenu = window.gContextMenu;
@@ -742,6 +743,64 @@ moongiraffe.Cmis.utils = {
     }
 };
 
+moongiraffe.Cmis.update = {
+    // Upgrade the old directoryList format and replace with
+    // JSON. This will enable labels and paths to contain "|" and "!"
+    // characters and lead the way to easy import/exporting of CMIS
+    // settings.
+    v20130116: function() {
+        let list = moongiraffe.Cmis.prefs.value("directoryList");
+
+        var items = [];
+
+        var xs = list.split("|");
+
+        xs.forEach(function (x) {
+            var item = x.split("!");
+
+            switch (item[0]) {
+            case '.':
+                items.push({
+                    type: "item",
+                    depth: parseInt(item[1]),
+                    name: item[2],
+                    path: item[3],
+                    prefix: item[4]
+                });
+                break;
+
+            case '=':
+                items.push({
+                    type: "saveas",
+                    depth: parseInt(item[1]),
+                    name: item[2],
+                    path: item[3]
+                });
+                break;
+
+            case '-':
+                items.push({
+                    type: "separator",
+                    depth: parseInt(item[1])
+                });
+                break;
+
+            case '>':
+                items.push({
+                    type: "submenu",
+                    depth: parseInt(item[1]),
+                    name: item[2]
+                });
+                break;
+            }
+        });
+
+        list = JSON.stringify(items);
+
+        moongiraffe.Cmis.prefs.value("directoryList", list);
+    }
+}
+
 function startup(data, reason) {
     // As of Gecko 10.0, manifest registration is performed automatically.
     if (Services.vc.compare(Services.appinfo.platformVersion, "10.0") < 0) {
@@ -762,6 +821,11 @@ function shutdown(data, reason) {
 }
 
 function install(data, reason) {
+    if (reason === 7 /* ADDON_UPGRADE */) {
+        if (Services.vc.compare(data.version, "20130116") <= 0) {
+            moongiraffe.Cmis.update.v20130116();
+        }
+    }
 }
 
 function uninstall(data, reason) {
