@@ -20,8 +20,8 @@
   <menubar>
     <menu label="&cmis.items.menu.label;">
       <menupopup>
-        <menuitem label="&cmis.items.menu.import;" oncommand="moongiraffe.Cmis.menu.items.import();" />
-        <menuitem label="&cmis.items.menu.export;" oncommand="moongiraffe.Cmis.menu.items.export();"/>
+        <menuitem label="&cmis.items.menu.import;" oncommand="moongiraffe.Cmis.menu.items.import_settings();" />
+        <menuitem label="&cmis.items.menu.export;" oncommand="moongiraffe.Cmis.menu.items.export_settings();"/>
         <menuseparator hidden="true" />
         <menuitem label="&cmis.items.menu.generate;" oncommand="" hidden="true" />
         <menuitem label="&cmis.items.menu.edit;" oncommand="" hidden="true" />
