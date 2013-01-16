@@ -17,6 +17,19 @@
 
   <script src="items.js"/>
 
+  <menubar>
+    <menu label="&cmis.items.menu.label;">
+      <menupopup>
+        <menuitem label="&cmis.items.menu.import;" oncommand="moongiraffe.Cmis.menu.items.import();" />
+        <menuitem label="&cmis.items.menu.export;" oncommand="moongiraffe.Cmis.menu.items.export();"/>
+        <menuseparator hidden="true" />
+        <menuitem label="&cmis.items.menu.generate;" oncommand="" hidden="true" />
+        <menuitem label="&cmis.items.menu.edit;" oncommand="" hidden="true" />
+        <menuitem label="&cmis.items.menu.statusbar;" oncommand="" hidden="true" />
+      </menupopup>
+    </menu>
+  </menubar>
+
   <groupbox orient="horizontal" flex="1">
     <hbox flex="1">
       <tree id="tree"
