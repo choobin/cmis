@@ -115,7 +115,9 @@ moongiraffe.Cmis.menu.items = {
     },
 
     insert: function(items) {
-        this.treeview.items = this.treeview.items.concat(items);
+        for (var i = 0; i < items.length; i++) {
+            this.treeview.insert(items[i]);
+        }
         this.update();
     },
 
@@ -215,9 +217,189 @@ moongiraffe.Cmis.menu.items = {
     },
 
     export_settings: function() {
+        var branch = Services.prefs.getBranch(PREFBRANCH);
+
+        var list = branch.getComplexValue("directoryList", Components.interfaces.nsISupportsString).data;
+
+        var items = JSON.parse(list);
+
+        // Translate the list into a pretty nested JSON object. This
+        // will let is neglect the depth field when writing to the
+        // file. Making it easier for users to manually edit.
+
+        var data = [];
+
+        var parent = [data];
+
+        var depth = [0];
+
+        var i = 0;
+
+        while (i < items.length) {
+            if (items[i].type === "submenu") {
+                var submenu = items[i];
+                submenu.menu = []; // Make sure menu exists.
+                parent[parent.length - 1].push(submenu);
+                parent.push(submenu.menu);
+                depth.push(submenu.depth + 1); // Increase depth.
+                i++;
+                continue;
+            }
+
+            if (items[i].depth < depth[depth.length - 1]) {
+                parent.pop();
+                depth.pop();
+                continue;
+            }
+
+            if (items[i].depth == depth[depth.length - 1]) {
+                parent[parent.length - 1].push(items[i]);
+                i++;
+                continue;
+            }
+        }
+
+        var timestamp = new Date().toISOString();
+
+        // Some file systems do not like ':' in filenames. I am
+        // looking at you Windows (/me shakes fist).
+        timestamp = timestamp.replace(/:/g, "");
+
+        var json = {
+            info: "Context Menu Image Saver Menu Settings",
+            version: 1.0,
+            created: timestamp,
+            menu:  data
+        };
+
+        var str = JSON.stringify(json, function (key, value) {
+            // The depth field is only useful for the treeview. We can
+            // ignore it here and re-compute is again during
+            // import_settings.
+            if (key === "depth")
+                return undefined;
+            return value;
+        }, "  ");
+
+        var nsIFilePicker = Components.interfaces.nsIFilePicker;
+
+        var fp = Components.classes["@mozilla.org/filepicker;1"]
+            .createInstance(nsIFilePicker);
+
+        fp.init(window, "Select a File", nsIFilePicker.modeSave);
+
+        fp.appendFilter("JSON Files", "*.json");
+
+        fp.defaultString = "cmis-settings-" + timestamp + ".json";
+
+        // Linux ignores this. TODO. Check so see if Windows and/or OSX does.
+        fp.defaultExtension = "json";
+
+        var res = fp.show();
+
+        if (res == nsIFilePicker.returnCancel)
+            return;
+
+        this.write(fp.file, str);
+    },
+
+    // XXX Cmis.io.write
+    write: function(file, data) {
+        var outstream = FileUtils.openSafeFileOutputStream(file)
+
+        var converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
+            .createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
+
+        converter.charset = "UTF-8";
+
+        var instream = converter.convertToInputStream(data);
+
+        NetUtil.asyncCopy(instream, outstream, function(status) {
+            if (!Components.isSuccessCode(status)) {
+                return;
+            }
+        });
+    },
+
+    // XXX Cmis.util.error
+    error: function(string) {
+        var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
+
+        Services.prompt.alert(
+            null,
+            bundle.GetStringFromName("errorPromptTitle"),
+            bundle.GetStringFromName(string));
+
+        Services.strings.flushBundles();
+    },
+
+    // XXX Cmis.util.flatten
+    flatten: function(xs, depth) {
+        var data = [];
+        xs.forEach(function (x) {
+            x.depth = depth;
+            data.push(x);
+            if (x.type === "submenu") { // XXX Fuck off long namespaces. Grrrr.
+                data = data.concat(moongiraffe.Cmis.menu.items.flatten(x.menu, depth + 1));
+            }
+        });
+        return data;
+    },
+
+    // XXX Cmis.io.read
+    read: function(file, fn) {
+        var channel = NetUtil.newChannel(file);
+
+        channel.contentType = "application/json";
+
+        NetUtil.asyncFetch(channel, function(inputStream, status) {
+            if (!Components.isSuccessCode(status)) {
+                return;
+            }
+
+            var data = NetUtil.readInputStreamToString(
+                inputStream,
+                inputStream.available(),
+                { charset: "UTF-8" }); // It defaults to LATIN.
+
+            fn(data);
+        });
     },
 
     import_settings: function() {
+        var nsIFilePicker = Components.interfaces.nsIFilePicker;
+
+        var fp = Components.classes["@mozilla.org/filepicker;1"]
+            .createInstance(nsIFilePicker);
+
+        fp.init(window, "Select a File", nsIFilePicker.modeOpen);
+
+        fp.appendFilter("JSON Files", "*.json");
+
+        var res = fp.show();
+
+        if (res == nsIFilePicker.returnCancel)
+            return;
+
+        this.read(fp.file, function(data) {
+            var list = [];
+
+            try {
+                list = JSON.parse(data);
+            } catch (e) {
+                this.error("errorPromptParseSettings");
+                return;
+            }
+
+            // TODO
+            // check info string
+            // check version string
+            // check timestamp (dr. who)
+
+            var items = moongiraffe.Cmis.menu.items.flatten(list.menu, 0);
+
+            moongiraffe.Cmis.menu.items.insert(items);
+        });
     }
 };
 
