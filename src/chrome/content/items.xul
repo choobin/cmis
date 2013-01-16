@@ -67,11 +67,11 @@
         <button class="new"
                 label="  &cmis.items.item;"
                 id="button-item"
-                oncommand="moongiraffe.Cmis.menu.items.newitem(false);"/>
+                oncommand="moongiraffe.Cmis.menu.items.newitem('item');"/>
         <button class="new"
                 label="  &cmis.items.submenu;"
                 id="button-submenu"
-                oncommand="moongiraffe.Cmis.menu.items.newitem(true);"/>
+                oncommand="moongiraffe.Cmis.menu.items.newitem('submenu');"/>
         <button class="edit"
                 label="  &cmis.items.edit;"
                 id="button-edit"

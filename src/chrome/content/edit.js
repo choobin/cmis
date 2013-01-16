@@ -41,26 +41,26 @@ moongiraffe.Cmis.menu.edit = {
         var item = window.arguments[0];
 
         $("name").value = item.name || "";
+        $("path").value = item.path || "";
+        $("prefix").value = item.prefix || "";
 
-        // We only want a name input field when we edit submenu items or a save as button
+        $("saveas-explanation").hidden = true;
+
+        // Submenu and Saveas items display minimal elements.
         if (item.type === "submenu" || item.type === "saveas") {
-            $("path").hidden = true;
             $("pathlabel").hidden = true;
             $("browse").hidden = true;
             $("prefix").hidden = true;
             $("prefixlabel").hidden = true;
             $("prefixguide").hidden = true;
         }
-        else {
-            $("path").value = item.path;
-            $("prefix").value = item.prefix;
+
+        if (item.type === "submenu") {
+            $("path").hidden = true;
         }
 
         if (item.type === "saveas") {
-            $("saveas-explanation").hidden = false;
-        }
-        else {
-            $("saveas-explanation").hidden = true;
+            $("saveas-explanation").hidden = false; // Yup!
         }
     },
 

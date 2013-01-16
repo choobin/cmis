@@ -122,11 +122,15 @@ moongiraffe.Cmis.menu.items = {
     },
 
     newitem: function(type, name) {
-        var item = new Item();
+        var item;
 
-        item.type = type;
+        switch (type) {
+            case "item": item = new Item(); break;
+            case "submenu": item = new Submenu(); break;
+            case "saveas": item = new Saveas(); break;
+        }
 
-        item.name = name;
+        item.name = name; // Saveas sets a localized label.
 
         window.openDialog(
             "chrome://cmis/content/edit.xul",
@@ -360,7 +364,7 @@ moongiraffe.Cmis.menu.items = {
             var data = NetUtil.readInputStreamToString(
                 inputStream,
                 inputStream.available(),
-                { charset: "UTF-8" }); // It defaults to LATIN.
+                { charset: "UTF-8" }); // It defaults to LATIN-1.
 
             fn(data);
         });
