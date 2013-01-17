@@ -210,6 +210,14 @@ moongiraffe.Cmis.menu = {
                 }
             }
         }
+
+        let hide = moongiraffe.Cmis.prefs.value("hideDefaultSaveAs");
+
+        if (hide) {
+            let window = Services.ww.activeWindow;
+            let saveimage = window.document.getElementById("context-saveimage");
+            saveimage.hidden = true;
+        }
     },
 
     wipe: function(context) {
@@ -373,6 +381,7 @@ moongiraffe.Cmis.prefs = {
         branch.setBoolPref("quickSaveEnabled", true);
         branch.setBoolPref("saveLinks", false);
         branch.setBoolPref("statusbarNotification", false);
+        branch.setBoolPref("hideDefaultSaveAs", false);
     },
 
     value: function(key, value) {
@@ -398,7 +407,8 @@ moongiraffe.Cmis.prefs = {
 
         if (key === "quickSaveEnabled" ||
             key === "saveLinks" ||
-            key === "statusbarNotification") {
+            key === "statusbarNotification" ||
+            key === "hideDefaultSaveAs") {
             get = branch.getBoolPref;
             set = branch.setBoolPref;
         }

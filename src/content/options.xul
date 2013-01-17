@@ -44,6 +44,11 @@
       title="&cmis.settings.quickSaveEnabled;" />
 
   <setting
+      pref="extensions.cmis@moongiraffe.net.hideDefaultSaveAs"
+      type="bool"
+      title="&cmis.settings.hideDefaultSaveAs;" />
+
+  <setting
       pref="extensions.cmis@moongiraffe.net.statusbarNotification"
       type="bool"
       title="&cmis.settings.statusbarNotification;" />
