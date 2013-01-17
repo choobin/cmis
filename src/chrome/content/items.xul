@@ -72,6 +72,14 @@
                 label="  &cmis.items.submenu;"
                 id="button-submenu"
                 oncommand="moongiraffe.Cmis.menu.items.newitem('submenu');"/>
+        <button class="new"
+                label="  &saveImageCmd.label;"
+                id="button-saveas"
+                oncommand="moongiraffe.Cmis.menu.items.newitem('saveas');"/>
+        <button class="separator"
+                label="  &cmis.items.separator;"
+                id="button-separator"
+                oncommand="moongiraffe.Cmis.menu.items.separator();"/>
         <button class="edit"
                 label="  &cmis.items.edit;"
                 id="button-edit"
@@ -80,14 +88,6 @@
                 label="  &cmis.items.delete;"
                id="button-delete"
                 oncommand="moongiraffe.Cmis.menu.items.delete();"/>
-        <button class="separator"
-                label="  &cmis.items.separator;"
-                id="button-separator"
-                oncommand="moongiraffe.Cmis.menu.items.separator();"/>
-        <button class="new"
-                label="  &saveImageCmd.label;"
-                id="button-saveas"
-                oncommand="moongiraffe.Cmis.menu.items.saveas();"/>
 
         <hbox>
           <button class="up"
