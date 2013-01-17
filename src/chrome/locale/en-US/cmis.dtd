@@ -17,7 +17,7 @@
 <!ENTITY cmis.items.pathTooltip "Configure the save path for a menu item">
 <!ENTITY cmis.items.nameTooltip "Configure the string that appears in the context menu">
 <!ENTITY cmis.items.prefixTooltip "Specify a prefix string to add to each filename before saving">
-<!ENTITY cmis.items.saveasExplanation "Note: An empty path will execute the defult 'Save As...' routine">
+<!ENTITY cmis.items.saveasExplanation "Note: An empty path will execute the defult 'Save Image As...' routine">
 <!ENTITY cmis.items.new "New">
 <!ENTITY cmis.items.item "Item">
 <!ENTITY cmis.items.submenu "Submenu">
