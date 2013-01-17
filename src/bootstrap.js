@@ -315,7 +315,9 @@ moongiraffe.Cmis.menu = {
 
         let source = NetUtil.newURI(event.originalTarget.src);
 
-        moongiraffe.Cmis.io.save(window, index, source);
+        let alt = event.originalTarget.alt;
+
+        moongiraffe.Cmis.io.save(window, index, source, alt);
 
         event.stopPropagation();
 
@@ -423,7 +425,7 @@ moongiraffe.Cmis.prefs = {
 };
 
 moongiraffe.Cmis.io = {
-    save: function(window, index, source) {
+    save: function(window, index, source, alt) {
         let list = moongiraffe.Cmis.prefs.value("directoryList");
 
         let items = JSON.parse(list);
@@ -461,9 +463,13 @@ moongiraffe.Cmis.io = {
             let prefix = moongiraffe.Cmis.utils.date(data.prefix);
 
             if (prefix.match(/%ALT/)) {
-                let gContextMenu = window.gContextMenu;
-
-                prefix = prefix.replace(/%ALT/g, gContextMenu.target.alt);
+                if (alt !== undefined) { // gContextMenu is not created on quicksave
+                    prefix = prefix.replace(/%ALT/g, alt);
+                }
+                else {
+                    let gContextMenu = window.gContextMenu;
+                    prefix = prefix.replace(/%ALT/g, gContextMenu.target.alt);
+                }
             }
 
             path.leafName = prefix + path.leafName;
