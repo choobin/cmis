@@ -624,7 +624,7 @@ moongiraffe.Cmis.utils = {
             // https://developer.mozilla.org/en-US/docs/XPCOM_Interface_Reference/nsIURL
             let url = source.QueryInterface(Components.interfaces.nsIURL);
 
-            if (url.fileName != "") { // XXX
+            if (url.fileName !== "") {
                 let texttosuburi = Components.classes["@mozilla.org/intl/texttosuburi;1"]
                     .getService(Components.interfaces.nsITextToSubURI);
 
@@ -650,7 +650,7 @@ moongiraffe.Cmis.utils = {
         return moongiraffe.Cmis.utils.validate(name, content_type);
     },
 
-    validate: function(name, content_type) { // XXX
+    validate: function(name, content_type) {
         // firefox-5.0/omni/chrome/toolkit/content/global/contentAreaUtils.js:883
         name = name.replace(/[\\]+/g, "_");
         name = name.replace(/[\/]+/g, "_");
@@ -757,12 +757,12 @@ moongiraffe.Cmis.update = {
     v20130116: function() {
         let list = moongiraffe.Cmis.prefs.value("directoryList");
 
-        var items = [];
+        let items = [];
 
-        var xs = list.split("|");
+        let xs = list.split("|");
 
         xs.forEach(function (x) {
-            var item = x.split("!");
+            let item = x.split("!");
 
             switch (item[0]) {
             case '.':
