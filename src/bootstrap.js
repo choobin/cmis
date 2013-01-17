@@ -432,81 +432,18 @@ moongiraffe.Cmis.io = {
 
         let data = items[index];
 
-        if (data.type === "saveas") {
-            let gContextMenu = window.gContextMenu;
-
-            gContextMenu.saveImage();
-
-            // Note that there is no way to check if the user canceled
-            // the save operation using saveImage or saveMedia.
-
-            // Setting previousDirectoryIndex will not work here as
-            // there there is no instance on gContextMenu when quick
-            // saving.
-
-            return;
-        }
-
-        let path = Components.classes["@mozilla.org/file/local;1"]
-            .createInstance(Components.interfaces.nsILocalFile);
-
-        path.initWithPath(data.path);
-
-        if (!path.exists())
-            path.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, parseInt("0700", 8));
-
         let filename = moongiraffe.Cmis.utils.filename(window, source);
 
-        path.append(filename);
+        let path = null;
 
-        if (data.prefix.length > 0) {
-            let prefix = moongiraffe.Cmis.utils.date(data.prefix);
-
-            if (prefix.match(/%ALT/)) {
-                if (alt !== undefined) { // gContextMenu is not created on quicksave
-                    prefix = prefix.replace(/%ALT/g, alt);
-                }
-                else {
-                    let gContextMenu = window.gContextMenu;
-                    prefix = prefix.replace(/%ALT/g, gContextMenu.target.alt);
-                }
-            }
-
-            path.leafName = prefix + path.leafName;
+        if (data.type === "saveas") {
+            path = moongiraffe.Cmis.utils.promptpath(window, data, filename);
+        }
+        else {
+            path = moongiraffe.Cmis.utils.buildpath(window, data, filename, alt);
         }
 
-        if (path.exists()) {
-            // 0 -> prompt user
-            // 1 -> save as unique file
-            // 2 -> overwrite file
-            let action = moongiraffe.Cmis.prefs.value("overwriteAction");
-
-            if (action == 0) {
-                // 0 -> overwrite file
-                // 1 -> save as unique file
-                // 2 -> cancel
-                let result = moongiraffe.Cmis.utils.prompt(window, path);
-
-                if (result == 2) {
-                    return;
-                }
-
-                // Note: The prompt.confirmEx call from utils.prompt
-                // will always return 1 if the user closes the window
-                // using the close button in the titlebar! See bug
-                // "345067". In this case it is safer to save as a
-                // unique file instead of overwriting.
-
-                if (result == 1) {
-                    // user prompted to rename file... change action to 'save as unique file'
-                    action = 1;
-                }
-            }
-
-            if (action == 1) {
-                path = moongiraffe.Cmis.utils.uniq(path);
-            }
-        }
+        if (!path) return;
 
         let target = NetUtil.newURI(path);
 
@@ -548,6 +485,99 @@ moongiraffe.Cmis.io = {
 };
 
 moongiraffe.Cmis.utils = {
+    buildpath: function(window, data, filename, alt) {
+        let path = Components.classes["@mozilla.org/file/local;1"]
+            .createInstance(Components.interfaces.nsILocalFile);
+
+        path.initWithPath(data.path);
+
+        if (!path.exists()) {
+            path.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, parseInt("0700", 8));
+        }
+
+        path.append(filename);
+
+        if (data.prefix.length > 0) {
+            let prefix = moongiraffe.Cmis.utils.date(data.prefix);
+
+            if (prefix.match(/%ALT/)) {
+                let gContextMenu = window.gContextMenu;
+
+                if (gContextMenu) {
+                    prefix = prefix.replace(/%ALT/g, gContextMenu.target.alt);
+                }
+                else { // gContextMenu is not created on quicksave
+                    prefix = prefix.replace(/%ALT/g, alt);
+                }
+            }
+
+            path.leafName = prefix + path.leafName;
+        }
+
+        if (path.exists()) {
+            // 0 -> prompt user
+            // 1 -> save as unique file
+            // 2 -> overwrite file
+            let action = moongiraffe.Cmis.prefs.value("overwriteAction");
+
+            if (action == 0) {
+                // 0 -> overwrite file
+                // 1 -> save as unique file
+                // 2 -> cancel
+                let result = moongiraffe.Cmis.utils.prompt(window, path);
+
+                if (result == 2) {
+                    return null;
+                }
+
+                // Note: The prompt.confirmEx call from utils.prompt
+                // will always return 1 if the user closes the window
+                // using the close button in the titlebar! See bug
+                // "345067". In this case it is safer to save as a
+                // unique file instead of overwriting.
+
+                if (result == 1) {
+                    // The user prompted to rename file... change
+                    // action to 'save as unique file'.
+                    action = 1;
+                }
+            }
+
+            if (action == 1) {
+                path = moongiraffe.Cmis.utils.uniq(path);
+            }
+        }
+
+        return path;
+    },
+
+    promptpath: function(window, data, filename) {
+        var nsIFilePicker = Components.interfaces.nsIFilePicker;
+
+        var fp = Components.classes["@mozilla.org/filepicker;1"]
+            .createInstance(nsIFilePicker);
+
+        fp.init(window, data.name, nsIFilePicker.modeSave);
+
+        fp.defaultString = filename;
+
+        if (data.path !== "") {
+            let path = Components.classes["@mozilla.org/file/local;1"]
+                .createInstance(Components.interfaces.nsILocalFile);
+
+            path.initWithPath(data.path);
+
+            fp.displayDirectory = path;
+        }
+
+        var res = fp.show();
+
+        if (res == nsIFilePicker.returnCancel)
+            return null;
+
+        return fp.file;
+    },
+
     prompt: function(window, path) {
         // https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIStringBundleService
         // https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIStringBundle
