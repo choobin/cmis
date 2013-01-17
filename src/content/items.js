@@ -98,7 +98,7 @@ moongiraffe.Cmis.menu.items = {
         if (index < 0) {
             $("button-down").disabled = true;
         }
-        else if (this.treeview.items[index].container) {
+        else if (this.treeview.items[index].type === "submenu") {
             var children = this.treeview.containerchildren(index);
             if (index + children == count - 1 && this.treeview.items[index].depth == 0)
                 $("button-down").disabled = true;
