@@ -8,6 +8,7 @@
 <!ENTITY cmis.settings.overwriteActionPrompt "prompt the user">
 <!ENTITY cmis.settings.overwriteActionSaveUnique "save as a unique file">
 <!ENTITY cmis.settings.overwriteActionOverwrite "overwrite the existing file">
+<!ENTITY cmis.settings.statusbarNotification "Display save notification in the status bar">
 <!ENTITY cmis.settings.quickSaveEnabled "Quick save to last used directory (Ctrl-RMB)">
 <!ENTITY cmis.settings.saveLinks "Save links not just images (Experimental)">
 <!ENTITY cmis.items.title "Edit Menu Items">

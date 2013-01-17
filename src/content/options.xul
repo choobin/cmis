@@ -6,7 +6,7 @@
 
   <setting
       type="control">
-    <button 
+    <button
         id="cmis-settings-button"
         label="&cmis.settings.title;"/>
   </setting>
@@ -42,6 +42,11 @@
       pref="extensions.cmis@moongiraffe.net.quickSaveEnabled"
       type="bool"
       title="&cmis.settings.quickSaveEnabled;" />
+
+  <setting
+      pref="extensions.cmis@moongiraffe.net.statusbarNotification"
+      type="bool"
+      title="&cmis.settings.statusbarNotification;" />
 
   <setting
       pref="extensions.cmis@moongiraffe.net.saveLinks"

@@ -25,7 +25,6 @@
         <menuseparator hidden="true" />
         <menuitem label="&cmis.items.menu.generate;" oncommand="" hidden="true" />
         <menuitem label="&cmis.items.menu.edit;" oncommand="" hidden="true" />
-        <menuitem label="&cmis.items.menu.statusbar;" oncommand="" hidden="true" />
       </menupopup>
     </menu>
   </menubar>

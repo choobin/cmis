@@ -372,6 +372,7 @@ moongiraffe.Cmis.prefs = {
         branch.setIntPref("previousDirectoryIndex", -1);
         branch.setBoolPref("quickSaveEnabled", true);
         branch.setBoolPref("saveLinks", false);
+        branch.setBoolPref("statusbarNotification", false);
     },
 
     value: function(key, value) {
@@ -395,7 +396,9 @@ moongiraffe.Cmis.prefs = {
         let get = branch.getIntPref;
         let set = branch.setIntPref;
 
-        if (key === "quickSaveEnabled" || key === "saveLinks") {
+        if (key === "quickSaveEnabled" ||
+            key === "saveLinks" ||
+            key === "statusbarNotification") {
             get = branch.getBoolPref;
             set = branch.setBoolPref;
         }
@@ -481,6 +484,14 @@ moongiraffe.Cmis.io = {
         persist.saveURI(source, null, null, null, null, target, null, privacy_context);
 
         moongiraffe.Cmis.prefs.value("previousDirectoryIndex", index);
+
+        let notify = moongiraffe.Cmis.prefs.value("statusbarNotification");
+
+        if (notify) {
+            window = Services.ww.activeWindow;
+            if (window.XULBrowserWindow)
+                window.XULBrowserWindow.setOverLink(name + " saved", null);
+        }
     },
 };
 
