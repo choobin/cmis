@@ -452,7 +452,7 @@ moongiraffe.Cmis.menu.items = {
 
             // Otherwise first create a Submenu then an initial Item
             // so we can save in the root directory too.
-            data.push(new Submenu(depth, "Here");
+            data.push(new Submenu(depth, "Here"));
             // XXX Localize
             data.push(new Item(depth + 1, directory.leafName, directory.path, ""));
 
