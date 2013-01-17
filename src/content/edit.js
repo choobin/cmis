@@ -148,9 +148,12 @@ moongiraffe.Cmis.menu.edit = {
             $("path").value = picker.file.path;
         }
 
-        var label = bundle.GetStringFromName("saveImage") + " \"" + this.basename(picker.file.path) + "\"";
+        // Only modify label if type === "Item" and keep "Save Image As..." label.
+        if ($("saveas-explanation").hidden) {
+            var label = bundle.GetStringFromName("saveImage") + " \"" + this.basename(picker.file.path) + "\"";
 
-        $("name").value = label;
+            $("name").value = label;
+        }
 
         Services.strings.flushBundles();
 
