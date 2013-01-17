@@ -477,7 +477,7 @@ Treeview.prototype = {
     },
 
     containerchildren: function(index) {
-        if (!this.items[index].container)
+        if (!(this.items[index].type === "submenu"))
             return 0;
 
         var children = 0;
@@ -497,7 +497,7 @@ Treeview.prototype = {
         var fromitems = this.containerchildren(from) + 1;
 
         if (to == from && // If we are an 'item' in the Treeview
-            !this.items[from].container && // that is, we are 'not' a container
+            !(this.items[from].type === "submenu") && // that is, we are 'not' a container
             from == this.items.length - 1 && // and we are the last 'item'
             this.items[from].depth > 0) { // and the depth of the item is greater than zero
             // we need to incrementally reduce its depth.
@@ -511,7 +511,7 @@ Treeview.prototype = {
         }
 
         if (from + fromitems == this.items.length && // If we are the last 'submenu' of the Treeview
-            this.items[from].container && // that is, we 'are' a container
+            this.items[from].type === "submenu" && // that is, we 'are' a container
             !up && // we are moving downards
             this.items[from].depth > 0) { // and the depth of the submenu is greater than zero
             // we need to incrementally reduce its depth.
@@ -541,7 +541,8 @@ Treeview.prototype = {
             // If the item above the submenu we wish to move is a
             // submenu that is the same depth we will increase the
             // depth of the from items.
-            if (this.items[to].container && this.items[to].depth == this.items[from].depth) {
+            if (this.items[to].type === "submenu" &&
+                this.items[to].depth == this.items[from].depth) {
                 for (var i = from; i < from + fromitems; i++)
                     this.items[i].depth++;
 
@@ -552,7 +553,8 @@ Treeview.prototype = {
 
             // If the item above is an actual submenu we have to decrease
             // the from items submenu depth.
-            if (this.items[to].container && this.items[to].depth < this.items[from].depth) {
+            if (this.items[to].type === "submenu" &&
+                this.items[to].depth < this.items[from].depth) {
                 for (var i = from; i < from + fromitems; i++)
                     this.items[i].depth--;
 
@@ -570,7 +572,7 @@ Treeview.prototype = {
         if (this.items[to].depth == this.items[from].depth) {
             // If we are moving a submenu downwards and the to items
             // are also a submenu we nest it inside the new submenu.
-            if (this.items[to].container && to > from) {
+            if (this.items[to].type === "submenu" && to > from) {
                 for (var i = from; i < from + fromitems; i++)
                     this.items[i].depth++;
             }
