@@ -671,12 +671,36 @@ Treeview.prototype = {
         moongiraffe.Cmis.menu.items.select();
     },
 
-    insert: function(newItem) {
-        this.items.push(newItem);
+    insert: function(item) {
+        var index = this.selection.currentIndex;
+
+        if (index == -1) {
+            // If there is nothing selected but there are menu items so we append to the end.
+            if (this.items.length > 0)
+                index = this.items.length - 1;
+            else // Otherwise append from the beginning.
+                index = 0;
+        }
+
+        var depth = 0;
+
+        if (this.items.length > 0) {
+            depth = this.items[index].depth;
+
+            if (this.items[index].type === "submenu")
+                depth++;
+        }
+
+        item.depth = depth;
+
+        if (this.items.length == 0 || index == this.items.length - 1)
+            this.items.push(item);
+        else
+            this.items.splice(index + 1, 0, item);
 
         this.treebox.rowCountChanged(this.rowCount, 1);
 
-        this.selection.select(this.items.length - 1);
+        this.selection.select(index + 1);
 
         moongiraffe.Cmis.menu.items.select();
     },
