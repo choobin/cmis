@@ -24,7 +24,7 @@
         <menuitem label="&cmis.items.menu.export;" oncommand="moongiraffe.Cmis.menu.items.export_settings();"/>
         <menuseparator />
         <menuitem label="&cmis.items.menu.generate;" oncommand="moongiraffe.Cmis.menu.items.generate();"/>
-        <menuitem label="&cmis.items.menu.edit;" oncommand="" hidden="true" />
+        <menuitem label="&cmis.items.menu.edit;" oncommand="moongiraffe.Cmis.menu.items.newitem('edit');"/>
       </menupopup>
     </menu>
   </menubar>

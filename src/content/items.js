@@ -139,21 +139,27 @@ moongiraffe.Cmis.menu.items = {
             var name = $("button-saveas").label.trim();
             item.name = name; // Saveas sets a localized label.
             break;
+
+        case "edit":
+            item = new Edit();
+            break;
         }
 
-        window.openDialog(
-            "chrome://cmis/content/edit.xul",
-            null,
-            "chrome,modal,centerscreen,resizable=yes,dependent=yes",
-            item);
+        // Do not initially open edit dialog for Edit item types. Keep
+        // initial "Edit Settings" label.
+        if (type !== "edit") {
+            window.openDialog(
+                "chrome://cmis/content/edit.xul",
+                null,
+                "chrome,modal,centerscreen,resizable=yes,dependent=yes",
+                item);
 
-        if (item.name === "")
-            return;
+            if (item.name === "")
+                return;
+        }
 
-        // Note: 'Save As' with a blank path acts as generic Save As.
-        if (item.type !== "submenu" &&
-            item.type !== "saveas" &&
-            item.path === "")
+        // Item elements require a path.
+        if (item.type == "item" && item.path === "")
             return;
 
         this.treeview.insert(item);
@@ -276,7 +282,7 @@ moongiraffe.Cmis.menu.items = {
             info: "Context Menu Image Saver Menu Settings",
             version: 1.0,
             created: timestamp,
-            menu:  data
+            menu: data
         };
 
         var str = JSON.stringify(json, function (key, value) {
@@ -501,13 +507,11 @@ function Submenu(depth, name) {
     this.menu = [];
 }
 
-/*
 function Edit(depth, name) {
     this.type = "edit";
     this.depth = depth || 0;
     this.name = name || "";
 }
-*/
 
 function Treeview(items) {
     this.items = items;

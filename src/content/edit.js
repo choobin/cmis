@@ -46,8 +46,9 @@ moongiraffe.Cmis.menu.edit = {
 
         $("saveas-explanation").hidden = true;
 
-        // Submenu just needs to display the name field.
-        if (item.type === "submenu") {
+        // Submenu and Edit items only need to display the name field.
+        if (item.type === "submenu" ||
+            item.type === "edit") {
             $("path").hidden = true;
             $("pathlabel").hidden = true;
             $("browse").hidden = true;
@@ -102,9 +103,8 @@ moongiraffe.Cmis.menu.edit = {
         switch (item.type) {
         case "item": // Fall through.
             item.prefix = $("prefix").value;
-        case "saveas": // Fall through.
+        case "saveas":
             item.path = $("path").value;
-        case "submenu":
             item.name = $("name").value;
             break;
         }

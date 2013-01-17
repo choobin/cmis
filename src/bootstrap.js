@@ -158,7 +158,10 @@ moongiraffe.Cmis.menu = {
 
                 item.setAttribute("label", data.name);
 
-                item.addEventListener("command", moongiraffe.Cmis.menu.save, false);
+                if (data.type === "item")
+                    item.addEventListener("command", moongiraffe.Cmis.menu.save, false);
+                else // data.type === "edit"
+                    item.addEventListener("command", moongiraffe.Cmis.menu.loadoptions, false);
             }
 
             item.setAttribute("id", "context-cmis-item-" + i);
@@ -330,6 +333,15 @@ moongiraffe.Cmis.menu = {
         event.stopPropagation();
 
         event.preventDefault();
+    },
+
+    loadoptions: function() {
+        Services.ww.openWindow(
+            null,
+            "chrome://cmis/content/items.xul",
+            null,
+            "chrome,modal,centerscreen,resizable=yes,scrollbars=no",
+            null);
     },
 
     observe: function(subject, topic, data) {
