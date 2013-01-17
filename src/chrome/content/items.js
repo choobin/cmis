@@ -121,16 +121,25 @@ moongiraffe.Cmis.menu.items = {
         this.update();
     },
 
-    newitem: function(type, name) {
+    newitem: function(type) {
         var item;
 
         switch (type) {
-            case "item": item = new Item(); break;
-            case "submenu": item = new Submenu(); break;
-            case "saveas": item = new Saveas(); break;
-        }
+        case "item":
+            item = new Item();
+            break;
 
-        item.name = name; // Saveas sets a localized label.
+        case "submenu":
+            item = new Submenu();
+            break;
+
+        case "saveas":
+            item = new Saveas();
+
+            var name = $("button-saveas").label.trim();
+            item.name = name; // Saveas sets a localized label.
+            break;
+        }
 
         window.openDialog(
             "chrome://cmis/content/edit.xul",
@@ -157,12 +166,6 @@ moongiraffe.Cmis.menu.items = {
     separator: function() {
         this.treeview.insert(new Separator());
         this.update();
-    },
-
-    saveas: function() {
-        // The label will be localized.
-        var label = $("button-saveas").label.trim();
-        this.newitem("saveas", label);
     },
 
     edit: function() {
