@@ -36,6 +36,6 @@
 <!ENTITY cmis.items.menu.label "Advanced Options">
 <!ENTITY cmis.items.menu.import "Import settings">
 <!ENTITY cmis.items.menu.export "Export settings">
-<!ENTITY cmis.items.menu.generate "Generate menu from directory">
+<!ENTITY cmis.items.menu.generate "Generate menu from directory hierarchy">
 <!ENTITY cmis.items.menu.edit "Add 'Edit Settings' menu item">
 <!ENTITY cmis.items.menu.statusbar "Enable statusbar save notifications">

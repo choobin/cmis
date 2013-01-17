@@ -379,6 +379,7 @@ moongiraffe.Cmis.menu.items = {
         var fp = Components.classes["@mozilla.org/filepicker;1"]
             .createInstance(nsIFilePicker);
 
+        // XXX Localize (Note: find all of the others)
         fp.init(window, "Select a File", nsIFilePicker.modeOpen);
 
         fp.appendFilter("JSON Files", "*.json");
@@ -399,14 +400,72 @@ moongiraffe.Cmis.menu.items = {
             }
 
             // TODO
+            // validate data
             // check info string
             // check version string
             // check timestamp (dr. who)
+            // check that their is actually a menu property
 
             var items = moongiraffe.Cmis.menu.items.flatten(list.menu, 0);
 
             moongiraffe.Cmis.menu.items.insert(items);
         });
+    },
+
+    generate: function() {
+        var nsIFilePicker = Components.interfaces.nsIFilePicker;
+
+        var fp = Components.classes["@mozilla.org/filepicker;1"]
+            .createInstance(nsIFilePicker);
+
+        // XXX Localize (Note: find all of the others)
+        fp.init(window, "Select a Path", nsIFilePicker.modeGetFolder);
+
+        var res = fp.show();
+
+        if (res == nsIFilePicker.returnCancel)
+            return;
+
+        function process(directory, depth) {
+            var enumerator = directory.directoryEntries;
+
+            var entries = [];
+
+            // directoryEntries returns a nsISimpleEnumerator. To get
+            // the number of directories we have to enumerate through
+            // them.
+            while (enumerator.hasMoreElements()) {
+                var entry = enumerator.getNext();
+
+                entry.QueryInterface(Components.interfaces.nsIFile);
+
+                if (entry.isDirectory())
+                    entries.push(entry);
+            }
+
+            // If there are no directories we can just return a single Item element.
+            if (entries.length == 0) {
+                return [new Item(depth, directory.leafName, directory.path, "")];
+            }
+
+            var data = [];
+
+            // Otherwise first create a Submenu then an initial Item
+            // so we can save in the root directory too.
+            data.push(new Submenu(depth, "Here");
+            // XXX Localize
+            data.push(new Item(depth + 1, directory.leafName, directory.path, ""));
+
+            for (var i = 0; i < entries.length; i++) {
+                data = data.concat(process(entries[i], depth + 1));
+            }
+
+            return data;
+        }
+
+        var items = process(fp.file, 0);
+
+        moongiraffe.Cmis.menu.items.insert(items);
     }
 };
 
