@@ -32,7 +32,7 @@
 <!ENTITY cmis.items.down "Down">
 <!ENTITY cmis.items.edit.title "Edit Menu Item">
 <!ENTITY cmis.items.format.header "Format variables">
-<!ENTITY cmis.items.format.default "Default file name including extension, e.g., example.png">
+<!ENTITY cmis.items.format.default "Default file name including extension, e.g., example.png, or &#37;NAME.&#37;EXT">
 <!ENTITY cmis.items.format.name "File name">
 <!ENTITY cmis.items.format.ext "File extension">
 <!ENTITY cmis.items.format.date "ISO8601 style date string YYYY-MM-DD-hhmmss">
