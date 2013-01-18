@@ -56,7 +56,7 @@ moongiraffe.Cmis.menu.items = {
 
         this.treeview.invalidate();
 
-        this.select();
+        this.treeview.selection.select(-1);
     },
 
     loaddata: function() {
@@ -88,8 +88,6 @@ moongiraffe.Cmis.menu.items = {
         var index = this.treeview.selection.currentIndex;
 
         var count = this.treeview.rowCount;
-
-        Services.console.logStringMessage("index: " + index + ", count: " + count);
 
         $("button-delete").disabled = false;
 
@@ -144,8 +142,8 @@ moongiraffe.Cmis.menu.items = {
         }
     },
 
-    insert: function(items) {
-        this.treeview.insert(items);
+    append: function(menu) {
+        this.treeview.append(menu);
         this.update();
     },
 
@@ -441,9 +439,9 @@ moongiraffe.Cmis.menu.items = {
             // check that their is actually a menu property
             // check that 'path' exists or can/should be created XXX
 
-            var items = moongiraffe.Cmis.menu.items.flatten(list.menu, 0);
+            var menu = moongiraffe.Cmis.menu.items.flatten(list.menu, 0);
 
-            moongiraffe.Cmis.menu.items.insert(items);
+            moongiraffe.Cmis.menu.items.append(menu);
         });
     },
 
@@ -500,7 +498,7 @@ moongiraffe.Cmis.menu.items = {
 
         var items = process(fp.file, 0);
 
-        moongiraffe.Cmis.menu.items.insert(items);
+        moongiraffe.Cmis.menu.items.append(items);
     }
 };
 
@@ -700,14 +698,24 @@ Treeview.prototype = {
         moongiraffe.Cmis.menu.items.select();
     },
 
+    append: function(menu) {
+        this.items = this.items.concat(menu);
+
+        this.treebox.rowCountChanged(this.rowCount, menu.length);
+
+        moongiraffe.Cmis.menu.items.select();
+    },
+
     insert: function(item) {
         var index = this.selection.currentIndex;
 
-        if (index == -1) {
-            // If there is nothing selected but there are menu items so we append to the end.
+        // If there is nothing selected /or/ the selection index is
+        // invalid /then/ we have to find an appropriate index.
+        if (index == -1 || index >= this.items.length) {
+            // If there are menu items we append to the end.
             if (this.items.length > 0)
                 index = this.items.length - 1;
-            else // Otherwise append from the beginning.
+            else // Otherwise we append from the start.
                 index = 0;
         }
 
@@ -720,24 +728,15 @@ Treeview.prototype = {
                 depth++; // Nest inside the selected submenu.
         }
 
-        var nitems = 1;
+        item.depth = depth;
 
-        if (item instanceof Array) {
-            nitems = item.length;
+        // XXX
+        //if (this.items.length == 0 || index == this.items.length - 1)
+        //this.items.push(item);
+        //else
+            this.items.splice(index + 1, 0, item);
 
-            for (var i = 0; i < item.length; i++)
-                item[i] += depth; // Increment initial generated depths.
-        }
-        else {
-            item.depth = depth;
-        }
-
-        if (this.items.length == 0 || index == this.items.length - 1)
-            this.items.push(item);
-        else
-            Array.prototype.splice.apply(this.items, [index + 1, 0].concat(item));
-
-        this.treebox.rowCountChanged(this.rowCount, nitems);
+        this.treebox.rowCountChanged(this.rowCount, 1);
 
         this.selection.select(index + 1);
 
@@ -757,9 +756,13 @@ Treeview.prototype = {
 
         this.treebox.rowCountChanged(index, -nitems);
 
-        // Keep the same index, unless we deleted the last item.
-        if (this.items.length > 0 && index > 0)
-            this.selection.select(index == this.items.length ? index - 1 : index);
+        // We want to keep the original selection value /although/ if
+        // we just deleted the final item /then/ we need to move the
+        // selection upwards.
+        if (index == this.items.length)
+            index--;
+
+        this.selection.select(index);
 
         moongiraffe.Cmis.menu.items.select();
     },
