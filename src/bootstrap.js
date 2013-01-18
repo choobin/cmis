@@ -158,10 +158,10 @@ moongiraffe.Cmis.menu = {
 
                 item.setAttribute("label", data.name);
 
-                if (data.type === "item")
-                    item.addEventListener("command", moongiraffe.Cmis.menu.save, false);
-                else // data.type === "edit"
+                if (data.type === "edit")
                     item.addEventListener("command", moongiraffe.Cmis.menu.loadoptions, false);
+                else // data.type === "item" or "saveas"
+                    item.addEventListener("command", moongiraffe.Cmis.menu.save, false);
             }
 
             item.setAttribute("id", "context-cmis-item-" + i);
