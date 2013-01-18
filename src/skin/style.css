@@ -54,6 +54,11 @@
   list-style-image: url("chrome://cmis/skin/separator.png");
 }
 
+.settings {
+  min-width: 16px;
+  list-style-image: url("chrome://cmis/skin/settings.png");
+}
+
 .browse {
   min-width: 16px;
   list-style-image: url("chrome://cmis/skin/browse.png");

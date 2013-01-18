@@ -158,7 +158,7 @@ moongiraffe.Cmis.menu = {
 
                 item.setAttribute("label", data.name);
 
-                if (data.type === "edit")
+                if (data.type === "settings")
                     item.addEventListener("command", moongiraffe.Cmis.menu.loadoptions, false);
                 else // data.type === "item" or "saveas"
                     item.addEventListener("command", moongiraffe.Cmis.menu.save, false);

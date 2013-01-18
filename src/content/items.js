@@ -166,18 +166,18 @@ moongiraffe.Cmis.menu.items = {
             item.name = name; // Saveas sets a localized label.
             break;
 
-        case "edit":
-            item = new Edit();
+        case "settings":
+            item = new Settings();
 
             var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
             item.name = bundle.GetStringFromName("openSettings");
             break;
         }
 
-        // Do not initially open edit dialog for Edit item types. Keep
+        // Do not initially open edit dialog for Settings item types. Keep
         // initial "Open Settings" label. The user can modity if later
         // if they need to.
-        if (type !== "edit") {
+        if (type !== "settings") {
             var ret = { item: item, cancel: false };
 
             window.openDialog(
@@ -340,7 +340,9 @@ moongiraffe.Cmis.menu.items = {
         fp.init(window, "Select a File", nsIFilePicker.modeSave);
 
         // XXX Localize
-        fp.appendFilter("JSON File", "*.json");
+        fp.appendFilter("JSON Files", "*.json");
+
+        fp.appendFilters(nsIFilePicker.filterAll);
 
         fp.defaultString = "cmis-menu-" + timestamp + ".json";
 
@@ -429,6 +431,8 @@ moongiraffe.Cmis.menu.items = {
 
         fp.appendFilter("JSON Files", "*.json");
 
+        fp.appendFilters(nsIFilePicker.filterAll);
+
         var res = fp.show();
 
         if (res == nsIFilePicker.returnCancel)
@@ -498,9 +502,9 @@ moongiraffe.Cmis.menu.items = {
 
             // Otherwise first create a Submenu then an initial Item
             // so we can save in the root directory too.
-            data.push(new Submenu(depth, "Here"));
+            data.push(new Submenu(depth, directory.leafName));
             // XXX Localize
-            data.push(new Item(depth + 1, directory.leafName, directory.path, ""));
+            data.push(new Item(depth + 1, "Here", directory.path, ""));
 
             for (var i = 0; i < entries.length; i++) {
                 data = data.concat(process(entries[i], depth + 1));
@@ -547,8 +551,8 @@ function Submenu(depth, name) {
     this.menu = [];
 }
 
-function Edit(depth, name) {
-    this.type = "edit";
+function Settings(depth, name) {
+    this.type = "settings";
     this.depth = depth || 0;
     this.name = name || "";
 }

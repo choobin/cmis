@@ -17,7 +17,7 @@
 
   <vbox align="center">
     <label id="saveas-explanation" class="small" value="&cmis.items.saveasExplanation;"/>
-    <label id="edit-explanation" class="small" value="&cmis.items.editExplanation;"/>
+    <label id="settings-explanation" class="small" value="&cmis.items.settingsExplanation;"/>
   </vbox>
 
   <grid>

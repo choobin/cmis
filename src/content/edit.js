@@ -45,11 +45,11 @@ moongiraffe.Cmis.menu.edit = {
         $("format").value = item.format || "%DEFAULT";
 
         $("saveas-explanation").hidden = true;
-        $("edit-explanation").hidden = true;
+        $("settings-explanation").hidden = true;
 
         // Submenu and Edit items only need to display the name field.
         if (item.type === "submenu" ||
-            item.type === "edit") {
+            item.type === "settings") {
             $("path").hidden = true;
             $("pathlabel").hidden = true;
             $("browse").hidden = true;
@@ -66,8 +66,8 @@ moongiraffe.Cmis.menu.edit = {
             $("saveas-explanation").hidden = false; // Yup!
         }
 
-        if (item.type === "edit") {
-            $("edit-explanation").hidden = false;
+        if (item.type === "settings") {
+            $("settings-explanation").hidden = false;
         }
     },
 

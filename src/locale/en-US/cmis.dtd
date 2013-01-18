@@ -20,10 +20,11 @@
 <!ENTITY cmis.items.nameTooltip "Configure the string that appears in the context menu">
 <!ENTITY cmis.items.formatTooltip "Specify the exact format for each filename before saving">
 <!ENTITY cmis.items.saveasExplanation "Note: An empty path will execute the defult 'Save Image As...' routine">
-<!ENTITY cmis.items.editExplanation "Note: This item will open the settings window">
+<!ENTITY cmis.items.settingsExplanation "Note: This item will open the settings window">
 <!ENTITY cmis.items.new "New">
 <!ENTITY cmis.items.item "Item">
 <!ENTITY cmis.items.submenu "Submenu">
+<!ENTITY cmis.items.settings "Open Settings">
 <!ENTITY cmis.items.edit "Edit">
 <!ENTITY cmis.items.delete "Delete">
 <!ENTITY cmis.items.separator "Separator">
@@ -41,5 +42,4 @@
 <!ENTITY cmis.items.menu.import "Import settings">
 <!ENTITY cmis.items.menu.export "Export settings">
 <!ENTITY cmis.items.menu.generate "Generate menu from directory hierarchy">
-<!ENTITY cmis.items.menu.edit "Add 'Open Settings' menu item">
 <!ENTITY cmis.items.menu.close "Close">

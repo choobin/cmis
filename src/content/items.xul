@@ -26,7 +26,6 @@
         <menuitem label="&cmis.items.menu.export;" oncommand="moongiraffe.Cmis.menu.items.export_settings();"/>
         <menuseparator />
         <menuitem label="&cmis.items.menu.generate;" oncommand="moongiraffe.Cmis.menu.items.generate();"/>
-        <menuitem label="&cmis.items.menu.edit;" oncommand="moongiraffe.Cmis.menu.items.newitem('edit');"/>
       </menupopup>
     </menu>
   </menubar>
@@ -77,6 +76,10 @@
                 label="  &saveImageCmd.label;"
                 id="button-saveas"
                 oncommand="moongiraffe.Cmis.menu.items.newitem('saveas');"/>
+        <button class="settings"
+                label="  &cmis.items.settings;"
+                id="button-saveas"
+                oncommand="moongiraffe.Cmis.menu.items.newitem('settings');"/>
         <button class="separator"
                 label="  &cmis.items.separator;"
                 id="button-separator"
