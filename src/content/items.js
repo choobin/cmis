@@ -170,7 +170,7 @@ moongiraffe.Cmis.menu.items = {
             item = new Edit();
 
             var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
-            item.name = bundle.GetStringFromName("openSettings"),
+            item.name = bundle.GetStringFromName("openSettings");
             break;
         }
 
@@ -178,11 +178,16 @@ moongiraffe.Cmis.menu.items = {
         // initial "Open Settings" label. The user can modity if later
         // if they need to.
         if (type !== "edit") {
+            var ret = { item: item, cancel: false };
+
             window.openDialog(
                 "chrome://cmis/content/edit.xul",
                 null,
                 "chrome,modal,centerscreen,resizable=yes,dependent=yes",
-                item);
+                ret);
+
+            if (ret.cancel)
+                return;
 
             if (item.name === "")
                 return;
@@ -210,11 +215,13 @@ moongiraffe.Cmis.menu.items = {
         if (index < 0)
             return;
 
+        var ret = { item: this.treeview.items[index], cancel: false };
+
         window.openDialog(
             "chrome://cmis/content/edit.xul",
             null,
             "chrome,modal,centerscreen,resizable=yes,dependent=yes",
-            this.treeview.items[index]);
+            ret);
 
         this.treeview.invalidate();
 

@@ -38,7 +38,7 @@ if (!moongiraffe.Cmis.menu) moongiraffe.Cmis.menu = {};
 
 moongiraffe.Cmis.menu.edit = {
     load: function() {
-        var item = window.arguments[0];
+        var item = window.arguments[0].item;
 
         $("name").value = item.name || "";
         $("path").value = item.path || "";
@@ -118,7 +118,8 @@ moongiraffe.Cmis.menu.edit = {
     },
 
     cancel: function() {
-        return true;
+        var item = window.arguments[0].cancel = true;
+        return false;
     },
 
     getpath: function() {
