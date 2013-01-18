@@ -411,6 +411,7 @@ moongiraffe.Cmis.menu.items = {
             // check version string
             // check timestamp (dr. who)
             // check that their is actually a menu property
+            // check that 'path' exists or can/should be created XXX
 
             var items = moongiraffe.Cmis.menu.items.flatten(list.menu, 0);
 
