@@ -42,9 +42,10 @@ moongiraffe.Cmis.menu.edit = {
 
         $("name").value = item.name || "";
         $("path").value = item.path || "";
-        $("prefix").value = item.prefix || "";
+        $("format").value = item.format || "%DEFAULT";
 
         $("saveas-explanation").hidden = true;
+        $("edit-explanation").hidden = true;
 
         // Submenu and Edit items only need to display the name field.
         if (item.type === "submenu" ||
@@ -52,17 +53,21 @@ moongiraffe.Cmis.menu.edit = {
             $("path").hidden = true;
             $("pathlabel").hidden = true;
             $("browse").hidden = true;
-            $("prefix").hidden = true;
-            $("prefixlabel").hidden = true;
-            $("prefixguide").hidden = true;
+            $("format").hidden = true;
+            $("formatlabel").hidden = true;
+            $("formatguide").hidden = true;
         }
 
         // Saveas displays name, path and message with some nitty gritty.
         if (item.type === "saveas") {
-            $("prefix").hidden = true;
-            $("prefixlabel").hidden = true;
-            $("prefixguide").hidden = true;
+            $("format").hidden = true;
+            $("formatlabel").hidden = true;
+            $("formatguide").hidden = true;
             $("saveas-explanation").hidden = false; // Yup!
+        }
+
+        if (item.type === "edit") {
+            $("edit-explanation").hidden = false;
         }
     },
 
@@ -102,7 +107,7 @@ moongiraffe.Cmis.menu.edit = {
 
         switch (item.type) {
         case "item": // Fall through.
-            item.prefix = $("prefix").value;
+            item.format = $("format").value;
         case "saveas":
             item.path = $("path").value;
             item.name = $("name").value;

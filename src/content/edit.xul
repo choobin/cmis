@@ -17,6 +17,7 @@
 
   <vbox align="center">
     <label id="saveas-explanation" class="small" value="&cmis.items.saveasExplanation;"/>
+    <label id="edit-explanation" class="small" value="&cmis.items.editExplanation;"/>
   </vbox>
 
   <grid>
@@ -46,53 +47,57 @@
       </row>
       <row>
         <hbox align="center">
-          <label id="prefixlabel" value="&cmis.items.prefix;"/>
+          <label id="formatlabel" value="&cmis.items.format;"/>
         </hbox>
         <hbox align="center">
-          <textbox flex="1" id="prefix"/>
+          <textbox flex="1" id="format"/>
         </hbox>
       </row>
     </rows>
   </grid>
 
-  <grid id="prefixguide">
+  <grid id="formatguide" class="pad">
     <columns>
       <column/>
       <column flex="1"/>
     </columns>
+
     <rows>
       <row>
-        <hbox>
-          <label class="small" value="&cmis.items.format.header;"/>
-        </hbox>
-        <hbox>
-          <label class="small" value="" flex="1"/>
-        </hbox>
+        <hbox><label class="small" value="&cmis.items.format.header;" /></hbox>
+        <hbox><label class="small" value="" flex="1"/></hbox>
       </row>
+
+      <row class="pad">
+        <hbox><label class="small" value="%DEFAULT"/></hbox>
+        <hbox><label class="small" value="&cmis.items.format.default;" flex="1"/></hbox>
+      </row>
+
       <row>
-        <hbox>
-          <label class="small" value="%DATE"/>
-        </hbox>
-        <hbox>
-          <label class="small" value="&cmis.items.format.date;" flex="1"/>
-        </hbox>
+        <hbox><label class="small" value="%NAME"/></hbox>
+        <hbox><label class="small" value="&cmis.items.format.name;" flex="1"/></hbox>
       </row>
+
       <row>
-        <hbox>
-          <label class="small" value="%DATE{FORMAT}"/>
-        </hbox>
-        <hbox>
-          <label class="small" value="&cmis.items.format.dateformat;" flex="1"/>
-        </hbox>
+        <hbox><label class="small" value="%EXT"/></hbox>
+        <hbox><label class="small" value="&cmis.items.format.ext;" flex="1"/></hbox>
       </row>
+
       <row>
-        <hbox>
-          <label class="small" value="%ALT"/>
-        </hbox>
-        <hbox>
-          <label class="small" value="&cmis.items.format.alt;" flex="1"/>
-        </hbox>
+        <hbox><label class="small" value="%DATE"/></hbox>
+        <hbox><label class="small" value="&cmis.items.format.date;" flex="1"/></hbox>
       </row>
+
+      <row>
+        <hbox><label class="small" value="%DATE{FORMAT}"/></hbox>
+        <hbox><label class="small" value="&cmis.items.format.dateformat;" flex="1"/></hbox>
+      </row>
+
+      <row>
+        <hbox><label class="small" value="%ALT"/></hbox>
+        <hbox><label class="small" value="&cmis.items.format.alt;" flex="1"/></hbox>
+      </row>
+
     </rows>
   </grid>
 

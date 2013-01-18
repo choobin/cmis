@@ -52,9 +52,9 @@
                    editable="false"
                    flex="3"/>
           <splitter class="tree-splitter"/>
-          <treecol id="prefix"
-                   label="&cmis.items.prefix;"
-                   tooltiptext="&cmis.items.prefixTooltip;"
+          <treecol id="format"
+                   label="&cmis.items.format;"
+                   tooltiptext="&cmis.items.formatTooltip;"
                    editable="true"
                    flex="1"/>
         </treecols>

@@ -168,11 +168,15 @@ moongiraffe.Cmis.menu.items = {
 
         case "edit":
             item = new Edit();
+
+            var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
+            item.name = bundle.GetStringFromName("openSettings"),
             break;
         }
 
         // Do not initially open edit dialog for Edit item types. Keep
-        // initial "Edit Settings" label.
+        // initial "Open Settings" label. The user can modity if later
+        // if they need to.
         if (type !== "edit") {
             window.openDialog(
                 "chrome://cmis/content/edit.xul",
@@ -325,11 +329,13 @@ moongiraffe.Cmis.menu.items = {
         var fp = Components.classes["@mozilla.org/filepicker;1"]
             .createInstance(nsIFilePicker);
 
+        // XXX Localize
         fp.init(window, "Select a File", nsIFilePicker.modeSave);
 
-        fp.appendFilter("JSON Files", "*.json");
+        // XXX Localize
+        fp.appendFilter("JSON File", "*.json");
 
-        fp.defaultString = "cmis-settings-" + timestamp + ".json";
+        fp.defaultString = "cmis-menu-" + timestamp + ".json";
 
         // Linux ignores this. TODO. Check so see if Windows and/or OSX does.
         fp.defaultExtension = "json";
@@ -507,12 +513,12 @@ moongiraffe.Cmis.menu.items = {
 // https://developer.mozilla.org/en-US/docs/XUL_Tutorial/More_Tree_Features
 // https://developer.mozilla.org/en-US/docs/XPCOM_Interface_Reference/nsITreeView
 
-function Item(depth, name, path, prefix) {
+function Item(depth, name, path, format) {
     this.type = "item";
     this.depth = depth || 0;
     this.name = name || "";
     this.path = path || "";
-    this.prefix = prefix || "";
+    this.format = format || "";
 }
 
 function Saveas(depth, name, path) {
@@ -783,8 +789,8 @@ Treeview.prototype = {
             return this.items[row].name;
         case "path":
             return this.items[row].path;
-        case "prefix":
-            return this.items[row].prefix;
+        case "format":
+            return this.items[row].format;
         default:
             return "";
         }

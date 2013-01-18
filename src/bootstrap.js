@@ -88,7 +88,7 @@ moongiraffe.Cmis.window = {
                 moongiraffe.Cmis.window.add(subject);
             }, false);
         }
-    },
+    }
 };
 
 moongiraffe.Cmis.menu = {
@@ -446,7 +446,7 @@ moongiraffe.Cmis.prefs = {
                     null);
             }, false);
         }
-    },
+    }
 };
 
 moongiraffe.Cmis.io = {
@@ -514,7 +514,7 @@ moongiraffe.Cmis.io = {
             if (window.XULBrowserWindow)
                 window.XULBrowserWindow.setOverLink(name + " saved", null);
         }
-    },
+    }
 };
 
 moongiraffe.Cmis.utils = {
@@ -528,24 +528,9 @@ moongiraffe.Cmis.utils = {
             path.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, parseInt("0700", 8));
         }
 
+        filename = moongiraffe.Cmis.utils.format(data.format, filename, alt);
+
         path.append(filename);
-
-        if (data.prefix.length > 0) {
-            let prefix = moongiraffe.Cmis.utils.date(data.prefix);
-
-            if (prefix.match(/%ALT/)) {
-                let gContextMenu = window.gContextMenu;
-
-                if (gContextMenu) {
-                    prefix = prefix.replace(/%ALT/g, gContextMenu.target.alt);
-                }
-                else { // gContextMenu is not created on quicksave
-                    prefix = prefix.replace(/%ALT/g, alt);
-                }
-            }
-
-            path.leafName = prefix + path.leafName;
-        }
 
         if (path.exists()) {
             // 0 -> prompt user
@@ -766,6 +751,35 @@ moongiraffe.Cmis.utils = {
         return path;
     },
 
+    format: function(format, filename, alt) {
+        // An empty format string should correspond to a %DEFAULT
+        // variable, i.e., the original filename.
+        if (format.length == 0)
+            return filename;
+
+        let [tmp, name, extension] = filename.match(/^(.*?)\.(.*?)$/); // Really man?
+
+        let result = format
+            .replace(/%DEFAULT/g, filename)
+            .replace(/%NAME/g, name)
+            .replace(/%EXT/g, extension)
+
+        result = moongiraffe.Cmis.utils.date(result);
+
+        if (result.match(/%ALT/)) {
+            let gContextMenu = Services.ww.activeWindow.gContextMenu;
+
+            if (gContextMenu) {
+                result = result.replace(/%ALT/g, gContextMenu.target.alt);
+            }
+            else { // gContextMenu is not created on quicksave
+                result = result.replace(/%ALT/g, alt);
+            }
+        }
+
+        return result;
+    },
+
     date: function(str) {
         function pad(value) {
             let str = "";
@@ -789,7 +803,7 @@ moongiraffe.Cmis.utils = {
 
         let format = str.match(/%DATE{(.*?)}/);
 
-        // There is a possibility that a prefix string contains more
+        // There is a possibility that a format string contains more
         // than one custom %DATE{} format string.
         while (format && format.length == 2) {
             str = str.replace(/%DATE{.*?}/, format[1]);
@@ -813,10 +827,10 @@ moongiraffe.Cmis.utils = {
 };
 
 moongiraffe.Cmis.update = {
-    // Upgrade the old directoryList format and replace with
-    // JSON. This will enable labels and paths to contain "|" and "!"
-    // characters and lead the way to easy import/exporting of CMIS
-    // settings.
+    // Upgrade the old directoryList format and replace it with user
+    // friendly(er) JSON. This will enable labels and paths to contain
+    // "|" and "!"  characters and lead the way to easy importing and
+    // exporting of CMIS settings.
     v20130116: function() {
         let list = moongiraffe.Cmis.prefs.value("directoryList");
 
@@ -829,12 +843,18 @@ moongiraffe.Cmis.update = {
 
             switch (item[0]) {
             case '.':
+                let prefix = item[4];
+
+                // Append %DEFAULT to the old style prefix data, even
+                // if it is empty.
+                prefix += "%DEFAULT"
+
                 items.push({
                     type: "item",
                     depth: parseInt(item[1]),
                     name: item[2],
                     path: item[3],
-                    prefix: item[4]
+                    format: prefix
                 });
                 break;
 
@@ -893,6 +913,7 @@ function install(data, reason) {
     if (reason === 7 /* ADDON_UPGRADE */) {
         if (Services.vc.compare(data.version, "20130116") <= 0) {
             moongiraffe.Cmis.update.v20130116();
+            //XXX update date of comparison and function call.....
         }
     }
 }

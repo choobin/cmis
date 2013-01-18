@@ -15,11 +15,12 @@
 <!ENTITY cmis.items.title "Edit Menu Items">
 <!ENTITY cmis.items.path "Save path">
 <!ENTITY cmis.items.name "Menu label">
-<!ENTITY cmis.items.prefix "File prefix">
+<!ENTITY cmis.items.format "File format">
 <!ENTITY cmis.items.pathTooltip "Configure the save path for a menu item">
 <!ENTITY cmis.items.nameTooltip "Configure the string that appears in the context menu">
-<!ENTITY cmis.items.prefixTooltip "Specify a prefix string to add to each filename before saving">
+<!ENTITY cmis.items.formatTooltip "Specify the exact format for each filename before saving">
 <!ENTITY cmis.items.saveasExplanation "Note: An empty path will execute the defult 'Save Image As...' routine">
+<!ENTITY cmis.items.menu.editExplanation "Note: This item will open the settings window">
 <!ENTITY cmis.items.new "New">
 <!ENTITY cmis.items.item "Item">
 <!ENTITY cmis.items.submenu "Submenu">
@@ -29,12 +30,15 @@
 <!ENTITY cmis.items.up "Up">
 <!ENTITY cmis.items.down "Down">
 <!ENTITY cmis.items.edit.title "Edit Menu Item">
-<!ENTITY cmis.items.format.header "Prefix variables">
+<!ENTITY cmis.items.format.header "Format variables">
+<!ENTITY cmis.items.format.default "Default file name including extension, e.g., example.png">
+<!ENTITY cmis.items.format.name "File name">
+<!ENTITY cmis.items.format.ext "File extension">
 <!ENTITY cmis.items.format.date "ISO8601 style date string YYYY-MM-DD-hhmmss">
-<!ENTITY cmis.items.format.dateformat "A custom date string, e.g., &#37;DATE{YYYY-MM}. Use yy for abbreviated year.">
-<!ENTITY cmis.items.format.alt "The &lt;IMG&gt; alt tag text (if it exists).">
+<!ENTITY cmis.items.format.dateformat "A custom date string, e.g., &#37;DATE{YYYY-MM}. Use yy for abbreviated year">
+<!ENTITY cmis.items.format.alt "The &lt;IMG&gt; alt tag text (if it exists)">
 <!ENTITY cmis.items.menu.label "Advanced Options">
 <!ENTITY cmis.items.menu.import "Import settings">
 <!ENTITY cmis.items.menu.export "Export settings">
 <!ENTITY cmis.items.menu.generate "Generate menu from directory hierarchy">
-<!ENTITY cmis.items.menu.edit "Add 'Edit Settings' menu item">
+<!ENTITY cmis.items.menu.edit "Add 'Open Settings' menu item">
