@@ -85,7 +85,7 @@
                 oncommand="moongiraffe.Cmis.menu.items.edit();"/>
         <button class="delete"
                 label="  &cmis.items.delete;"
-               id="button-delete"
+                id="button-delete"
                 oncommand="moongiraffe.Cmis.menu.items.delete();"/>
 
         <hbox>
