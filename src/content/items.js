@@ -489,8 +489,19 @@ moongiraffe.Cmis.menu.items = {
 
                 entry.QueryInterface(Components.interfaces.nsIFile);
 
-                if (entry.isDirectory())
-                    entries.push(entry);
+                try {
+                    if (entry.isDirectory())
+                        entries.push(entry);
+                } catch (e) {
+                    // So... It turns out that on Windows (tested on
+                    // Win7 SP1 x86_64), if a file name is too long
+                    // (hey, I have not bothered to find the exact
+                    // length here just say long), well, if a file
+                    // name is too long it will freak out and the call
+                    // to isDirectory will fail. Hence this try/catch
+                    // statement as a work around until I figure out
+                    // what is going on. /me takes deep breath.
+                }
             }
 
             // If there are no directories we can just return a single Item element.
