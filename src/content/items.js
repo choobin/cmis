@@ -55,6 +55,8 @@ moongiraffe.Cmis.menu.items = {
         this.tree.view = this.treeview;
 
         this.treeview.invalidate();
+
+        this.select();
     },
 
     loaddata: function() {
@@ -87,37 +89,63 @@ moongiraffe.Cmis.menu.items = {
 
         var count = this.treeview.rowCount;
 
+        Services.console.logStringMessage("index: " + index + ", count: " + count);
+
+        $("button-delete").disabled = false;
+
+        // If nothing is selected /or/ there are no items in the list
+        // /or/ the selection index is invalid /then/ we can not
+        // delete anything.
+        if (index < 0 || count == 0 || index >= count) {
+            $("button-delete").disabled = true;
+        }
+
+        $("button-edit").disabled = false;
+
+        // If nothing is selected /or/ the selected item is a
+        // separator /or/ the selection index is invalid /then/ we can
+        // not edit anything.
+        if (index < 0 || index >= count || this.treeview.isSeparator(index)) {
+            $("button-edit").disabled = true;
+        }
+
         $("button-up").disabled = false;
 
+        $("button-down").disabled = false;
+
+        // If nothing is selected /or/ there are no items in the list
+        // /or/ the selection index is invalid /then/ we can not move
+        // up or down.
+        if (index < 0 || count == 0 || index >= count) {
+            $("button-up").disabled = true;
+            $("button-down").disabled = true;
+            return;
+        }
+
+        // If we are at the top of the list /and/ the selected item's
+        // depth is 0 /then/ we can not move further up.
         if (index == 0 && this.treeview.items[0].depth == 0) {
             $("button-up").disabled = true;
         }
 
-        $("button-down").disabled = false;
-
-        if (index < 0) {
-            $("button-down").disabled = true;
-        }
-        else if (this.treeview.items[index].type === "submenu") {
+        // If the selected item is a submenu /and/ there are no other
+        // items bellow its children /and/ the submenu's depth is 0
+        // /then/ we can not move further down.
+        if (count > 0 && index < count && this.treeview.items[index].type === "submenu") {
             var children = this.treeview.containerchildren(index);
             if (index + children == count - 1 && this.treeview.items[index].depth == 0)
                 $("button-down").disabled = true;
         }
-        else if (index == count - 1 && this.treeview.items[count - 1].depth == 0) {
+
+        // If we are at the bottom of the list /and/ the item's depth
+        // is 0 /then/ we can not move further down.
+        if (index == count - 1 && this.treeview.items[count - 1].depth == 0) {
             $("button-down").disabled = true;
         }
-
-        $("button-delete").disabled = index < 0;
-
-        $("button-edit").disabled = index < 0 || this.treeview.isSeparator(index);
-
-        return true;
     },
 
     insert: function(items) {
-        for (var i = 0; i < items.length; i++) {
-            this.treeview.insert(items[i]);
-        }
+        this.treeview.insert(items);
         this.update();
     },
 
@@ -689,17 +717,27 @@ Treeview.prototype = {
             depth = this.items[index].depth;
 
             if (this.items[index].type === "submenu")
-                depth++;
+                depth++; // Nest inside the selected submenu.
         }
 
-        item.depth = depth;
+        var nitems = 1;
+
+        if (item instanceof Array) {
+            nitems = item.length;
+
+            for (var i = 0; i < item.length; i++)
+                item[i] += depth; // Increment initial generated depths.
+        }
+        else {
+            item.depth = depth;
+        }
 
         if (this.items.length == 0 || index == this.items.length - 1)
             this.items.push(item);
         else
-            this.items.splice(index + 1, 0, item);
+            Array.prototype.splice.apply(this.items, [index + 1, 0].concat(item));
 
-        this.treebox.rowCountChanged(this.rowCount, 1);
+        this.treebox.rowCountChanged(this.rowCount, nitems);
 
         this.selection.select(index + 1);
 
