@@ -206,6 +206,9 @@ moongiraffe.Cmis.menu.items = {
 
     separator: function() {
         this.treeview.insert(new Separator());
+
+        this.treeview.invalidate();
+
         this.update();
     },
 
@@ -230,6 +233,9 @@ moongiraffe.Cmis.menu.items = {
 
     delete: function() {
         this.treeview.delete();
+
+        this.treeview.invalidate();
+
         this.update();
     },
 
