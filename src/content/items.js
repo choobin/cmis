@@ -441,7 +441,11 @@ moongiraffe.Cmis.menu.items = {
 
         fp.init(window, "", nsIFilePicker.modeOpen);
 
+        var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
+
         fp.appendFilter("JSON " + bundle.GetStringFromName("files"), "*.json");
+
+        Services.strings.flushBundles();
 
         fp.appendFilters(nsIFilePicker.filterAll);
 
@@ -528,7 +532,7 @@ moongiraffe.Cmis.menu.items = {
 
             var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
 
-            data.push(new Item(depth + 1, bundle.GetStringFromName("here");, directory.path, "%DEFAULT"));
+            data.push(new Item(depth + 1, bundle.GetStringFromName("here"), directory.path, "%DEFAULT"));
 
             for (var i = 0; i < entries.length; i++) {
                 data = data.concat(process(entries[i], depth + 1));
