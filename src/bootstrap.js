@@ -913,7 +913,6 @@ function install(data, reason) {
     if (reason === 7 /* ADDON_UPGRADE */) {
         if (Services.vc.compare(data.version, "20130119") <= 0) {
             moongiraffe.Cmis.update.v20130119();
-            //XXX update date of comparison and function call.....
         }
     }
 }
