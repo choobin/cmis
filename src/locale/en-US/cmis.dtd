@@ -41,5 +41,5 @@
 <!ENTITY cmis.items.menu.label "Advanced Options">
 <!ENTITY cmis.items.menu.import "Import settings">
 <!ENTITY cmis.items.menu.export "Export settings">
-<!ENTITY cmis.items.menu.generate "Generate menu from directory hierarchy">
+<!ENTITY cmis.items.menu.generate "Generate menu from a directory tree">
 <!ENTITY cmis.items.menu.close "Close">
