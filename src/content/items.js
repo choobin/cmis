@@ -202,6 +202,8 @@ moongiraffe.Cmis.menu.items = {
         this.treeview.invalidate();
 
         this.update();
+
+        Services.strings.flushBundles();
     },
 
     separator: function() {
@@ -321,10 +323,13 @@ moongiraffe.Cmis.menu.items = {
         // looking at you Windows (/me shakes fist).
         timestamp = timestamp.replace(/:/g, "");
 
+        var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
+
         var json = {
             info: "Context Menu Image Saver Menu Settings",
             version: 1.0,
             created: timestamp,
+            note: bundle.GetStringFromName("settingsNote"),
             menu: data
         };
 
@@ -350,7 +355,7 @@ moongiraffe.Cmis.menu.items = {
 
         fp.appendFilters(nsIFilePicker.filterAll);
 
-        fp.defaultString = "cmis-menu-" + timestamp + ".json";
+        fp.defaultString = "cmis-" + bundle.GetStringFromName("settings") + "-" + timestamp + ".json";
 
         // Linux ignores this. TODO. Check so see if Windows and/or OSX does.
         fp.defaultExtension = "json";
@@ -361,6 +366,8 @@ moongiraffe.Cmis.menu.items = {
             return;
 
         this.write(fp.file, str);
+
+        Services.strings.flushBundles();
     },
 
     // XXX Cmis.io.write
@@ -496,7 +503,7 @@ moongiraffe.Cmis.menu.items = {
                 entry.QueryInterface(Components.interfaces.nsIFile);
 
                 try {
-                    if (entry.isDirectory())
+                    if (entry.isDirectory() && entry.isWritable())
                         entries.push(entry);
                 } catch (e) {
                     // So... It turns out that on Windows (tested on
@@ -512,7 +519,7 @@ moongiraffe.Cmis.menu.items = {
 
             // If there are no directories we can just return a single Item element.
             if (entries.length == 0) {
-                return [new Item(depth, directory.leafName, directory.path, "")];
+                return [new Item(depth, directory.leafName, directory.path, "%DEFAULT")];
             }
 
             var data = [];
@@ -521,7 +528,7 @@ moongiraffe.Cmis.menu.items = {
             // so we can save in the root directory too.
             data.push(new Submenu(depth, directory.leafName));
             // XXX Localize
-            data.push(new Item(depth + 1, "Here", directory.path, ""));
+            data.push(new Item(depth + 1, "Here", directory.path, "%DEFAULT"));
 
             for (var i = 0; i < entries.length; i++) {
                 data = data.concat(process(entries[i], depth + 1));
