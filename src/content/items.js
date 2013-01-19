@@ -540,6 +540,9 @@ moongiraffe.Cmis.menu.items = {
             return data;
         }
 
+        if (!fp.file.isWritable())
+            return;
+
         var items = process(fp.file, 0);
 
         moongiraffe.Cmis.menu.items.append(items);
