@@ -350,17 +350,14 @@ moongiraffe.Cmis.menu.items = {
         var fp = Components.classes["@mozilla.org/filepicker;1"]
             .createInstance(nsIFilePicker);
 
-        // XXX Localize
-        fp.init(window, "Select a File", nsIFilePicker.modeSave);
+        fp.init(window, "", nsIFilePicker.modeSave);
 
-        // XXX Localize
-        fp.appendFilter("JSON Files", "*.json");
+        fp.appendFilter("JSON " + bundle.GetStringFromName("files"), "*.json");
 
         fp.appendFilters(nsIFilePicker.filterAll);
 
         fp.defaultString = "cmis-" + bundle.GetStringFromName("settings") + "-" + timestamp + ".json";
 
-        // Linux ignores this. TODO. Check so see if Windows and/or OSX does.
         fp.defaultExtension = "json";
 
         var res = fp.show();
@@ -442,10 +439,9 @@ moongiraffe.Cmis.menu.items = {
         var fp = Components.classes["@mozilla.org/filepicker;1"]
             .createInstance(nsIFilePicker);
 
-        // XXX Localize (Note: find all of the others)
-        fp.init(window, "Select a File", nsIFilePicker.modeOpen);
+        fp.init(window, "", nsIFilePicker.modeOpen);
 
-        fp.appendFilter("JSON Files", "*.json");
+        fp.appendFilter("JSON " + bundle.GetStringFromName("files"), "*.json");
 
         fp.appendFilters(nsIFilePicker.filterAll);
 
@@ -470,7 +466,7 @@ moongiraffe.Cmis.menu.items = {
             // check version string
             // check timestamp (dr. who)
             // check that their is actually a menu property
-            // check that 'path' exists or can/should be created XXX
+            // check that 'path' exists or can/should be created
 
             var menu = moongiraffe.Cmis.menu.items.flatten(list.menu, 0);
 
@@ -484,8 +480,7 @@ moongiraffe.Cmis.menu.items = {
         var fp = Components.classes["@mozilla.org/filepicker;1"]
             .createInstance(nsIFilePicker);
 
-        // XXX Localize (Note: find all of the others)
-        fp.init(window, "Select a Path", nsIFilePicker.modeGetFolder);
+        fp.init(window, "", nsIFilePicker.modeGetFolder);
 
         var res = fp.show();
 
@@ -530,8 +525,10 @@ moongiraffe.Cmis.menu.items = {
             // Otherwise first create a Submenu then an initial Item
             // so we can save in the root directory too.
             data.push(new Submenu(depth, directory.leafName));
-            // XXX Localize
-            data.push(new Item(depth + 1, "Here", directory.path, "%DEFAULT"));
+
+            var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
+
+            data.push(new Item(depth + 1, bundle.GetStringFromName("here");, directory.path, "%DEFAULT"));
 
             for (var i = 0; i < entries.length; i++) {
                 data = data.concat(process(entries[i], depth + 1));
@@ -777,11 +774,7 @@ Treeview.prototype = {
 
         item.depth = depth;
 
-        // XXX
-        //if (this.items.length == 0 || index == this.items.length - 1)
-        //this.items.push(item);
-        //else
-            this.items.splice(index + 1, 0, item);
+        this.items.splice(index + 1, 0, item);
 
         this.treebox.rowCountChanged(this.rowCount, 1);
 
