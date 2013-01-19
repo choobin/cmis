@@ -280,7 +280,7 @@ moongiraffe.Cmis.menu.items = {
         var items = JSON.parse(list);
 
         // Translate the list into a pretty nested JSON object. This
-        // will let is neglect the depth field when writing to the
+        // will let us neglect the depth field when writing to the
         // file. Making it easier for users to manually edit.
 
         var data = [];
