@@ -77,7 +77,7 @@ moongiraffe.Cmis.menu.edit = {
 
         // If path is hidden we are a submenu item, so we can just return the name value
         if ($("path").hidden === true) {
-            var item = window.arguments[0];
+            var item = window.arguments[0].item;
             item.name = $("name").value;
             return true;
         }
@@ -103,7 +103,7 @@ moongiraffe.Cmis.menu.edit = {
             return false;
         }
 
-        var item = window.arguments[0];
+        var item = window.arguments[0].item;
 
         switch (item.type) {
         case "item": // Fall through.
@@ -119,7 +119,7 @@ moongiraffe.Cmis.menu.edit = {
 
     cancel: function() {
         var item = window.arguments[0].cancel = true;
-        return false;
+        return true;
     },
 
     getpath: function() {
