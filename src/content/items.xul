@@ -37,7 +37,8 @@
             flex="1"
             rows="12"
             treelines="true"
-            onselect="moongiraffe.Cmis.menu.items.select();">
+            onselect="moongiraffe.Cmis.menu.items.select();"
+            ondblclick="moongiraffe.Cmis.menu.items.edit();">
 
         <treecols>
           <treecol id="name"

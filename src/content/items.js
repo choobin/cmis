@@ -220,6 +220,9 @@ moongiraffe.Cmis.menu.items = {
         if (index < 0)
             return;
 
+        if (this.treeview.items[index].type === "separator")
+            return;
+
         var ret = { item: this.treeview.items[index], cancel: false };
 
         window.openDialog(
