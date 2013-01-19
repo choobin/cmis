@@ -2,7 +2,7 @@ ZIP=$(shell which zip)
 
 XPI=cmis@moongiraffe.net.xpi
 
-all: zip
+all: clean zip
 
 install: zip
 	firefox $(XPI) &
