@@ -13,6 +13,7 @@
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     title="&cmis.items.title;"
     minwidth="900"
+    minheight="500"
     buttons="accept"
     buttonlabelaccept="&cmis.items.menu.close;"
     onload="moongiraffe.Cmis.menu.items.load();">
