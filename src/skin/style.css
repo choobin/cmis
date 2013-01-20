@@ -59,6 +59,11 @@
   list-style-image: url("chrome://cmis/skin/settings.png");
 }
 
+.generate {
+  min-width: 16px;
+  list-style-image: url("chrome://cmis/skin/generate.png");
+}
+
 .browse {
   min-width: 16px;
   list-style-image: url("chrome://cmis/skin/browse.png");

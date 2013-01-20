@@ -25,8 +25,6 @@
       <menupopup>
         <menuitem label="&cmis.items.menu.import;" oncommand="moongiraffe.Cmis.menu.items.import_settings();" />
         <menuitem label="&cmis.items.menu.export;" oncommand="moongiraffe.Cmis.menu.items.export_settings();"/>
-        <menuseparator />
-        <menuitem label="&cmis.items.menu.generate;" oncommand="moongiraffe.Cmis.menu.items.generate();"/>
       </menupopup>
     </menu>
   </menubar>
@@ -86,6 +84,10 @@
                 label="  &cmis.items.separator;"
                 id="button-separator"
                 oncommand="moongiraffe.Cmis.menu.items.separator();"/>
+        <button class="generate"
+                label="  &cmis.items.generate;"
+                id="button-generate"
+                oncommand="moongiraffe.Cmis.menu.items.generate();"/>
         <button class="edit"
                 label="  &cmis.items.edit;"
                 id="button-edit"

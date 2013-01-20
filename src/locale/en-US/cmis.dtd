@@ -28,6 +28,7 @@
 <!ENTITY cmis.items.edit "Edit">
 <!ENTITY cmis.items.delete "Delete">
 <!ENTITY cmis.items.separator "Separator">
+<!ENTITY cmis.items.generate "Generate menu">
 <!ENTITY cmis.items.up "Up">
 <!ENTITY cmis.items.down "Down">
 <!ENTITY cmis.items.edit.title "Edit Menu Item">
@@ -41,5 +42,4 @@
 <!ENTITY cmis.items.menu.label "Advanced Options">
 <!ENTITY cmis.items.menu.import "Import settings">
 <!ENTITY cmis.items.menu.export "Export settings">
-<!ENTITY cmis.items.menu.generate "Generate menu from a directory tree">
 <!ENTITY cmis.items.menu.close "Close">
