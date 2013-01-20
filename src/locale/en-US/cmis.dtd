@@ -28,7 +28,7 @@
 <!ENTITY cmis.items.edit "Edit">
 <!ENTITY cmis.items.delete "Delete">
 <!ENTITY cmis.items.separator "Separator">
-<!ENTITY cmis.items.generate "Generate menu">
+<!ENTITY cmis.items.generate "Generate Menu">
 <!ENTITY cmis.items.up "Up">
 <!ENTITY cmis.items.down "Down">
 <!ENTITY cmis.items.edit.title "Edit Menu Item">
