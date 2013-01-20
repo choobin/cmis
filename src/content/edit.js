@@ -154,8 +154,10 @@ moongiraffe.Cmis.menu.edit = {
             $("path").value = picker.file.path;
         }
 
-        // Only modify label if type === "Item" and keep "Save Image As..." label.
-        if ($("saveas-explanation").hidden) {
+        // Only set a default label if the item is /not/ a Saveas
+        // object /and/ the field is empty.
+        if ($("saveas-explanation").hidden &&
+            $("path").value === "") {
             var label = bundle.GetStringFromName("saveImage") + " \"" + this.basename(picker.file.path) + "\"";
 
             $("name").value = label;
