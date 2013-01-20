@@ -297,6 +297,12 @@ moongiraffe.Cmis.menu.items = {
         var i = 0;
 
         while (i < items.length) {
+            if (items[i].depth < depth[depth.length - 1]) {
+                parent.pop();
+                depth.pop();
+                continue;
+            }
+
             if (items[i].type === "submenu") {
                 var submenu = items[i];
                 submenu.menu = []; // Make sure menu exists.
@@ -304,12 +310,6 @@ moongiraffe.Cmis.menu.items = {
                 parent.push(submenu.menu);
                 depth.push(submenu.depth + 1); // Increase depth.
                 i++;
-                continue;
-            }
-
-            if (items[i].depth < depth[depth.length - 1]) {
-                parent.pop();
-                depth.pop();
                 continue;
             }
 
