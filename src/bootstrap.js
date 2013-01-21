@@ -117,48 +117,50 @@ moongiraffe.Cmis.menu = {
 
         let child = context.firstChild;
 
-        let stack = [];
+        let parent = [null];
+
+        let depth = [0];
 
         let item;
 
-        let depth = 0;
+        let i = 0;
 
-        for (let i = 0; i < items.length; i++) {
-            let data = items[i];
-
-            if (data.depth < depth) {
-                stack.pop();
+        while (i < items.length) {
+            if (items[i].depth < depth[depth.length - 1]) {
+                parent.pop();
+                depth.pop();
+                continue;
             }
 
-            depth = data.depth;
-
-            if (data.type === "submenu") {
+            if (items[i].type === "submenu") {
                 item = document.createElement("menu");
-                item.setAttribute("label", data.name);
+                item.setAttribute("label", items[i].name);
 
                 let popup = document.createElement("menupopup");
-
                 popup.setAttribute("id", "context-cmis-item-" + i);
 
                 item.appendChild(popup);
 
-                if (depth > 0) {
-                    stack[stack.length - 1].appendChild(item);
-                    stack.push(popup);
+                depth.push(items[i].depth + 1); // Add one to match child depth
+
+                if (items[i].depth > 0) {
+                    parent[parent.length - 1].appendChild(item);
+                    parent.push(popup);
+                    i++;
                     continue;
                 }
 
-                stack.push(popup);
+                parent.push(popup);
             }
-            else if (data.type === "separator") {
+            else if (items[i].type === "separator") {
                 item = document.createElement("menuseparator");
             }
             else {
                 item = document.createElement("menuitem");
 
-                item.setAttribute("label", data.name);
+                item.setAttribute("label", items[i].name);
 
-                if (data.type === "settings")
+                if (items[i].type === "settings")
                     item.addEventListener("command", moongiraffe.Cmis.menu.loadoptions, false);
                 else // data.type === "item" or "saveas"
                     item.addEventListener("command", moongiraffe.Cmis.menu.save, false);
@@ -166,8 +168,12 @@ moongiraffe.Cmis.menu = {
 
             item.setAttribute("id", "context-cmis-item-" + i);
 
-            if (depth > 0) {
-                stack[stack.length - 1].appendChild(item);
+            // Check to see if we append to the top of the parent
+            // stack or the actual context menu.
+            if (items[i].depth > 0 &&
+                items[i].depth == depth[depth.length - 1]) {
+                parent[parent.length - 1].appendChild(item);
+                i++;
                 continue;
             }
 
@@ -185,6 +191,8 @@ moongiraffe.Cmis.menu = {
                 context.insertBefore(item, sendimage);
                 break;
             }
+
+            i++;
         }
     },
 
