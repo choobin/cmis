@@ -733,6 +733,7 @@ moongiraffe.Cmis.utils = {
         name = name.replace(/[\>]+/g, ")");
         name = name.replace(/[\|]+/g, "_");
 
+        // XXX This was returning null sometimes. Is this supposed to ever happen?
         let mimeService = Components.classes["@mozilla.org/mime;1"]
             .getService(Components.interfaces.nsIMIMEService);
 
