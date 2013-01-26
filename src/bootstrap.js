@@ -484,11 +484,15 @@ moongiraffe.Cmis.io = {
 
         let privacy_context = null;
 
+        let is_private = false;
+
         // As of Firefox 18, the `addDownload` and `saveURL` functions have changed to support per-window private browsing.
         if (Services.vc.compare(Services.appinfo.platformVersion, "18.0") >= 0) {
             privacy_context = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
                 .getInterface(Components.interfaces.nsIWebNavigation)
                 .QueryInterface(Components.interfaces.nsILoadContext);
+
+            is_private = privacy_context.usePrivateBrowsing;
         }
 
         // https://developer.mozilla.org/en/nsIWebBrowserPersist
@@ -496,22 +500,33 @@ moongiraffe.Cmis.io = {
             .classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"]
             .createInstance(Components.interfaces.nsIWebBrowserPersist);
 
-        const nsIWBP = Components.interfaces.nsIWebBrowserPersist;
+        const nsIWebBrowserPersist = Components.interfaces.nsIWebBrowserPersist;
 
         persist.persistFlags =
-            nsIWBP.PERSIST_FLAGS_REPLACE_EXISTING_FILES |
-            nsIWBP.PERSIST_FLAGS_FROM_CACHE |
-            nsIWBP.PERSIST_FLAGS_CLEANUP_ON_FAILURE;
+            nsIWebBrowserPersist.PERSIST_FLAGS_REPLACE_EXISTING_FILES |
+            nsIWebBrowserPersist.PERSIST_FLAGS_FROM_CACHE |
+            nsIWebBrowserPersist.PERSIST_FLAGS_CLEANUP_ON_FAILURE;
+
+        const nsIDownloadManager = Components.interfaces.nsIDownloadManager;
 
         // https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIDownloadManager
         let manager = Components.classes["@mozilla.org/download-manager;1"]
-            .getService(Components.interfaces.nsIDownloadManager);
+            .getService(nsIDownloadManager);
 
-        let listener = manager.addDownload(0, source, target, name, null, null, null, null, persist, privacy_context);
+        let listener = manager.addDownload(
+            nsIDownloadManager.DOWNLOAD_TYPE_DOWNLOAD,
+            source,
+            target,
+            name,
+            null, // mime info
+            null, // start time
+            null, // tmp file
+            persist,
+            is_private);
 
         persist.progressListener = listener;
 
-        persist.saveURI(source, null, null, null, null, target, null, privacy_context);
+        persist.saveURI(source, null, null, null, null, target, privacy_context);
 
         moongiraffe.Cmis.prefs.value("previousDirectoryIndex", index);
 
