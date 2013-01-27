@@ -16,7 +16,6 @@
   <script src="edit.js"/>
 
   <vbox align="center">
-    <label id="saveas-explanation" class="small" value="&cmis.items.saveasExplanation;"/>
     <label id="settings-explanation" class="small" value="&cmis.items.settingsExplanation;"/>
   </vbox>
 
@@ -55,6 +54,10 @@
       </row>
     </rows>
   </grid>
+
+  <vbox align="center" class="pad">
+    <checkbox id="saveas" label="&cmis.items.saveas;"/>
+  </vbox>
 
   <grid id="formatguide" class="pad">
     <columns>

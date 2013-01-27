@@ -71,6 +71,7 @@ moongiraffe.Cmis.menu.items = {
         var list = JSON.stringify(this.treeview.items, function (key, value) {
             if (key === "menu") // The menu field is only need for import/export calls.
                 return undefined;
+
             return value;
         }, "");
 
@@ -157,13 +158,6 @@ moongiraffe.Cmis.menu.items = {
 
         case "submenu":
             item = new Submenu();
-            break;
-
-        case "saveas":
-            item = new Saveas();
-
-            var name = $("button-saveas").label.trim();
-            item.name = name; // Saveas sets a localized label.
             break;
 
         case "settings":
@@ -342,6 +336,7 @@ moongiraffe.Cmis.menu.items = {
             // import_settings.
             if (key === "depth")
                 return undefined;
+
             return value;
         }, "  ");
 
@@ -521,7 +516,7 @@ moongiraffe.Cmis.menu.items = {
 
             // If there are no directories we can just return a single Item element.
             if (entries.length == 0) {
-                return [new Item(depth, directory.leafName, directory.path, "%DEFAULT")];
+                return [new Item(depth, directory.leafName, directory.path, "%DEFAULT", false)];
             }
 
             var data = [];
@@ -532,7 +527,7 @@ moongiraffe.Cmis.menu.items = {
 
             var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
 
-            data.push(new Item(depth + 1, bundle.GetStringFromName("here"), directory.path, "%DEFAULT"));
+            data.push(new Item(depth + 1, bundle.GetStringFromName("here"), directory.path, "%DEFAULT", false));
 
             for (var i = 0; i < entries.length; i++) {
                 data = data.concat(process(entries[i], depth + 1));
@@ -555,19 +550,13 @@ moongiraffe.Cmis.menu.items = {
 // https://developer.mozilla.org/en-US/docs/XUL_Tutorial/More_Tree_Features
 // https://developer.mozilla.org/en-US/docs/XPCOM_Interface_Reference/nsITreeView
 
-function Item(depth, name, path, format) {
+function Item(depth, name, path, format, saveas) {
     this.type = "item";
     this.depth = depth || 0;
     this.name = name || "";
     this.path = path || "";
     this.format = format || "";
-}
-
-function Saveas(depth, name, path) {
-    this.type = "saveas";
-    this.depth = depth || 0;
-    this.name = name || "";
-    this.path = path || "";
+    this.saveas = saveas || false;
 }
 
 function Separator(depth) {
@@ -826,9 +815,9 @@ Treeview.prototype = {
         case "name":
             return this.items[row].name;
         case "path":
-            return this.items[row].path;
+            return this.items[row].path || "";
         case "format":
-            return this.items[row].format;
+            return this.items[row].format || "";
         default:
             return "";
         }

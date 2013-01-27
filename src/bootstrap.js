@@ -162,7 +162,7 @@ moongiraffe.Cmis.menu = {
 
                 if (items[i].type === "settings")
                     item.addEventListener("command", moongiraffe.Cmis.menu.loadoptions, false);
-                else // data.type === "item" or "saveas"
+                else // data.type === "item"
                     item.addEventListener("command", moongiraffe.Cmis.menu.save, false);
             }
 
@@ -323,9 +323,10 @@ moongiraffe.Cmis.menu = {
         if (index == -1) {
             let bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
 
-            Services.prompt.alert(null,
-                                  bundle.GetStringFromName("errorPromptTitle"),
-                                  bundle.GetStringFromName("errorPromptSaveMessage"));
+            Services.prompt.alert(
+                null,
+                bundle.GetStringFromName("errorPromptTitle"),
+                bundle.GetStringFromName("errorPromptSaveMessage"));
 
             Services.strings.flushBundles();
 
@@ -463,13 +464,15 @@ moongiraffe.Cmis.io = {
 
         let filename = moongiraffe.Cmis.utils.filename(window, source);
 
+        filename = moongiraffe.Cmis.utils.format(data.format, filename, alt);
+
         let path = null;
 
-        if (data.type === "saveas") {
+        if (data.saveas) {
             path = moongiraffe.Cmis.utils.promptpath(window, data, filename);
         }
         else {
-            path = moongiraffe.Cmis.utils.buildpath(window, data, filename, alt);
+            path = moongiraffe.Cmis.utils.buildpath(window, data, filename);
         }
 
         if (!path) return;
@@ -537,7 +540,7 @@ moongiraffe.Cmis.io = {
 };
 
 moongiraffe.Cmis.utils = {
-    buildpath: function(window, data, filename, alt) {
+    buildpath: function(window, data, filename) {
         let path = Components.classes["@mozilla.org/file/local;1"]
             .createInstance(Components.interfaces.nsILocalFile);
 
@@ -546,8 +549,6 @@ moongiraffe.Cmis.utils = {
         if (!path.exists()) {
             path.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, parseInt("0700", 8));
         }
-
-        filename = moongiraffe.Cmis.utils.format(data.format, filename, alt);
 
         path.append(filename);
 
@@ -874,16 +875,19 @@ moongiraffe.Cmis.update = {
                     depth: parseInt(item[1]),
                     name: item[2],
                     path: item[3],
-                    format: prefix
+                    format: prefix,
+                    saveas: false
                 });
                 break;
 
             case '=':
                 items.push({
-                    type: "saveas",
+                    type: "item",
                     depth: parseInt(item[1]),
                     name: item[2],
-                    path: item[3]
+                    path: item[3],
+                    format: "%DEFAULT",
+                    saveas: false
                 });
                 break;
 

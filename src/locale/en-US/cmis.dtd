@@ -19,12 +19,12 @@
 <!ENTITY cmis.items.pathTooltip "Configure the save path for a menu item">
 <!ENTITY cmis.items.nameTooltip "Configure the string that appears in the context menu">
 <!ENTITY cmis.items.formatTooltip "Specify the exact format for each filename before saving">
-<!ENTITY cmis.items.saveasExplanation "Note: An empty path will execute the defult 'Save Image As...' routine">
+<!ENTITY cmis.items.saveas "Open the 'Save Image As...' dialog before saving">
 <!ENTITY cmis.items.settingsExplanation "Note: This item will open the settings window">
 <!ENTITY cmis.items.new "New">
 <!ENTITY cmis.items.item "Item">
 <!ENTITY cmis.items.submenu "Submenu">
-<!ENTITY cmis.items.settings "Open Settings">
+<!ENTITY cmis.items.settings "Settings">
 <!ENTITY cmis.items.edit "Edit">
 <!ENTITY cmis.items.delete "Delete">
 <!ENTITY cmis.items.separator "Separator">

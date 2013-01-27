@@ -2,12 +2,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://cmis/skin/style.css" type="text/css"?>
 
-<!DOCTYPE dialog [
- <!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd">
- %browserDTD;
- <!ENTITY % cmisDTD SYSTEM "chrome://cmis/locale/cmis.dtd">
- %cmisDTD;
-]>
+<!DOCTYPE dialog SYSTEM "chrome://cmis/locale/cmis.dtd">
 
 <dialog
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -76,13 +71,9 @@
                 label="  &cmis.items.submenu;"
                 id="button-submenu"
                 oncommand="moongiraffe.Cmis.menu.items.newitem('submenu');"/>
-        <button class="new"
-                label="  &saveImageCmd.label;"
-                id="button-saveas"
-                oncommand="moongiraffe.Cmis.menu.items.newitem('saveas');"/>
         <button class="settings"
                 label="  &cmis.items.settings;"
-                id="button-saveas"
+                id="button-settings"
                 oncommand="moongiraffe.Cmis.menu.items.newitem('settings');"/>
         <button class="separator"
                 label="  &cmis.items.separator;"

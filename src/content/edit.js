@@ -43,9 +43,7 @@ moongiraffe.Cmis.menu.edit = {
         $("name").value = item.name || "";
         $("path").value = item.path || "";
         $("format").value = item.format || "%DEFAULT";
-
-        $("saveas-explanation").hidden = true;
-        $("settings-explanation").hidden = true;
+        $("saveas").checked = item.saveas || false;
 
         // Submenu and Edit items only need to display the name field.
         if (item.type === "submenu" ||
@@ -58,13 +56,7 @@ moongiraffe.Cmis.menu.edit = {
             $("formatguide").hidden = true;
         }
 
-        // Saveas displays name, path and message with some nitty gritty.
-        if (item.type === "saveas") {
-            $("format").hidden = true;
-            $("formatlabel").hidden = true;
-            $("formatguide").hidden = true;
-            $("saveas-explanation").hidden = false; // Yup!
-        }
+        $("settings-explanation").hidden = true;
 
         if (item.type === "settings") {
             $("settings-explanation").hidden = false;
@@ -105,14 +97,10 @@ moongiraffe.Cmis.menu.edit = {
 
         var item = window.arguments[0].item;
 
-        switch (item.type) {
-        case "item": // Fall through.
-            item.format = $("format").value;
-        case "saveas":
-            item.path = $("path").value;
-            item.name = $("name").value;
-            break;
-        }
+        item.name = $("name").value;
+        item.path = $("path").value;
+        item.format = $("format").value;
+        item.saveas = $("saveas").checked;
 
         return true;
     },
@@ -154,10 +142,8 @@ moongiraffe.Cmis.menu.edit = {
             $("path").value = picker.file.path;
         }
 
-        // Only set a default label if the item is /not/ a Saveas
-        // object /and/ the field is empty.
-        if ($("saveas-explanation").hidden &&
-            $("path").value === "") {
+        // Only set a default label if the field is empty.
+        if ($("name").value === "") {
             var label = bundle.GetStringFromName("saveImage") + " \"" + this.basename(picker.file.path) + "\"";
 
             $("name").value = label;
