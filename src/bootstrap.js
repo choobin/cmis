@@ -314,20 +314,20 @@ moongiraffe.Cmis.menu = {
             return;
         }
 
+        event.stopPropagation();
+
+        event.preventDefault();
+
         let index = moongiraffe.Cmis.prefs.value("previousDirectoryIndex");
 
-        let bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
-
         if (index == -1) {
+            let bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
+
             Services.prompt.alert(null,
                                   bundle.GetStringFromName("errorPromptTitle"),
                                   bundle.GetStringFromName("errorPromptSaveMessage"));
 
             Services.strings.flushBundles();
-
-            event.stopPropagation();
-
-            event.preventDefault();
 
             return;
         }
@@ -337,10 +337,6 @@ moongiraffe.Cmis.menu = {
         let alt = event.originalTarget.alt;
 
         moongiraffe.Cmis.io.save(window, index, source, alt);
-
-        event.stopPropagation();
-
-        event.preventDefault();
     },
 
     loadoptions: function() {
