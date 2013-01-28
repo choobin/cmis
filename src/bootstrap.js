@@ -281,7 +281,7 @@ moongiraffe.Cmis.menu = {
 
         let source = NetUtil.newURI(url);
 
-        let [target, filename] = moongiraffe.Cmis.utils.target(window, index, source, null, false);
+        let [target, filename] = moongiraffe.Cmis.utils.target(index, source, null, false);
 
         moongiraffe.Cmis.io.save(source, target, filename);
 
@@ -341,7 +341,7 @@ moongiraffe.Cmis.menu = {
 
         let source = NetUtil.newURI(event.originalTarget.src);
 
-        let [target, filename] = moongiraffe.Cmis.utils.target(window, index, source, alt, true);
+        let [target, filename] = moongiraffe.Cmis.utils.target(index, source, alt, true);
 
         moongiraffe.Cmis.io.save(source, target, filename);
 
@@ -526,7 +526,7 @@ moongiraffe.Cmis.io = {
 };
 
 moongiraffe.Cmis.utils = {
-    buildpath: function(window, data, filename) {
+    buildpath: function(data, filename) {
         let path = Components.classes["@mozilla.org/file/local;1"]
             .createInstance(Components.interfaces.nsILocalFile);
 
@@ -538,44 +538,12 @@ moongiraffe.Cmis.utils = {
 
         path.append(filename);
 
-        if (path.exists()) {
-            // 0 -> prompt user
-            // 1 -> save as unique file
-            // 2 -> overwrite file
-            let action = moongiraffe.Cmis.prefs.value("overwriteAction");
-
-            if (action == 0) {
-                // 0 -> overwrite file
-                // 1 -> save as unique file
-                // 2 -> cancel
-                let result = moongiraffe.Cmis.utils.prompt(window, path);
-
-                if (result == 2) {
-                    return null;
-                }
-
-                // Note: The prompt.confirmEx call from utils.prompt
-                // will always return 1 if the user closes the window
-                // using the close button in the titlebar! See bug
-                // "345067". In this case it is safer to save as a
-                // unique file instead of overwriting.
-
-                if (result == 1) {
-                    // The user prompted to rename file... change
-                    // action to 'save as unique file'.
-                    action = 1;
-                }
-            }
-
-            if (action == 1) {
-                path = moongiraffe.Cmis.utils.uniq(path);
-            }
-        }
-
         return path;
     },
 
-    promptpath: function(window, data, filename) {
+    promptpath: function(data, filename) {
+        let window = Services.ww.activeWindow;
+
         var nsIFilePicker = Components.interfaces.nsIFilePicker;
 
         var fp = Components.classes["@mozilla.org/filepicker;1"]
@@ -604,7 +572,9 @@ moongiraffe.Cmis.utils = {
         return fp.file;
     },
 
-    prompt: function(window, path) {
+    prompt: function(path) {
+        let window = Services.ww.activeWindow;
+
         // https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIStringBundleService
         // https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIStringBundle
         let bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
@@ -633,22 +603,22 @@ moongiraffe.Cmis.utils = {
         return button;
     },
 
-    target: function(window, index, source, alt, quicksave) {
+    target: function(index, source, alt, quicksave) {
         let list = moongiraffe.Cmis.prefs.value("directoryList");
 
         let items = JSON.parse(list);
 
         let data = items[index];
 
-        let filename = moongiraffe.Cmis.utils.filename(window, source);
+        let filename = moongiraffe.Cmis.utils.filename(source);
 
         filename = moongiraffe.Cmis.utils.format(data.format, filename, alt);
-
-        let previndex = moongiraffe.Cmis.prefs.value("previousDirectoryIndex");
 
         let path = null;
 
         if (data.saveas) {
+            let previndex = moongiraffe.Cmis.prefs.value("previousDirectoryIndex");
+
             let prevpath = moongiraffe.Cmis.prefs.value("previousSaveAsDirectory");
 
             // If we are preforming a quicksave action on a menu item
@@ -657,25 +627,68 @@ moongiraffe.Cmis.utils = {
             if (quicksave &&
                 previndex == index &&
                 prevpath !== "") {
-                path = Components.classes["@mozilla.org/file/local;1"]
+                path = Components
+                    .classes["@mozilla.org/file/local;1"]
                     .createInstance(Components.interfaces.nsILocalFile);
 
                 path.initWithPath(prevpath);
 
                 path.append(filename);
+
+                // Now we move down to path.exists() and check overwriteAction.
             }
             else {
-                path = moongiraffe.Cmis.utils.promptpath(window, data, filename);
+                path = moongiraffe.Cmis.utils.promptpath(data, filename);
+
+                if (!path) return [null, null]; // The cancel button was clicked.
 
                 let dir = moongiraffe.Cmis.utils.dirname(path.path);
 
                 moongiraffe.Cmis.prefs.value("previousSaveAsDirectory", dir);
+
+                let target = NetUtil.newURI(path);
+
+                return [target, path.leafName];
             }
         }
         else {
-            path = moongiraffe.Cmis.utils.buildpath(window, data, filename);
+            path = moongiraffe.Cmis.utils.buildpath(data, filename);
 
             moongiraffe.Cmis.prefs.value("previousSaveAsDirectory", "");
+        }
+
+        if (path.exists()) {
+            // 0 -> prompt user
+            // 1 -> save as unique file
+            // 2 -> overwrite file
+            let action = moongiraffe.Cmis.prefs.value("overwriteAction");
+
+            if (action == 0) {
+                // 0 -> overwrite file
+                // 1 -> save as unique file
+                // 2 -> cancel
+                let result = moongiraffe.Cmis.utils.prompt(path);
+
+                if (result == 2) {
+                    return [null, null];
+                }
+
+                // Note: The prompt.confirmEx call from utils.prompt
+                // will always return 1 if the user closes the window
+                // using the close button in the titlebar! See bug
+                // "345067". In this case it is safer to save as a
+                // unique file instead of overwriting.
+
+                if (result == 1) {
+                    // The user prompted to rename file... change
+                    // action to 'save as unique file'.
+                    action = 1;
+                }
+            }
+
+            if (action == 1) {
+                path = moongiraffe.Cmis.utils.uniq(path);
+            }
         }
 
         let target = NetUtil.newURI(path);
@@ -683,7 +696,9 @@ moongiraffe.Cmis.utils = {
         return [target, path.leafName];
     },
 
-    filename: function(window, source) {
+    filename: function(source) {
+        let window = Services.ww.activeWindow;
+
         let name = null;
 
         let cache = null;
