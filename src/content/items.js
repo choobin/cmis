@@ -44,6 +44,7 @@ if (!moongiraffe.Cmis.menu) moongiraffe.Cmis.menu = {};
 moongiraffe.Cmis.menu.items = {
     tree: null,
     treeview: null,
+    prevpath: "",
 
     load: function() {
         var data = this.loaddata();
@@ -172,7 +173,10 @@ moongiraffe.Cmis.menu.items = {
         // initial "Open Settings" label. The user can modity if later
         // if they need to.
         if (type !== "settings") {
-            var ret = { item: item, cancel: false };
+            var ret = {
+                item: item,
+                prevpath: moongiraffe.Cmis.menu.items.prevpath,
+                cancel: false };
 
             window.openDialog(
                 "chrome://cmis/content/edit.xul",
@@ -185,6 +189,9 @@ moongiraffe.Cmis.menu.items = {
 
             if (item.name === "")
                 return;
+
+            if (ret.prevpath !== "")
+                moongiraffe.Cmis.menu.items.prevpath = ret.prevpath;
         }
 
         // Item elements require a path.

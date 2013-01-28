@@ -116,6 +116,9 @@ moongiraffe.Cmis.menu.edit = {
 
         var path = $("path").value;
 
+        if (path === "")
+            path = window.arguments[0].prevpath;
+
         if (path !== "") {
             var file = Components.classes["@mozilla.org/file/local;1"]
                 .createInstance(Components.interfaces.nsILocalFile);
@@ -140,6 +143,8 @@ moongiraffe.Cmis.menu.edit = {
 
         if (ret == Components.interfaces.nsIFilePicker.returnOK) {
             $("path").value = picker.file.path;
+
+            window.arguments[0].prevpath = moongiraffe.Cmis.menu.edit.dirname(picker.file.path);
         }
 
         // Only set a default label if the field is empty.
@@ -165,6 +170,7 @@ moongiraffe.Cmis.menu.edit = {
         Services.strings.flushBundles();
     },
 
+    // XXX Cmis.util.basename
     basename: function(path) {
         var offset = path.lastIndexOf('/');
 
@@ -179,6 +185,23 @@ moongiraffe.Cmis.menu.edit = {
         }
 
         return base;
+    },
+
+    // XXX Cmis.util.dirname
+    dirname: function(path) {
+        var offset = path.lastIndexOf('/');
+
+        if (offset == -1) {
+            offset = path.lastIndexOf('\\');
+        }
+
+        var dir = path;
+
+        if (offset != -1) {
+            dir = new String(path).substring(0, offset);
+        }
+
+        return dir;
     }
 };
 
