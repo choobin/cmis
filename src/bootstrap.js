@@ -466,6 +466,8 @@ moongiraffe.Cmis.prefs = {
 
 moongiraffe.Cmis.io = {
     save: function(source, target) {
+        let window = Services.ww.activeWindow;
+
         let name = target.leafName;
 
         let privacy_context = null;
@@ -518,7 +520,6 @@ moongiraffe.Cmis.io = {
         let notify = moongiraffe.Cmis.prefs.value("statusbarNotification");
 
         if (notify) {
-            let window = Services.ww.activeWindow;
             if (window && window.XULBrowserWindow) // XXX L10n
                 window.XULBrowserWindow.setOverLink(name + " saved", null);
         }
