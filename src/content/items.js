@@ -822,7 +822,7 @@ Treeview.prototype = {
     getCellText: function(row, column) {
         switch (typeof(column) == "object" ? column.id : column) {
         case "name":
-            return this.items[row].name;
+            return this.items[row].name || "";
         case "path":
             return this.items[row].path || "";
         case "format":
