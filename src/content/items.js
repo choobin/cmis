@@ -65,6 +65,8 @@ moongiraffe.Cmis.menu.items = {
 
         var list = branch.getComplexValue("directoryList", Components.interfaces.nsISupportsString).data;
 
+        if (list === "") return [];
+
         return JSON.parse(list);
     },
 
