@@ -544,9 +544,9 @@ moongiraffe.Cmis.utils = {
     promptpath: function(data, filename) {
         let window = Services.ww.activeWindow;
 
-        var nsIFilePicker = Components.interfaces.nsIFilePicker;
+        let nsIFilePicker = Components.interfaces.nsIFilePicker;
 
-        var fp = Components.classes["@mozilla.org/filepicker;1"]
+        let fp = Components.classes["@mozilla.org/filepicker;1"]
             .createInstance(nsIFilePicker);
 
         fp.init(window, data.name, nsIFilePicker.modeSave);
@@ -562,9 +562,7 @@ moongiraffe.Cmis.utils = {
             fp.displayDirectory = path;
         }
 
-        fp.appendFilters(nsIFilePicker.filterAll);
-
-        var res = fp.show();
+        let res = fp.show();
 
         if (res == nsIFilePicker.returnCancel)
             return null;
@@ -826,13 +824,13 @@ moongiraffe.Cmis.utils = {
     },
 
     dirname: function(path) {
-        var offset = path.lastIndexOf('/');
+        let offset = path.lastIndexOf('/');
 
         if (offset == -1) {
             offset = path.lastIndexOf('\\');
         }
 
-        var dir = path;
+        let dir = path;
 
         if (offset != -1) {
             dir = new String(path).substring(0, offset);
