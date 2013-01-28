@@ -54,6 +54,7 @@ moongiraffe.Cmis.menu.edit = {
             $("format").hidden = true;
             $("formatlabel").hidden = true;
             $("formatguide").hidden = true;
+            $("saveas").hidden = true;
         }
 
         $("settings-explanation").hidden = true;
