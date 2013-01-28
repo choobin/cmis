@@ -909,6 +909,38 @@ moongiraffe.Cmis.update = {
 
         let items = [];
 
+        // If the first character is a '[' it is safe to assume that
+        // the directoryList has already been converted, i.e., user is
+        // running a -dev version. Note: Saveas items have been merged
+        // with Item objects. That is, we still need to process the list.
+        if (list[0] == '[') {
+            let xs = JSON.parse(list);
+
+
+            xs.forEach(function (item) {
+                if (item.type === "item" &&
+                    item.saveas === undefined) {
+                    item.saveas = false;
+                }
+
+                if (item.type ==="saveas") {
+                    item.type = "item";
+                    item.format = "%DEFAULT";
+                    item.saveas = true;
+                }
+
+                items.push(item);
+            });
+
+            list = JSON.stringify(items);
+
+            moongiraffe.Cmis.prefs.value("directoryList", list);
+
+            return;
+        }
+
+        // Otherwise we translate the old directoryList string
+        // and go from there.
         let xs = list.split("|");
 
         xs.forEach(function (x) {
@@ -939,7 +971,7 @@ moongiraffe.Cmis.update = {
                     name: item[2],
                     path: item[3],
                     format: "%DEFAULT",
-                    saveas: false
+                    saveas: true
                 });
                 break;
 
