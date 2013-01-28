@@ -283,6 +283,8 @@ moongiraffe.Cmis.menu = {
 
         let [target, filename] = moongiraffe.Cmis.utils.target(index, source, null, false);
 
+        if (!target) return;
+
         moongiraffe.Cmis.io.save(source, target, filename);
 
         moongiraffe.Cmis.prefs.value("previousDirectoryIndex", index);
@@ -342,6 +344,8 @@ moongiraffe.Cmis.menu = {
         let source = NetUtil.newURI(event.originalTarget.src);
 
         let [target, filename] = moongiraffe.Cmis.utils.target(index, source, alt, true);
+
+        if (!target) return;
 
         moongiraffe.Cmis.io.save(source, target, filename);
 
