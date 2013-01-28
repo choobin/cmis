@@ -59,10 +59,6 @@
       </tree>
 
       <vbox>
-        <button class="generate"
-                label="  &cmis.items.generate;"
-                id="button-generate"
-                oncommand="moongiraffe.Cmis.menu.items.generate();"/>
         <button class="new"
                 label="  &cmis.items.item;"
                 id="button-item"
@@ -79,6 +75,10 @@
                 label="  &cmis.items.separator;"
                 id="button-separator"
                 oncommand="moongiraffe.Cmis.menu.items.separator();"/>
+        <button class="generate"
+                label="  &cmis.items.generate;"
+                id="button-generate"
+                oncommand="moongiraffe.Cmis.menu.items.generate();"/>
         <button class="edit"
                 label="  &cmis.items.edit;"
                 id="button-edit"
