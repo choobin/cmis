@@ -279,9 +279,11 @@ moongiraffe.Cmis.menu = {
             url = gContextMenu.link;
         }
 
+        let saveas = false;
+
         let source = NetUtil.newURI(url);
 
-        let [target, filename] = moongiraffe.Cmis.utils.target(index, source, null, false);
+        let [target, filename] = moongiraffe.Cmis.utils.target(event, index, source, null, false);
 
         if (!target) return;
 
@@ -343,7 +345,7 @@ moongiraffe.Cmis.menu = {
 
         let source = NetUtil.newURI(event.originalTarget.src);
 
-        let [target, filename] = moongiraffe.Cmis.utils.target(index, source, alt, true);
+        let [target, filename] = moongiraffe.Cmis.utils.target(event, index, source, alt, true);
 
         if (!target) return;
 
@@ -557,6 +559,8 @@ moongiraffe.Cmis.utils = {
 
         fp.defaultString = filename;
 
+        fp.appendFilters(nsIFilePicker.filterAll);
+
         if (data.path !== "") {
             let path = Components.classes["@mozilla.org/file/local;1"]
                 .createInstance(Components.interfaces.nsILocalFile);
@@ -605,7 +609,7 @@ moongiraffe.Cmis.utils = {
         return button;
     },
 
-    target: function(index, source, alt, quicksave) {
+    target: function(event, index, source, alt, quicksave) {
         let list = moongiraffe.Cmis.prefs.value("directoryList");
 
         let items = JSON.parse(list);
@@ -617,6 +621,9 @@ moongiraffe.Cmis.utils = {
         filename = moongiraffe.Cmis.utils.format(data.format, filename, alt);
 
         let path = null;
+
+        if (event.shiftKey)
+            data.saveas = true;
 
         if (data.saveas) {
             let previndex = moongiraffe.Cmis.prefs.value("previousDirectoryIndex");
