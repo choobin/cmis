@@ -281,9 +281,9 @@ moongiraffe.Cmis.menu = {
 
         let source = NetUtil.newURI(url);
 
-        let target = moongiraffe.Cmis.utils.target(window, index, source, null, false);
+        let [target, filename] = moongiraffe.Cmis.utils.target(window, index, source, null, false);
 
-        moongiraffe.Cmis.io.save(source, target);
+        moongiraffe.Cmis.io.save(source, target, filename);
 
         moongiraffe.Cmis.prefs.value("previousDirectoryIndex", index);
     },
@@ -341,9 +341,9 @@ moongiraffe.Cmis.menu = {
 
         let source = NetUtil.newURI(event.originalTarget.src);
 
-        let target = moongiraffe.Cmis.utils.target(window, index, source, alt, true);
+        let [target, filename] = moongiraffe.Cmis.utils.target(window, index, source, alt, true);
 
-        moongiraffe.Cmis.io.save(source, target);
+        moongiraffe.Cmis.io.save(source, target, filename);
 
         moongiraffe.Cmis.prefs.value("previousDirectoryIndex", index);
     },
@@ -465,10 +465,8 @@ moongiraffe.Cmis.prefs = {
 };
 
 moongiraffe.Cmis.io = {
-    save: function(source, target) {
+    save: function(source, target, filename) {
         let window = Services.ww.activeWindow;
-
-        let name = target.leafName;
 
         let privacy_context = null;
 
@@ -506,7 +504,7 @@ moongiraffe.Cmis.io = {
             nsIDownloadManager.DOWNLOAD_TYPE_DOWNLOAD,
             source,
             target,
-            name,
+            filename,
             null, // mime info
             null, // start time
             null, // tmp file
@@ -520,8 +518,9 @@ moongiraffe.Cmis.io = {
         let notify = moongiraffe.Cmis.prefs.value("statusbarNotification");
 
         if (notify) {
-            if (window && window.XULBrowserWindow) // XXX L10n
-                window.XULBrowserWindow.setOverLink(name + " saved", null);
+            if (window && window.XULBrowserWindow) { // XXX L10n
+                window.XULBrowserWindow.setOverLink(filename + " saved", null);
+            }
         }
     }
 };
@@ -679,7 +678,7 @@ moongiraffe.Cmis.utils = {
 
         let target = NetUtil.newURI(path);
 
-        return target;
+        return [target, path.leafName];
     },
 
     filename: function(window, source) {
