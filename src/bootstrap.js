@@ -594,6 +594,8 @@ moongiraffe.Cmis.utils = {
             fp.displayDirectory = path;
         }
 
+        fp.appendFilters(nsIFilePicker.filterAll);
+
         var res = fp.show();
 
         if (res == nsIFilePicker.returnCancel)
