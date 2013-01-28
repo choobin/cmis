@@ -281,7 +281,11 @@ moongiraffe.Cmis.menu = {
 
         let source = NetUtil.newURI(url);
 
-        moongiraffe.Cmis.io.save(window, index, source);
+        let target = moongiraffe.Cmis.utils.target(window, index, source, null, false);
+
+        moongiraffe.Cmis.io.save(source, target);
+
+        moongiraffe.Cmis.prefs.value("previousDirectoryIndex", index);
     },
 
     quicksave: function(event) {
@@ -333,11 +337,15 @@ moongiraffe.Cmis.menu = {
             return;
         }
 
-        let source = NetUtil.newURI(event.originalTarget.src);
-
         let alt = event.originalTarget.alt;
 
-        moongiraffe.Cmis.io.save(window, index, source, alt);
+        let source = NetUtil.newURI(event.originalTarget.src);
+
+        let target = moongiraffe.Cmis.utils.target(window, index, source, alt, true);
+
+        moongiraffe.Cmis.io.save(source, target);
+
+        moongiraffe.Cmis.prefs.value("previousDirectoryIndex", index);
     },
 
     loadoptions: function() {
@@ -392,6 +400,7 @@ moongiraffe.Cmis.prefs = {
         string.data = "";
 
         branch.setComplexValue("directoryList", Components.interfaces.nsISupportsString, string);
+        branch.setComplexValue("previousSaveAsDirectory", Components.interfaces.nsISupportsString, string);
         branch.setIntPref("itemPlacement", 0);
         branch.setIntPref("overwriteAction", 0);
         branch.setIntPref("previousDirectoryIndex", -1);
@@ -404,14 +413,15 @@ moongiraffe.Cmis.prefs = {
     value: function(key, value) {
         let branch = Services.prefs.getBranch(PREFBRANCH);
 
-        if (key === "directoryList") {
+        if (key === "directoryList" ||
+            key === "previousSaveAsDirectory") {
             if (value !== undefined) {
                 let string = Components.classes["@mozilla.org/supports-string;1"]
                     .createInstance(Components.interfaces.nsISupportsString);
 
                 string.data = value;
 
-                branch.setComplexValue("directoryList", Components.interfaces.nsISupportsString, string);
+                branch.setComplexValue(key, Components.interfaces.nsISupportsString, string);
 
                 return;
             }
@@ -455,31 +465,8 @@ moongiraffe.Cmis.prefs = {
 };
 
 moongiraffe.Cmis.io = {
-    save: function(window, index, source, alt) {
-        let list = moongiraffe.Cmis.prefs.value("directoryList");
-
-        let items = JSON.parse(list);
-
-        let data = items[index];
-
-        let filename = moongiraffe.Cmis.utils.filename(window, source);
-
-        filename = moongiraffe.Cmis.utils.format(data.format, filename, alt);
-
-        let path = null;
-
-        if (data.saveas) {
-            path = moongiraffe.Cmis.utils.promptpath(window, data, filename);
-        }
-        else {
-            path = moongiraffe.Cmis.utils.buildpath(window, data, filename);
-        }
-
-        if (!path) return;
-
-        let target = NetUtil.newURI(path);
-
-        let name = path.leafName;
+    save: function(source, target) {
+        let name = target.leafName;
 
         let privacy_context = null;
 
@@ -509,7 +496,8 @@ moongiraffe.Cmis.io = {
         const nsIDownloadManager = Components.interfaces.nsIDownloadManager;
 
         // https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIDownloadManager
-        let manager = Components.classes["@mozilla.org/download-manager;1"]
+        let manager = Components
+            .classes["@mozilla.org/download-manager;1"]
             .getService(nsIDownloadManager);
 
         let listener = manager.addDownload(
@@ -527,13 +515,11 @@ moongiraffe.Cmis.io = {
 
         persist.saveURI(source, null, null, null, null, target, privacy_context);
 
-        moongiraffe.Cmis.prefs.value("previousDirectoryIndex", index);
-
         let notify = moongiraffe.Cmis.prefs.value("statusbarNotification");
 
         if (notify) {
-            window = Services.ww.activeWindow;
-            if (window.XULBrowserWindow)
+            let window = Services.ww.activeWindow;
+            if (window && window.XULBrowserWindow) // XXX L10n
                 window.XULBrowserWindow.setOverLink(name + " saved", null);
         }
     }
@@ -643,6 +629,56 @@ moongiraffe.Cmis.utils = {
         Services.strings.flushBundles();
 
         return button;
+    },
+
+    target: function(window, index, source, alt, quicksave) {
+        let list = moongiraffe.Cmis.prefs.value("directoryList");
+
+        let items = JSON.parse(list);
+
+        let data = items[index];
+
+        let filename = moongiraffe.Cmis.utils.filename(window, source);
+
+        filename = moongiraffe.Cmis.utils.format(data.format, filename, alt);
+
+        let previndex = moongiraffe.Cmis.prefs.value("previousDirectoryIndex");
+
+        let path = null;
+
+        if (data.saveas) {
+            let prevpath = moongiraffe.Cmis.prefs.value("previousSaveAsDirectory");
+
+            // If we are preforming a quicksave action on a menu item
+            // with the 'Save As' option selected we should only
+            // prompt if the previousSaveAsDirectory is not set.
+            if (quicksave &&
+                previndex == index &&
+                prevpath !== "") {
+                path = Components.classes["@mozilla.org/file/local;1"]
+                    .createInstance(Components.interfaces.nsILocalFile);
+
+                path.initWithPath(prevpath);
+
+                path.append(filename);
+            }
+            else {
+                path = moongiraffe.Cmis.utils.promptpath(window, data, filename);
+
+                let dir = moongiraffe.Cmis.utils.dirname(path.path);
+
+                moongiraffe.Cmis.prefs.value("previousSaveAsDirectory", dir);
+            }
+        }
+        else {
+            path = moongiraffe.Cmis.utils.buildpath(window, data, filename);
+
+            moongiraffe.Cmis.prefs.value("previousSaveAsDirectory", "");
+        }
+
+        let target = NetUtil.newURI(path);
+
+        return target;
     },
 
     filename: function(window, source) {
@@ -770,6 +806,22 @@ moongiraffe.Cmis.utils = {
             }
         }
         return path;
+    },
+
+    dirname: function(path) {
+        var offset = path.lastIndexOf('/');
+
+        if (offset == -1) {
+            offset = path.lastIndexOf('\\');
+        }
+
+        var dir = path;
+
+        if (offset != -1) {
+            dir = new String(path).substring(0, offset);
+        }
+
+        return dir;
     },
 
     format: function(format, filename, alt) {
