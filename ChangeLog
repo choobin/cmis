@@ -1,3 +1,31 @@
+2013-01-29  Christopher Hoobin  <hsirhc@gmail.com>
+
+	- Updated directoryList format from a delimited string to a JSON string.
+
+	- Added import/export functionality.
+
+	- New context items will now be inserted bellow the current
+	  selected item.
+
+	- File prefix setting is now 'File format'. It is now possible to
+	  control how the file is named, not just its prefix.
+
+	- Variables added to File format setting.
+
+	- Added 'Open Save As Dialog' option to menu items.
+
+	- Added 'Settings' option to settings dialog. This will open the
+	  settings dialog from the context menu.
+
+	- Added 'Generate' option to settings dialog. This will generate a
+	  menu tree from a selected directory.
+
+	- Double click on a menu item will open its edit dialog.
+
+	- Added 'Hide the default Save Image As... context item' option.
+
+	- Added 'Display save notification in the status bar' option.
+
 2013-01-13  Christopher Hoobin  <hsirhc@gmail.com>
 
 	* bootstrap.js
