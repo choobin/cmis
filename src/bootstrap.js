@@ -355,10 +355,17 @@ moongiraffe.Cmis.menu = {
     },
 
     loadoptions: function() {
+        let window = Services.ww.getWindowByName("cmis-items", Services.ww.activeWindow);
+
+        if (window) {
+            window.focus();
+            return;
+        }
+
         Services.ww.openWindow(
             null,
             "chrome://cmis/content/items.xul",
-            null,
+            "cmis-items",
             "dialog,chrome,centerscreen,resizable=yes,scrollbars=no,close=no",
             null);
     },
