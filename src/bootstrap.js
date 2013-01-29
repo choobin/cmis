@@ -525,7 +525,12 @@ moongiraffe.Cmis.io = {
 
         if (notify) {
             if (window && window.XULBrowserWindow) { // XXX L10n
-                window.XULBrowserWindow.setOverLink(filename + " saved", null);
+                let bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
+                let message = filename + " " + bundle.GetStringFromName("saved");
+
+                window.XULBrowserWindow.setOverLink(message, null);
+
+                Services.strings.flushBundles();
             }
         }
     }
@@ -941,7 +946,6 @@ moongiraffe.Cmis.update = {
         // with Item objects. That is, we still need to process the list.
         if (list[0] == '[') {
             let xs = JSON.parse(list);
-
 
             xs.forEach(function (item) {
                 if (item.type === "item" &&
