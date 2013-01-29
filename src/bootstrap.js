@@ -935,7 +935,7 @@ moongiraffe.Cmis.update = {
     // friendly(er) JSON. This will enable labels and paths to contain
     // "|" and "!"  characters and lead the way to easy importing and
     // exporting of CMIS settings.
-    v20130128: function() {
+    v20130129: function() {
         let list = moongiraffe.Cmis.prefs.value("directoryList");
 
         let items = [];
@@ -1033,7 +1033,7 @@ function startup(data, reason) {
     if (Services.vc.compare(Services.appinfo.platformVersion, "10.0") < 0) {
         Components.manager.addBootstrappedManifestLocation(data.installPath);
     }
-
+q
     moongiraffe.Cmis.prefs.startup();
     moongiraffe.Cmis.window.startup();
 }
@@ -1049,8 +1049,8 @@ function shutdown(data, reason) {
 
 function install(data, reason) {
     if (reason === 7 /* ADDON_UPGRADE */) {
-        if (Services.vc.compare(data.version, "20130128") <= 0) {
-            moongiraffe.Cmis.update.v20130128();
+        if (Services.vc.compare(data.version, "20130129") <= 0) {
+            moongiraffe.Cmis.update.v20130129();
         }
     }
 }
