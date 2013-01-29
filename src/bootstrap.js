@@ -359,7 +359,7 @@ moongiraffe.Cmis.menu = {
             null,
             "chrome://cmis/content/items.xul",
             null,
-            "chrome,modal,centerscreen,resizable=yes,scrollbars=no",
+            "dialog,chrome,centerscreen,resizable=yes,scrollbars=no,close=no",
             null);
     },
 
@@ -458,14 +458,7 @@ moongiraffe.Cmis.prefs = {
         if (topic === "addon-options-displayed" && data === "cmis@choobin") {
             let document = subject;
             let button = document.getElementById("cmis-settings-button");
-            button.addEventListener("command", function() {
-                Services.ww.openWindow(
-                    null,
-                    "chrome://cmis/content/items.xul",
-                    null,
-                    "chrome,modal,centerscreen,resizable=yes,scrollbars=no",
-                    null);
-            }, false);
+            button.addEventListener("command", moongiraffe.Cmis.menu.loadoptions, false);
         }
     }
 };
