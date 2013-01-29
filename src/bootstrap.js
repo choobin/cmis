@@ -329,7 +329,7 @@ moongiraffe.Cmis.menu = {
         let index = moongiraffe.Cmis.prefs.value("previousDirectoryIndex");
 
         if (index == -1) {
-            let bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
+            let bundle = Services.strings.createBundle("chrome://cmis/locale/cmis.properties");
 
             Services.prompt.alert(
                 null,
@@ -525,7 +525,7 @@ moongiraffe.Cmis.io = {
 
         if (notify) {
             if (window && window.XULBrowserWindow) { // XXX L10n
-                let bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
+                let bundle = Services.strings.createBundle("chrome://cmis/locale/cmis.properties");
                 let message = filename + " " + bundle.GetStringFromName("saved");
 
                 window.XULBrowserWindow.setOverLink(message, null);
@@ -588,7 +588,7 @@ moongiraffe.Cmis.utils = {
 
         // https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIStringBundleService
         // https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIStringBundle
-        let bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
+        let bundle = Services.strings.createBundle("chrome://cmis/locale/cmis.properties");
 
         // https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIPromptService
         let check = {value: false};

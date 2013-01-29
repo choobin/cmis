@@ -166,7 +166,7 @@ moongiraffe.Cmis.menu.items = {
         case "settings":
             item = new Settings();
 
-            var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
+            var bundle = Services.strings.createBundle("chrome://cmis/locale/cmis.properties");
             item.name = bundle.GetStringFromName("openSettings");
             break;
         }
@@ -329,7 +329,7 @@ moongiraffe.Cmis.menu.items = {
         // looking at you Windows (/me shakes fist).
         timestamp = timestamp.replace(/:/g, "");
 
-        var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
+        var bundle = Services.strings.createBundle("chrome://cmis/locale/cmis.properties");
 
         var json = {
             info: "Context Menu Image Saver Menu Settings",
@@ -394,7 +394,7 @@ moongiraffe.Cmis.menu.items = {
 
     // XXX Cmis.util.error
     error: function(string) {
-        var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
+        var bundle = Services.strings.createBundle("chrome://cmis/locale/cmis.properties");
 
         Services.prompt.alert(
             null,
@@ -445,7 +445,7 @@ moongiraffe.Cmis.menu.items = {
 
         fp.init(window, "", nsIFilePicker.modeOpen);
 
-        var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
+        var bundle = Services.strings.createBundle("chrome://cmis/locale/cmis.properties");
 
         fp.appendFilter("JSON " + bundle.GetStringFromName("files"), "*.json");
 
@@ -534,7 +534,7 @@ moongiraffe.Cmis.menu.items = {
             // so we can save in the root directory too.
             data.push(new Submenu(depth, directory.leafName));
 
-            var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
+            var bundle = Services.strings.createBundle("chrome://cmis/locale/cmis.properties");
 
             data.push(new Item(depth + 1, bundle.GetStringFromName("here"), directory.path, "%DEFAULT", false));
 

@@ -134,7 +134,7 @@ moongiraffe.Cmis.menu.edit = {
             picker.displayDirectory = file;
         }
 
-        var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
+        var bundle = Services.strings.createBundle("chrome://cmis/locale/cmis.properties");
 
         picker.init(window,
                     bundle.GetStringFromName("selectDirectory"),
@@ -161,7 +161,7 @@ moongiraffe.Cmis.menu.edit = {
     },
 
     error: function(string) {
-        var bundle = Services.strings.createBundle("chrome://cmis/locale/prompt.properties");
+        var bundle = Services.strings.createBundle("chrome://cmis/locale/cmis.properties");
 
         Services.prompt.alert(
             null,
