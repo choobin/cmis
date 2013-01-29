@@ -1033,7 +1033,7 @@ function startup(data, reason) {
     if (Services.vc.compare(Services.appinfo.platformVersion, "10.0") < 0) {
         Components.manager.addBootstrappedManifestLocation(data.installPath);
     }
-q
+
     moongiraffe.Cmis.prefs.startup();
     moongiraffe.Cmis.window.startup();
 }
