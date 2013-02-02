@@ -39,7 +39,9 @@
 <!ENTITY cmis.items.format.date "ISO8601 style date string YYYY-MM-DD-hhmmss">
 <!ENTITY cmis.items.format.dateformat "A custom date string, e.g., &#37;DATE{YYYY-MM}. Use yy for abbreviated year">
 <!ENTITY cmis.items.format.alt "The &lt;IMG&gt; alt tag text (if it exists)">
-<!ENTITY cmis.items.menu.label "Advanced Options">
+<!ENTITY cmis.items.menu.label "Options">
 <!ENTITY cmis.items.menu.import "Import settings">
 <!ENTITY cmis.items.menu.export "Export settings">
+<!ENTITY cmis.items.menu.expandSubmenus "Expand all Submenus">
+<!ENTITY cmis.items.menu.collapseSubmenus "Collapse all Submenus">
 <!ENTITY cmis.items.menu.close "Close">
