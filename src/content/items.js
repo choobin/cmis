@@ -312,11 +312,12 @@ moongiraffe.Cmis.menu.items = {
 
         var toitem = this.treeview.items[toindex];
 
-        // If we are moving into a closed submenu we need to swap their contents.
-        if (to != this.treeview.rowCount && // Special case: Last item + moving down --> call swap
-            fromitem.depth == toitem.depth &&
-            toitem.type === "submenu" &&
-            !toitem.open) {
+        if (to != from && // If we are the last item or the last
+            to != this.treeview.rowCount && // submenu of the tree we skip this and call swap
+            fromitem.depth == toitem.depth && // otherwise, if we are at the same level
+            toitem.type === "submenu" && // and we are moving into a submenu that is
+            !toitem.open) { // closed
+            // we can shuffle the contents of both items
             this.treeview.shuffle(up, toindex, fromindex);
             this.treeview.selection.select(select);
         }
@@ -773,8 +774,6 @@ Treeview.prototype = {
     },
 
     swap: function(up, to, from) {
-        Services.console.logStringMessage("to: " + to + ", from: " + from);
-
         var fromitems = this.containerchildren(from) + 1;
 
         var select;
@@ -787,7 +786,6 @@ Treeview.prototype = {
             this.items[from].depth--;
 
             select = this.visibleindex(from);
-            Services.console.logStringMessage("[1] select " + select);
             this.selection.select(select);
             moongiraffe.Cmis.menu.items.select();
             return;
@@ -802,7 +800,6 @@ Treeview.prototype = {
                 this.items[i].depth--;
 
             select = this.visibleindex(from);
-            Services.console.logStringMessage("[2] select " + select);
             this.selection.select(select);
             moongiraffe.Cmis.menu.items.select();
             return;
@@ -817,7 +814,6 @@ Treeview.prototype = {
                     this.items[i].depth++;
 
                 select = this.visibleindex(from);
-                Services.console.logStringMessage("[3] select " + select);
                 this.selection.select(select);
                 moongiraffe.Cmis.menu.items.select();
                 return;
@@ -832,7 +828,6 @@ Treeview.prototype = {
                     this.items[i].depth++;
 
                 select = this.visibleindex(from);
-                Services.console.logStringMessage("[4] select " + select);
                 this.selection.select(select);
                 moongiraffe.Cmis.menu.items.select();
                 return;
@@ -867,16 +862,13 @@ Treeview.prototype = {
             if (to < from) { // Moving upwards. The 'to' index marks the beginning.
                 this.shuffleleft(to, fromitems + 1); // Including the 'to' item on the left.
                 select = this.visibleindex(to);
-                Services.console.logStringMessage("[5] select: " + select);
                 this.selection.select(select); // Select the new position of the submenu.
             }
             else { // Moving downwards. The 'from' index marks the beginning.
                 this.shuffleright(from, fromitems + 1); // Including the 'to' item on the right.
                 select = this.visibleindex(from + 1);
-                Services.console.logStringMessage("[6] select: " + select);
                 this.selection.select(select); // Select the new position of the submenu.
             }
-
 
             return;
         }
@@ -893,7 +885,6 @@ Treeview.prototype = {
         }
 
         select = this.visibleindex(from);
-        Services.console.logStringMessage("[7] select: " + select);
         this.selection.select(select);
         moongiraffe.Cmis.menu.items.select();
     },
