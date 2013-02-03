@@ -298,17 +298,27 @@ moongiraffe.Cmis.menu.items = {
             }
         }
 
+        var select = to;
+
+        // If we are moving an open submenu downwards we have to
+        // adjust the to index to account for the submenus children.
+        if (!up &&
+            fromitem.type === "submenu" &&
+            fromitem.open) {
+            to += this.treeview.containerchildren(fromindex);
+        }
+
         var toindex = this.treeview.visible[to];
 
         var toitem = this.treeview.items[toindex];
 
         // If we are moving into a closed submenu we need to swap their contents.
-        if (to != from && // Special case: Last item + moving down --> call swap
+        if (to != this.treeview.rowCount && // Special case: Last item + moving down --> call swap
             fromitem.depth == toitem.depth &&
             toitem.type === "submenu" &&
             !toitem.open) {
             this.treeview.shuffle(up, toindex, fromindex);
-            this.treeview.selection.select(to);
+            this.treeview.selection.select(select);
         }
         else {
             // Otherwise we call the old-style swap bahaviour on all
@@ -605,8 +615,12 @@ moongiraffe.Cmis.menu.items = {
     },
 
     startdrag: function(event) {
-        Services.console.logStringMessage("startdrag: " + this.treeview.selection.currentIndex);
-        event.dataTransfer.setData("text/plain", "" + this.treeview.selection.currentIndex);
+        var index = this.treeview.selection.currentIndex;
+
+        if (index < 0 || index > this.treeview.rowCount - 1)
+            return;
+
+        event.dataTransfer.setData("text/plain", "" + index);
     }
 };
 
@@ -653,6 +667,8 @@ function Treeview(items) {
 }
 
 Treeview.prototype = {
+    QueryInterface: XPCOMUtils.generateQI([Components.interfaces.nsITreeView]),
+
     computevisible: function() {
         this.visible = [];
 
@@ -737,8 +753,31 @@ Treeview.prototype = {
         this.reverse(from, fromitems + toitems);
     },
 
+    visibleindex: function(index) {
+        var position = 0;
+
+        var i = 0;
+
+        while (i < index) {
+            if (this.items[i].type === "submenu" && // isContainer(i) checks this.visible[i]
+                !this.items[i].open) {
+                i += this.containerchildren(i); // skip children
+            }
+
+            i++;
+
+            position++;
+        }
+
+        return position;
+    },
+
     swap: function(up, to, from) {
+        Services.console.logStringMessage("to: " + to + ", from: " + from);
+
         var fromitems = this.containerchildren(from) + 1;
+
+        var select;
 
         if (to == from && // If we are an 'item' in the Treeview
             !(this.items[from].type === "submenu") && // that is, we are 'not' a container
@@ -747,7 +786,9 @@ Treeview.prototype = {
             // we need to incrementally reduce its depth.
             this.items[from].depth--;
 
-            this.selection.select(from);
+            select = this.visibleindex(from);
+            Services.console.logStringMessage("[1] select " + select);
+            this.selection.select(select);
             moongiraffe.Cmis.menu.items.select();
             return;
         }
@@ -760,7 +801,9 @@ Treeview.prototype = {
             for (var i = from; i < from + fromitems; i++)
                 this.items[i].depth--;
 
-            this.selection.select(from);
+            select = this.visibleindex(from);
+            Services.console.logStringMessage("[2] select " + select);
+            this.selection.select(select);
             moongiraffe.Cmis.menu.items.select();
             return;
         }
@@ -773,7 +816,9 @@ Treeview.prototype = {
                 for (var i = from; i < from + fromitems; i++)
                     this.items[i].depth++;
 
-                this.selection.select(from);
+                select = this.visibleindex(from);
+                Services.console.logStringMessage("[3] select " + select);
+                this.selection.select(select);
                 moongiraffe.Cmis.menu.items.select();
                 return;
             }
@@ -786,7 +831,9 @@ Treeview.prototype = {
                 for (var i = from; i < from + fromitems; i++)
                     this.items[i].depth++;
 
-                this.selection.select(from);
+                select = this.visibleindex(from);
+                Services.console.logStringMessage("[4] select " + select);
+                this.selection.select(select);
                 moongiraffe.Cmis.menu.items.select();
                 return;
             }
@@ -819,12 +866,17 @@ Treeview.prototype = {
 
             if (to < from) { // Moving upwards. The 'to' index marks the beginning.
                 this.shuffleleft(to, fromitems + 1); // Including the 'to' item on the left.
-                this.selection.select(to); // Select the new position of the submenu.
+                select = this.visibleindex(to);
+                Services.console.logStringMessage("[5] select: " + select);
+                this.selection.select(select); // Select the new position of the submenu.
             }
             else { // Moving downwards. The 'from' index marks the beginning.
                 this.shuffleright(from, fromitems + 1); // Including the 'to' item on the right.
-                this.selection.select(from + 1); // Select the new position of the submenu.
+                select = this.visibleindex(from + 1);
+                Services.console.logStringMessage("[6] select: " + select);
+                this.selection.select(select); // Select the new position of the submenu.
             }
+
 
             return;
         }
@@ -840,14 +892,22 @@ Treeview.prototype = {
                 this.items[i].depth--;
         }
 
-        this.selection.select(from);
+        select = this.visibleindex(from);
+        Services.console.logStringMessage("[7] select: " + select);
+        this.selection.select(select);
         moongiraffe.Cmis.menu.items.select();
     },
 
     append: function(menu) {
+        var oldlength = this.visible.length;
+
         this.items = this.items.concat(menu);
 
-        this.treebox.rowCountChanged(this.rowCount, menu.length);
+        this.computevisible();
+
+        var change = this.visible.length - oldlength;
+
+        this.treebox.rowCountChanged(this.rowCount, change);
 
         this.treebox.invalidate();
 
@@ -1053,8 +1113,8 @@ Treeview.prototype = {
 
     canDrop: function(index, orientation, transfer) {
         // Prevent dropping data on top of containers (submenus). This
-        // was we can only drop before or after items and/or submenus
-        // and makes the code much easier to deal with.
+        // way we can only drop before or after items and/or submenus
+        // making this code much easier to deal with.
         if (orientation == 0 /* DROP_ON */)
             return false;
 
@@ -1094,29 +1154,43 @@ Treeview.prototype = {
 
         var toindex = this.visible[to];
 
-        var toitem = this.items[to];
-
-        var nitems = this.containerchildren(fromindex) + 1;
-
-        // If we are draging an item or submenu downwards we have to
-        // adjust the to index once we splice the date from this.items
-        if (toindex > fromindex)
-            toindex = toindex - nitems;
-
-        // If we are dropping after a menu item we need to splice the
-        // data on the next toindex.
-        if (orientation == 1 /* DROP_AFTER */)
-            toindex++;
-
-        var data = this.items.splice(fromindex, nitems);
+        var toitem = this.items[toindex];
 
         var offset = toitem.depth - fromitem.depth;
 
-        data.forEach(function (item) {
+        if (orientation == 1 /* DROP_AFTER */ &&
+            toitem.type === "submenu") {
+            if (toitem.open) {
+                // If we are dropping into an open submenu we need to
+                // nest fromitems inside it
+                offset++;
+            }
+            else {
+                // If we are dropping after a closed submenu we have
+                // to adjust its offset past its children too
+                toindex += this.containerchildren(toindex);
+            }
+        }
+
+        var fromchildren = this.containerchildren(fromindex);
+
+        var fromitems = this.items.splice(fromindex, fromchildren + 1);
+
+        // If we are dropping after a menu item we need to splice the
+        // data using the position /after/ toindex
+        if (orientation == 1 /* DROP_AFTER */)
+            toindex++;
+
+        // If we are draging an item or submenu downwards we have to
+        // adjust the to index once we splice the from elements
+        if (toindex > fromindex)
+            toindex = toindex - (fromchildren + 1);
+
+        fromitems.forEach(function (item) {
             item.depth += offset;
         });
 
-        Array.prototype.splice.apply(this.items, [toindex, 0].concat(data));
+        Array.prototype.splice.apply(this.items, [toindex, 0].concat(fromitems));
 
         this.invalidate();
 
@@ -1133,10 +1207,7 @@ Treeview.prototype = {
     getRowProperties: function(row,props) {},
     getCellProperties: function(row,col,props) {},
     getColumnProperties: function(colid,col,props) {},
-    getImageSrc: function getImageSrc(row, column) {},
-
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=654998
-    QueryInterface: XPCOMUtils.generateQI([Components.interfaces.nsITreeView]),
+    getImageSrc: function(row, column) {},
 };
 
 function $(x) {
