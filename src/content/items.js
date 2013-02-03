@@ -1188,6 +1188,8 @@ Treeview.prototype = {
         this.selection.select(to);
 
         moongiraffe.Cmis.menu.items.select();
+
+        moongiraffe.Cmis.menu.items.update();
     },
 
     cycleHeader: function(col, elem) {},
