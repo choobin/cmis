@@ -109,8 +109,8 @@ moongiraffe.Cmis.menu.items = {
 
         $("button-delete").disabled = false;
 
-        // If nothing is selected /or/ there are no items in the list
-        // /or/ the selection index is invalid /then/ we can not
+        // If nothing is selected or there are no items in the list
+        // or the selection index is invalid then we can not
         // delete anything.
         if (index < 0 || count == 0 || index >= count) {
             $("button-delete").disabled = true;
@@ -118,8 +118,8 @@ moongiraffe.Cmis.menu.items = {
 
         $("button-edit").disabled = false;
 
-        // If nothing is selected /or/ the selected item is a
-        // separator /or/ the selection index is invalid /then/ we can
+        // If nothing is selected or the selected item is a
+        // separator or the selection index is invalid then we can
         // not edit anything.
         if (index < 0 || index >= count || item.type === "separator") {
             $("button-edit").disabled = true;
@@ -129,8 +129,8 @@ moongiraffe.Cmis.menu.items = {
 
         $("button-down").disabled = false;
 
-        // If nothing is selected /or/ there are no items in the list
-        // /or/ the selection index is invalid /then/ we can not move
+        // If nothing is selected or there are no items in the list
+        // or the selection index is invalid then we can not move
         // up or down.
         if (index < 0 || count == 0 || index >= count) {
             $("button-up").disabled = true;
@@ -138,15 +138,15 @@ moongiraffe.Cmis.menu.items = {
             return;
         }
 
-        // If we are at the top of the list /and/ the selected item's
-        // depth is 0 /then/ we can not move further up.
+        // If we are at the top of the list and the selected item's
+        // depth is 0 then we can not move further up.
         if (index == 0 && item.depth == 0) {
            $("button-up").disabled = true;
         }
 
-        // If the selected item is a submenu /and/ there are no other
-        // items bellow its children /and/ the _open_ submenu's depth
-        // is 0 /then/ we can not move further down.
+        // If the selected item is a submenu and there are no other
+        // items bellow its children and the _open_ submenu's depth
+        // is 0 then we can not move further down.
         if (count > 0 &&
             index < count &&
             item.type === "submenu" &&
@@ -156,8 +156,8 @@ moongiraffe.Cmis.menu.items = {
                 $("button-down").disabled = true;
         }
 
-        // If we are at the bottom of the list /and/ the item's depth
-        // is 0 /then/ we can not move further down.
+        // If we are at the bottom of the list and the item's depth
+        // is 0 then we can not move further down.
         if (index == count - 1 && item.depth == 0) {
             $("button-down").disabled = true;
         }
@@ -322,7 +322,7 @@ moongiraffe.Cmis.menu.items = {
             this.treeview.selection.select(select);
         }
         else {
-            // Otherwise we call the old-style swap bahaviour on all
+            // Otherwise we call the old-style swap behavior on all
             // items until somebody complains about it :D
             this.treeview.swap(up, toindex, fromindex);
         }
@@ -910,8 +910,8 @@ Treeview.prototype = {
 
         var index = this.visible[visibleindex];
 
-        // If there is nothing selected /or/ the selection index is
-        // invalid /then/ we have to find an appropriate index.
+        // If there is nothing selected or the selection index is
+        // invalid then we have to find an appropriate index.
         if (index == -1 || index >= this.items.length) {
             // If there are menu items we append to the end.
             if (this.items.length > 0)
@@ -971,8 +971,8 @@ Treeview.prototype = {
 
         this.treebox.rowCountChanged(index, change);
 
-        // We want to keep the original selection value /although/ if
-        // we just deleted the final item /then/ we need to move the
+        // We want to keep the original selection value although if
+        // we just deleted the final item then we need to move the
         // selection upwards.
         if (index == this.visible.length)
             index--;
