@@ -23,6 +23,9 @@
         <menuseparator/>
         <menuitem label="&cmis.items.menu.expandSubmenus;" oncommand="moongiraffe.Cmis.menu.items.togglesubmenus(true);"/>
         <menuitem label="&cmis.items.menu.collapseSubmenus;" oncommand="moongiraffe.Cmis.menu.items.togglesubmenus(false);"/>
+        <menuseparator/>
+        <menuitem id="cmis-undo" label="&cmis.items.menu.undo;" oncommand="moongiraffe.Cmis.menu.items.undo();"/>
+        <menuitem id="cmis-redo" label="&cmis.items.menu.redo;" oncommand="moongiraffe.Cmis.menu.items.redo();"/>
       </menupopup>
     </menu>
   </menubar>

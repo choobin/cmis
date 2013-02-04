@@ -45,6 +45,8 @@ moongiraffe.Cmis.menu.items = {
     tree: null,
     treeview: null,
     prevpath: "",
+    stack: [],
+    stackptr: -1,
 
     load: function() {
         var items = this.loaddata();
