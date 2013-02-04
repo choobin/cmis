@@ -153,7 +153,7 @@ moongiraffe.Cmis.menu.items = {
             index < count &&
             item.type === "submenu" &&
             item.open) {
-            var children = this.treeview.visiblechildren(itemindex); // XXX
+            var children = this.treeview.visiblechildren(itemindex);
             if (index + children == count - 1 && item.depth == 0)
                 $("button-down").disabled = true;
         }
@@ -335,7 +335,7 @@ moongiraffe.Cmis.menu.items = {
             if (this.treeview.items[fromindex].depth == 0)
                 return;
 
-            // XXX
+            // Special case. Swap will reduce the submenu's depth.
             this.treeview.swap(false, fromindex, fromindex);
         }
         else {
@@ -363,77 +363,6 @@ moongiraffe.Cmis.menu.items = {
 
         this.update();
     },
-
-    /*
-    move: function(up) {
-        var visibleindex = this.treeview.selection.currentIndex;
-
-        var from = visibleindex;
-
-        var fromindex = this.treeview.visible[from];
-
-        var fromitem = this.treeview.items[fromindex];
-
-        var to;
-
-        if (up) {
-            if (from <= 0)
-                return;
-
-            to = from - 1;
-        }
-        else {
-            // If we are at last visible item with a depth greater
-            // than zero we can still decrease the items depth.
-            if (from == this.treeview.rowCount - 1) {
-                if (this.treeview.items[fromindex].depth == 0)
-                    return;
-
-                to = from;
-            }
-            else {
-                to = from + 1;
-            }
-        }
-
-        var select = to;
-
-        // If we are moving an open submenu downwards we have to
-        // adjust the to index to account for the submenus children.
-        if (!up &&
-            fromitem.type === "submenu" &&
-            fromitem.open) {
-            // XXXXXXXX
-            //to += this.treeview.containerchildren(fromindex);
-            to += this.treeview.visiblechildren(fromindex);
-        }
-
-        var toindex = this.treeview.visible[to];
-
-        var toitem = this.treeview.items[toindex];
-
-        if (to != from && // If we are the last item or the last
-            to != this.treeview.rowCount && // submenu of the tree we skip this and call swap
-            fromitem.depth == toitem.depth && // otherwise, if we are at the same level
-            toitem.type === "submenu" && // and we are moving into a submenu that is
-            !toitem.open) { // closed
-            // we can shuffle the contents of both items
-            this.treeview.shuffle(up, toindex, fromindex);
-            this.treeview.selection.select(select);
-        }
-        else {
-            // Otherwise we call the old-style swap behavior on all
-            // items until somebody complains about it :D
-            this.treeview.swap(up, toindex, fromindex);
-        }
-
-        this.treeview.invalidate();
-
-        this.select();
-
-        this.update();
-    },
-    */
 
     export_settings: function() {
         var branch = Services.prefs.getBranch(PREFBRANCH);
@@ -910,7 +839,7 @@ Treeview.prototype = {
     visiblechildren: function(index) {
         var item = this.items[index];
 
-        if (!(item.type === "submenu"))
+        if (item.type !== "submenu")
             return 0;
 
         if (!item.open)
@@ -920,7 +849,10 @@ Treeview.prototype = {
 
         var i = index + 1;
 
-        while (i < this.items.length && this.items[i].depth > item.depth) {
+        while (i < this.items.length) {
+            if (this.items[i].depth <= item.depth)
+                break;
+
             if (this.items[i].type === "submenu" && // isContainer(i) checks this.visible[i]
                 !this.items[i].open) {
                 i += this.containerchildren(i); // skip children
@@ -970,11 +902,6 @@ Treeview.prototype = {
         return position;
     },
 
-    // XXX
-    // remove up
-    // swap to make to/from (like shuffle)
-    // reduce complexity
-    // or perhaps do something like move -> moveup/movedown
     swap: function(up, to, from) {
         var fromitems = this.containerchildren(from) + 1;
 
@@ -1309,6 +1236,15 @@ Treeview.prototype = {
         if (orientation == 0 /* DROP_ON */)
             return false;
 
+        // Banned! DROP_BEFORE *ruined* Christmas! After countless
+        // hours hacking at a custom treeview with DROP_BEFORE and
+        // DROP_AFTER enabled, it was just too unpredictable... Well,
+        // nasty. Really nasty. At the moment I am only allowing
+        // DROP_AFTER. This makes the drop function significantly
+        // easier to deal with. For me, and for the rest of humanity.
+        if (orientation == -1 /* DROP_BEFORE */)
+            return false;
+
         var from = parseInt(transfer.getData("text/plain"));
 
         var fromindex = this.visible[from];
@@ -1341,6 +1277,8 @@ Treeview.prototype = {
 
         var fromitem = this.items[fromindex];
 
+        var fromvisible = this.visiblechildren(fromindex);
+
         var to = row;
 
         var toindex = this.visible[to];
@@ -1349,16 +1287,15 @@ Treeview.prototype = {
 
         var offset = toitem.depth - fromitem.depth;
 
-        if (orientation == 1 /* DROP_AFTER */ &&
-            toitem.type === "submenu") {
+        if (toitem.type === "submenu") {
+            // If we are inserting a new item or submenu after an _open_
+            // submenu we nest it inside the submenu.
             if (toitem.open) {
-                // If we are dropping into an open submenu we need to
-                // nest fromitems inside it
                 offset++;
             }
+            // If we are inserting something into a _closed_ submenu
+            // we skip its elements and insert them after it.
             else {
-                // If we are dropping after a closed submenu we have
-                // to adjust its offset past its children too
                 toindex += this.containerchildren(toindex);
             }
         }
@@ -1367,15 +1304,14 @@ Treeview.prototype = {
 
         var fromitems = this.items.splice(fromindex, fromchildren + 1);
 
-        // If we are dropping after a menu item we need to splice the
-        // data using the position /after/ toindex
-        if (orientation == 1 /* DROP_AFTER */)
-            toindex++;
+        // Because we only allow DROP_AFTER we have to move to the
+        // next toindex position before splicing.
+        toindex++;
 
         // If we are draging an item or submenu downwards we have to
-        // adjust the to index once we splice the from elements
+        // adjust the to index once we splice fromitems.
         if (toindex > fromindex)
-            toindex = toindex - (fromchildren + 1);
+            toindex -= (fromchildren + 1);
 
         fromitems.forEach(function (item) {
             item.depth += offset;
@@ -1385,16 +1321,20 @@ Treeview.prototype = {
 
         this.invalidate();
 
-        var selection = to;
-
-        if (to > from)
-            to -= this.visiblechildren(fromindex);
-
-        this.selection.select(selection);
+        // Search for the correct select index.
+        var i = 0;
+        while (i < this.visible.length) {
+            if (this.items[this.visible[i]] === fromitem) {
+                this.selection.select(i);
+                break;
+            }
+            i++;
+        }
 
         moongiraffe.Cmis.menu.items.select();
 
         moongiraffe.Cmis.menu.items.update();
+
     },
 
     cycleHeader: function(col, elem) {},
