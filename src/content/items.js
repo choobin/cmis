@@ -262,9 +262,26 @@ moongiraffe.Cmis.menu.items = {
     },
 
     delete: function() {
-        this.treeview.delete();
+        var rangecount = this.treeview.selection.getRangeCount();
+        var start = new Object();
+        var end = new Object();
+        var ranges = [];
 
-        this.treeview.invalidate();
+        for (var i = 0; i < rangecount; i++) {
+            this.treeview.selection.getRangeAt(i, start, end);
+            ranges.push({start: start.value, end: end.value});
+        }
+
+        // We iterate through each selected block in reverse,
+        // furthermore, we iterate through each of these ranges
+        // backwards while deleting. This way we do not have to
+        // re-adjust each index after a modification to the tree.
+
+        for (var i = ranges.length - 1; i >= 0; i--) {
+            for (var j = ranges[i].end; j >= ranges[i].start; j--) {
+                this.treeview.delete(j);
+            }
+        }
 
         this.update();
     },
@@ -1019,10 +1036,8 @@ Treeview.prototype = {
         moongiraffe.Cmis.menu.items.select();
     },
 
-    delete: function() {
-        var index = this.selection.currentIndex;
-
-        if (index < 0) {
+    delete: function(index) {
+        if (index < 0 || index > this.rowCount - 1) {
             return;
         }
 
