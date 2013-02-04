@@ -42,8 +42,9 @@
 <!ENTITY cmis.items.menu.label "Options">
 <!ENTITY cmis.items.menu.import "Import settings">
 <!ENTITY cmis.items.menu.export "Export settings">
-<!ENTITY cmis.items.menu.expandSubmenus "Expand all Submenus">
-<!ENTITY cmis.items.menu.collapseSubmenus "Collapse all Submenus">
+<!ENTITY cmis.items.menu.expandSubmenus "Expand all submenus">
+<!ENTITY cmis.items.menu.collapseSubmenus "Collapse all submenus">
+<!ENTITY cmis.items.menu.selectall "Select all items">
 <!ENTITY cmis.items.menu.undo "Undo">
 <!ENTITY cmis.items.menu.redo "Redo">
 <!ENTITY cmis.items.menu.close "Close">

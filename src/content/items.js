@@ -681,6 +681,10 @@ moongiraffe.Cmis.menu.items = {
         else {
             $("cmis-undo").disabled = false;
         }
+    },
+
+    selectall: function() {
+        this.treeview.selection.selectAll();
     }
 };
 
