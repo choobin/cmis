@@ -109,12 +109,12 @@
                   id="button-up"
                   label=" &cmis.items.up;"
                   flex="1"
-                  oncommand="moongiraffe.Cmis.menu.items.move(true);"/>
+                  oncommand="moongiraffe.Cmis.menu.items.moveup();"/>
           <button class="down"
                   id="button-down"
                   label=" &cmis.items.down;"
                   flex="1"
-                  oncommand="moongiraffe.Cmis.menu.items.move(false);"/>
+                  oncommand="moongiraffe.Cmis.menu.items.movedown();"/>
         </hbox>
 
       </vbox> <!-- buttons -->

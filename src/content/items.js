@@ -153,7 +153,7 @@ moongiraffe.Cmis.menu.items = {
             index < count &&
             item.type === "submenu" &&
             item.open) {
-            var children = this.treeview.containerchildren(itemindex);
+            var children = this.treeview.visiblechildren(itemindex); // XXX
             if (index + children == count - 1 && item.depth == 0)
                 $("button-down").disabled = true;
         }
@@ -286,6 +286,85 @@ moongiraffe.Cmis.menu.items = {
         this.update();
     },
 
+    moveup: function() {
+        var from = this.treeview.selection.currentIndex;;
+
+        if (from <= 0)
+            return;
+
+        var fromindex = this.treeview.visible[from];
+
+        var fromitem = this.treeview.items[fromindex];
+
+        var to = from - 1;
+
+        var toindex = this.treeview.visible[to];
+
+        var toitem = this.treeview.items[toindex];
+
+        if (fromitem.depth == toitem.depth && // If to and from are at the same level
+            toitem.type === "submenu" && // and we are moving into a submenu that is
+            !toitem.open) { // closed we can shuffle the contents of both items
+            this.treeview.shuffle(toindex, fromindex);
+            this.treeview.selection.select(to);
+        }
+        else {
+            this.treeview.swap(true, toindex, fromindex);
+        }
+
+        this.treeview.invalidate();
+
+        this.select();
+
+        this.update();
+    },
+
+    movedown: function() {
+        var from = this.treeview.selection.currentIndex;
+
+        var fromindex = this.treeview.visible[from];
+
+        var fromitem = this.treeview.items[fromindex];
+
+        var fromchildren = this.treeview.visiblechildren(fromindex);
+
+        // If we are at last visible item or submenu with a depth
+        // greater than zero we can still decrease the items depth.
+        if (from == this.treeview.rowCount - 1 ||
+            from + fromchildren == this.treeview.rowCount - 1) {
+            if (this.treeview.items[fromindex].depth == 0)
+                return;
+
+            // XXX
+            this.treeview.swap(false, fromindex, fromindex);
+        }
+        else {
+            var to = from + fromchildren + 1;
+
+            var toindex = this.treeview.visible[to];
+
+            var toitem = this.treeview.items[toindex];
+
+            if (fromitem.depth == toitem.depth && // If to and from are at the same level
+                toitem.type === "submenu" && // and we are moving into a submenu that is
+                !toitem.open) { // closed we can shuffle the contents of both items
+                this.treeview.shuffle(toindex, fromindex);
+                this.treeview.selection.select(from + 1);
+            }
+            else {
+                this.treeview.swap(false, toindex, fromindex);
+            }
+        }
+
+
+        this.treeview.invalidate();
+
+        this.select();
+
+        this.update();
+    },
+
+    /*
     move: function(up) {
         var visibleindex = this.treeview.selection.currentIndex;
 
@@ -324,7 +403,9 @@ moongiraffe.Cmis.menu.items = {
         if (!up &&
             fromitem.type === "submenu" &&
             fromitem.open) {
-            to += this.treeview.containerchildren(fromindex);
+            // XXXXXXXX
+            //to += this.treeview.containerchildren(fromindex);
+            to += this.treeview.visiblechildren(fromindex);
         }
 
         var toindex = this.treeview.visible[to];
@@ -352,6 +433,7 @@ moongiraffe.Cmis.menu.items = {
 
         this.update();
     },
+    */
 
     export_settings: function() {
         var branch = Services.prefs.getBranch(PREFBRANCH);
@@ -807,7 +889,7 @@ Treeview.prototype = {
         }
     },
 
-    containerchildren: function(index) {
+    containerchildren: function(index, onlyvisible) {
         if (!(this.items[index].type === "submenu"))
             return 0;
 
@@ -825,7 +907,34 @@ Treeview.prototype = {
         return children;
     },
 
-    shuffle: function(up, to, from) {
+    visiblechildren: function(index) {
+        var item = this.items[index];
+
+        if (!(item.type === "submenu"))
+            return 0;
+
+        if (!item.open)
+            return 0;
+
+        var children = 0;
+
+        var i = index + 1;
+
+        while (i < this.items.length && this.items[i].depth > item.depth) {
+            if (this.items[i].type === "submenu" && // isContainer(i) checks this.visible[i]
+                !this.items[i].open) {
+                i += this.containerchildren(i); // skip children
+            }
+
+            i++;
+
+            children++;
+        }
+
+        return children;
+    },
+
+    shuffle: function(to, from) {
         if (from > to) {
             var temp = to;
             to = from;
@@ -861,6 +970,11 @@ Treeview.prototype = {
         return position;
     },
 
+    // XXX
+    // remove up
+    // swap to make to/from (like shuffle)
+    // reduce complexity
+    // or perhaps do something like move -> moveup/movedown
     swap: function(up, to, from) {
         var fromitems = this.containerchildren(from) + 1;
 
@@ -881,7 +995,7 @@ Treeview.prototype = {
 
         if (from + fromitems == this.items.length && // If we are the last 'submenu' of the Treeview
             this.items[from].type === "submenu" && // that is, we 'are' a container
-            !up && // we are moving downards
+            !up && // we are moving downwards
             this.items[from].depth > 0) { // and the depth of the submenu is greater than zero
             // we need to incrementally reduce its depth.
             for (var i = from; i < from + fromitems; i++)
@@ -1271,7 +1385,12 @@ Treeview.prototype = {
 
         this.invalidate();
 
-        this.selection.select(to);
+        var selection = to;
+
+        if (to > from)
+            to -= this.visiblechildren(fromindex);
+
+        this.selection.select(selection);
 
         moongiraffe.Cmis.menu.items.select();
 
