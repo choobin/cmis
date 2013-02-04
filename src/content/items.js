@@ -45,11 +45,13 @@ moongiraffe.Cmis.menu.items = {
     tree: null,
     treeview: null,
     prevpath: "",
+    stack: [],
+    stackpos: -1,
 
     load: function() {
-        var items = this.loaddata();
+        var list = this.loaddata();
 
-        this.treeview = new Treeview(items);
+        this.treeview = new Treeview(list);
 
         this.tree = $("tree");
 
@@ -67,17 +69,11 @@ moongiraffe.Cmis.menu.items = {
 
         if (list === "") return [];
 
-        var items = JSON.parse(list);
+        this.stackpos = 0;
 
-        items.forEach(function (item) {
-            // If a submenu item does not have an open field we set it
-            // to open. This will prevent the need to another update
-            // function in bootstrap.js.
-            if (item.type === "submenu" && item.open === undefined)
-                item.open = true;
-        });
+        this.stack[this.stackpos] = list;
 
-        return items;
+        return list;
     },
 
     update: function() {
@@ -87,6 +83,12 @@ moongiraffe.Cmis.menu.items = {
 
             return value;
         }, "");
+
+        $("cmis-undo").disabled = false;
+
+        this.stackpos++;
+
+        this.stack[this.stackpos] = list;
 
         var string = Components.classes["@mozilla.org/supports-string;1"]
             .createInstance(Components.interfaces.nsISupportsString);
@@ -622,6 +624,46 @@ moongiraffe.Cmis.menu.items = {
             return;
 
         event.dataTransfer.setData("text/plain", "" + index);
+    },
+
+    undo: function() {
+        if (this.stackpos == 0) return;
+
+        this.stackpos--;
+
+        var list = this.stack[this.stackpos];
+
+        this.treeview.loaditems(list);
+
+        this.treeview.invalidate();
+
+        if (this.stackpos == 0) {
+            $("cmis-undo").disabled = true;
+            $("cmis-redo").disabled = false;
+        }
+        else {
+            $("cmis-redo").disabled = false;
+        }
+    },
+
+    redo: function() {
+        if (this.stackpos == this.stack.length - 1) return;
+
+        this.stackpos++;
+
+        var list = this.stack[this.stackpos];
+
+        this.treeview.loaditems(list);
+
+        this.treeview.invalidate();
+
+        if (this.stackpos == this.stack.length - 1) {
+            $("cmis-undo").disabled = false;
+            $("cmis-redo").disabled = true;
+        }
+        else {
+            $("cmis-undo").disabled = false;
+        }
     }
 };
 
@@ -660,10 +702,12 @@ function Settings(depth, name) {
     this.name = name || "";
 }
 
-function Treeview(items) {
+function Treeview(list) {
     this.treebox = null;
     this.selection = null;
-    this.items = items;
+    this.items = [];
+    this.visible = [];
+    this.loaditems(list);
     this.computevisible();
 }
 
@@ -685,6 +729,29 @@ Treeview.prototype = {
 
             i++;
         }
+    },
+
+    loaditems: function(list) {
+        var oldlength = this.visible.length;
+
+        var data = JSON.parse(list);
+
+        data.forEach(function (item) {
+            // If a submenu item does not have an open field we set it
+            // to open. This will prevent the need to another update
+            // function in bootstrap.js.
+            if (item.type === "submenu" && item.open === undefined)
+                item.open = true;
+        });
+
+        this.items = data;
+
+        this.computevisible();
+
+        var change = this.visible.length - oldlength;
+
+        if (this.treebox) // Only needed if we are preforming an undo/redo operation
+            this.treebox.rowCountChanged(this.rowCount, change);
     },
 
     invalidate: function() {

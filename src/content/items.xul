@@ -11,9 +11,15 @@
     minheight="500"
     buttons="accept"
     buttonlabelaccept="&cmis.items.menu.close;"
-    onload="moongiraffe.Cmis.menu.items.load();">
+    onload="moongiraffe.Cmis.menu.items.load();"
+    ondialogaccept="moongiraffe.Cmis.menu.items.update();">
 
   <script src="items.js"/>
+
+  <keyset>
+    <key id="key-undo" modifiers="accel" key="Z" oncommand="moongiraffe.Cmis.menu.items.undo();"/>
+    <key id="key-redo" modifiers="accel" key="Y" oncommand="moongiraffe.Cmis.menu.items.redo();"/>
+  </keyset>
 
   <menubar>
     <menu label="&cmis.items.menu.label;">
@@ -23,6 +29,9 @@
         <menuseparator/>
         <menuitem label="&cmis.items.menu.expandSubmenus;" oncommand="moongiraffe.Cmis.menu.items.togglesubmenus(true);"/>
         <menuitem label="&cmis.items.menu.collapseSubmenus;" oncommand="moongiraffe.Cmis.menu.items.togglesubmenus(false);"/>
+        <menuseparator/>
+        <menuitem id="cmis-undo" disabled="true" key="key-undo" label="&cmis.items.menu.undo;" oncommand="moongiraffe.Cmis.menu.items.undo();"/>
+        <menuitem id="cmis-redo" disabled="true" key="key-redo" label="&cmis.items.menu.redo;" oncommand="moongiraffe.Cmis.menu.items.redo();"/>
       </menupopup>
     </menu>
   </menubar>

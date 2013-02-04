@@ -44,4 +44,6 @@
 <!ENTITY cmis.items.menu.export "Export settings">
 <!ENTITY cmis.items.menu.expandSubmenus "Expand all Submenus">
 <!ENTITY cmis.items.menu.collapseSubmenus "Collapse all Submenus">
+<!ENTITY cmis.items.menu.undo "Undo">
+<!ENTITY cmis.items.menu.redo "Redo">
 <!ENTITY cmis.items.menu.close "Close">
