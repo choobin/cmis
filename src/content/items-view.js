@@ -680,7 +680,7 @@ let ItemsView = {
         // knows what value it is. Even though I restrict orientation
         // to DROP_AFTER it still baffles me how the index seems to
         // randomly change (just to spite me (I swear! (oah the
-        // humanity))).
+        // humanity~~~~~))).
         let i = 0;
         while (i < this.visible.length) {
             if (this.items[this.visible[i]] === fromitem)
