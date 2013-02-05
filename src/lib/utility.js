@@ -236,7 +236,8 @@ Cmis.utility = {
                 content_disposition = properties.get("content-disposition", Components.interfaces.nsISupportsCString);
             }
 
-            let decoder = Components.classes["@mozilla.org/network/mime-hdrparam;1"]
+            let decoder = Components
+                .classes["@mozilla.org/network/mime-hdrparam;1"]
                 .createInstance(Components.interfaces.nsIMIMEHeaderParam);
 
             let unused = {value : null};
@@ -254,7 +255,8 @@ Cmis.utility = {
             let url = source.QueryInterface(Components.interfaces.nsIURL);
 
             if (url.fileName !== "") {
-                let texttosuburi = Components.classes["@mozilla.org/intl/texttosuburi;1"]
+                let texttosuburi = Components
+                    .classes["@mozilla.org/intl/texttosuburi;1"]
                     .getService(Components.interfaces.nsITextToSubURI);
 
                 name = texttosuburi.unEscapeURIForUI(url.originCharset || "UTF-8", url.fileName);
@@ -292,7 +294,8 @@ Cmis.utility = {
         name = name.replace(/[\|]+/g, "_");
 
         // XXX This was returning null sometimes. Is this supposed to ever happen?
-        let mimeService = Components.classes["@mozilla.org/mime;1"]
+        let mimeService = Components
+            .classes["@mozilla.org/mime;1"]
             .getService(Components.interfaces.nsIMIMEService);
 
         let extension = mimeService.getPrimaryExtension(content_type, null);
@@ -336,15 +339,13 @@ Cmis.utility = {
     dirname: function(path) {
         let offset = path.lastIndexOf('/');
 
-        if (offset == -1) {
+        if (offset == -1)
             offset = path.lastIndexOf('\\');
-        }
 
         let dir = path;
 
-        if (offset != -1) {
+        if (offset != -1)
             dir = new String(path).substring(0, offset);
-        }
 
         return dir;
     },
@@ -367,12 +368,10 @@ Cmis.utility = {
         if (result.match(/%ALT/)) {
             let gContextMenu = Services.ww.activeWindow.gContextMenu;
 
-            if (gContextMenu) {
+            if (gContextMenu)
                 result = result.replace(/%ALT/g, gContextMenu.target.alt);
-            }
-            else { // gContextMenu is not created on quicksave
+            else // gContextMenu is not created on quicksave
                 result = result.replace(/%ALT/g, alt);
-            }
         }
 
         return result;
@@ -409,9 +408,8 @@ Cmis.utility = {
             format = str.match(/%DATE{(.*?)}/);
         }
 
-        if (str.match(/%DATE/)) {
+        if (str.match(/%DATE/))
             str = str.replace(/%DATE/g, "YYYY-MM-DD-hhmmss");
-        }
 
         return str
             .replace(/YYYY/g, year)

@@ -38,7 +38,8 @@ let ItemsIO = {
     _write: function(file, data) {
         let outstream = FileUtils.openSafeFileOutputStream(file)
 
-        let converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
+        let converter = Components
+            .classes["@mozilla.org/intl/scriptableunicodeconverter"]
             .createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
 
         converter.charset = "UTF-8";
