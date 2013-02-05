@@ -147,6 +147,8 @@ let ItemsIO = {
 
         filePicker.defaultString = "cmis-" + bundle.GetStringFromName("settings") + "-" + timestamp + ".json";
 
+        Services.strings.flushBundles();
+
         filePicker.defaultExtension = "json";
 
         let result = filePicker.show();
@@ -155,8 +157,6 @@ let ItemsIO = {
             return;
 
         this._write(filePicker.file, str);
-
-        Services.strings.flushBundles();
     },
 
     importSettings: function() {
@@ -192,7 +192,7 @@ let ItemsIO = {
             // check info string
             // check version string
             // check timestamp (dr. who)
-            // check that their is actually a menu property
+            // check that there is actually a menu property
             // check that 'path'
             // - contains correct path separators for OS
             // - exists
