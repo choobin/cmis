@@ -328,7 +328,7 @@ let ItemsActions = {
         ItemsView.selection.selectAll();
     },
 
-    undoActions: function() {
+    undoAction: function() {
         if (this.stackPos == 0) return;
 
         this.stackPos--;
@@ -348,7 +348,7 @@ let ItemsActions = {
         }
     },
 
-    redoActions: function() {
+    redoAction: function() {
         if (this.stackPos == this.stack.length - 1) return;
 
         this.stackPos++;

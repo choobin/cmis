@@ -26,12 +26,12 @@
     <key id="key-undo"
          modifiers="accel"
          key="Z"
-         oncommand="ItemsActions.undoActions();"/>
+         oncommand="ItemsActions.undoAction();"/>
 
     <key id="key-redo"
          modifiers="accel"
          key="Y"
-         oncommand="ItemsActions.redoActions();"/>
+         oncommand="ItemsActions.redoAction();"/>
   </keyset>
 
   <menubar>
@@ -63,13 +63,13 @@
                   disabled="true"
                   key="key-undo"
                   label="&cmis.items.menu.undo;"
-                  oncommand="ItemsActions.undoActions();"/>
+                  oncommand="ItemsActions.undoAction();"/>
 
         <menuitem id="cmis-redo"
                   disabled="true"
                   key="key-redo"
                   label="&cmis.items.menu.redo;"
-                  oncommand="ItemsActions.redoActions();"/>
+                  oncommand="ItemsActions.redoAction();"/>
       </menupopup>
     </menu>
   </menubar>
