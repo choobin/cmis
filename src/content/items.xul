@@ -10,31 +10,68 @@
     minwidth="900"
     minheight="500"
     buttons="accept"
-    buttonlabelaccept="&cmis.items.menu.close;"
-    onload="moongiraffe.Cmis.menu.items.load();"
-    ondialogaccept="moongiraffe.Cmis.menu.items.update();">
+    buttonlabelaccept="&cmis.items.menu.close;">
+    <!--ondialogaccept="Utility.updateList();">
+        XXX updateList should be called each time the treeview is modified -->
 
-  <script src="items.js"/>
+  <script type="application/x-javascript;version=1.7" src="items-view.js"/>
+  <script type="application/x-javascript;version=1.7" src="items-actions.js"/>
+  <script type="application/x-javascript;version=1.7" src="items-io.js"/>
+  <script type="application/x-javascript;version=1.7" src="utility.js"/>
 
   <keyset>
-    <key id="key-selectall" modifiers="accel" key="A" oncommand="moongiraffe.Cmis.menu.items.selectall();"/>
-    <key id="key-undo" modifiers="accel" key="Z" oncommand="moongiraffe.Cmis.menu.items.undo();"/>
-    <key id="key-redo" modifiers="accel" key="Y" oncommand="moongiraffe.Cmis.menu.items.redo();"/>
+    <key id="key-selectall"
+         modifiers="accel"
+         key="A"
+         oncommand="ItemsActions.selectAll();"/>
+
+    <key id="key-undo"
+         modifiers="accel"
+         key="Z"
+         oncommand="ItemsActions.undoActions();"/>
+
+    <key id="key-redo"
+         modifiers="accel"
+         key="Y"
+         oncommand="ItemsActions.redoActions();"/>
   </keyset>
 
   <menubar>
     <menu label="&cmis.items.menu.label;">
       <menupopup>
-        <menuitem label="&cmis.items.menu.import;" oncommand="moongiraffe.Cmis.menu.items.import_settings();" />
-        <menuitem label="&cmis.items.menu.export;" oncommand="moongiraffe.Cmis.menu.items.export_settings();"/>
+        <menuitem label="&cmis.items.menu.import;"
+                  oncommand="ItemsIO.importSettings();" />
+
+        <menuitem label="&cmis.items.menu.export;"
+                  oncommand="ItemsIO.exportSettings();"/>
+
         <menuseparator/>
-        <menuitem label="&cmis.items.menu.expandSubmenus;" oncommand="moongiraffe.Cmis.menu.items.togglesubmenus(true);"/>
-        <menuitem label="&cmis.items.menu.collapseSubmenus;" oncommand="moongiraffe.Cmis.menu.items.togglesubmenus(false);"/>
+
+        <menuitem label="&cmis.items.menu.expandSubmenus;"
+                  oncommand="ItemsActions.toggleSubmenus(true);"/>
+
+        <menuitem label="&cmis.items.menu.collapseSubmenus;"
+                  oncommand="ItemsActions.toggleSubmenus(false);"/>
+
         <menuseparator/>
-        <menuitem key="key-selectall" label="&cmis.items.menu.selectall;" oncommand="moongiraffe.Cmis.menu.items.selectall();"/>
+
+        <menuitem key="key-selectall"
+                  label="&cmis.items.menu.selectall;"
+                  oncommand="ItemsActions.selectAll();"/>
+
         <menuseparator/>
-        <menuitem id="cmis-undo" disabled="true" key="key-undo" label="&cmis.items.menu.undo;" oncommand="moongiraffe.Cmis.menu.items.undo();"/>
-        <menuitem id="cmis-redo" disabled="true" key="key-redo" label="&cmis.items.menu.redo;" oncommand="moongiraffe.Cmis.menu.items.redo();"/>
+
+        <menuitem id="cmis-undo"
+                  disabled="true"
+                  key="key-undo"
+                  label="&cmis.items.menu.undo;"
+                  oncommand="ItemsActions.undoActions();"/>
+
+        <menuitem id="cmis-redo"
+                  disabled="true"
+                  key="key-redo"
+                  label="&cmis.items.menu.redo;"
+                  oncommand="ItemsActions.redoActions();"/>
       </menupopup>
     </menu>
   </menubar>
@@ -46,8 +83,8 @@
             flex="1"
             rows="12"
             treelines="true"
-            onselect="moongiraffe.Cmis.menu.items.select();"
-            ondblclick="moongiraffe.Cmis.menu.items.edit();">
+            onselect="ItemsActions.selectItem();"
+            ondblclick="ItemsActions.editItem();">
 
         <treecols>
           <treecol id="name"
@@ -56,13 +93,17 @@
                    primary="true"
                    editable="true"
                    flex="3"/>
+
           <splitter class="tree-splitter"/>
+
           <treecol id="path"
                    label="&cmis.items.path;"
                    tooltiptext="&cmis.items.pathTooltip;"
                    editable="false"
                    flex="3"/>
+
           <splitter class="tree-splitter"/>
+
           <treecol id="format"
                    label="&cmis.items.format;"
                    tooltiptext="&cmis.items.formatTooltip;"
@@ -70,7 +111,7 @@
                    flex="1"/>
         </treecols>
 
-        <treechildren ondragstart="moongiraffe.Cmis.menu.items.startdrag(event);" />
+        <treechildren ondragstart="ItemsActions.startDrag(event);" />
 
       </tree>
 
@@ -78,43 +119,50 @@
         <button class="new"
                 label="  &cmis.items.item;"
                 id="button-item"
-                oncommand="moongiraffe.Cmis.menu.items.newitem('item');"/>
+                oncommand="ItemsActions.newItem('item');"/>
+
         <button class="new"
                 label="  &cmis.items.submenu;"
                 id="button-submenu"
-                oncommand="moongiraffe.Cmis.menu.items.newitem('submenu');"/>
+                oncommand="ItemsActions.newItem('submenu');"/>
+
         <button class="settings"
                 label="  &cmis.items.settings;"
                 id="button-settings"
-                oncommand="moongiraffe.Cmis.menu.items.newitem('settings');"/>
+                oncommand="ItemsActions.newItem('settings');"/>
+
         <button class="separator"
                 label="  &cmis.items.separator;"
                 id="button-separator"
-                oncommand="moongiraffe.Cmis.menu.items.separator();"/>
+                oncommand="ItemsActions.newItem('separator');"/>
+
         <button class="generate"
                 label="  &cmis.items.generate;"
                 id="button-generate"
-                oncommand="moongiraffe.Cmis.menu.items.generate();"/>
+                oncommand="ItemsIO.generateItems();"/>
+
         <button class="edit"
                 label="  &cmis.items.edit;"
                 id="button-edit"
-                oncommand="moongiraffe.Cmis.menu.items.edit();"/>
+                oncommand="ItemsActions.editItem();"/>
+
         <button class="delete"
                 label="  &cmis.items.delete;"
                 id="button-delete"
-                oncommand="moongiraffe.Cmis.menu.items.delete();"/>
+                oncommand="ItemsActions.deleteItem();"/>
 
         <hbox>
           <button class="up"
                   id="button-up"
                   label=" &cmis.items.up;"
                   flex="1"
-                  oncommand="moongiraffe.Cmis.menu.items.moveup();"/>
+                  oncommand="ItemsActions.moveUp();"/>
+
           <button class="down"
                   id="button-down"
                   label=" &cmis.items.down;"
                   flex="1"
-                  oncommand="moongiraffe.Cmis.menu.items.movedown();"/>
+                  oncommand="ItemsActions.moveDown();"/>
         </hbox>
 
       </vbox> <!-- buttons -->
