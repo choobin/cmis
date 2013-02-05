@@ -11,8 +11,6 @@
     minheight="500"
     buttons="accept"
     buttonlabelaccept="&cmis.items.menu.close;">
-    <!--ondialogaccept="Utility.updateList();">
-        XXX updateList should be called each time the treeview is modified -->
 
   <script type="application/x-javascript;version=1.7" src="items-view.js"/>
   <script type="application/x-javascript;version=1.7" src="items-actions.js"/>
