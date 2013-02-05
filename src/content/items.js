@@ -819,7 +819,7 @@ Treeview.prototype = {
     },
 
     containerchildren: function(index, onlyvisible) {
-        if (!(this.items[index].type === "submenu"))
+        if (this.items[index].type !== "submenu")
             return 0;
 
         var depth = this.items[index].depth;
@@ -1334,7 +1334,6 @@ Treeview.prototype = {
         moongiraffe.Cmis.menu.items.select();
 
         moongiraffe.Cmis.menu.items.update();
-
     },
 
     cycleHeader: function(col, elem) {},
