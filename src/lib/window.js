@@ -32,39 +32,58 @@
 
 Components.utils.import("resource://gre/modules/Services.jsm");
 
-let Cmis = {};
+Cmis.window = {
+    startup: function() {
+        Services.ww.registerNotification(Cmis.window);
 
-function startup(data, reason) {
-    // As of Gecko 10.0, manifest registration is performed automatically.
-    if (Services.vc.compare(Services.appinfo.platformVersion, "10.0") < 0)
-        Components.manager.addBootstrappedManifestLocation(data.installPath);
+        let windows = Services.wm.getEnumerator("navigator:browser");
 
-    ["window", "menu", "io", "preferences", "utility"].forEach(function (script) {
-        let url = data.resourceURI.spec + "lib/" + script + ".js";
+        while (windows.hasMoreElements()) {
+            Cmis.window.add(windows.getNext());
+        }
+    },
 
-        Services.scriptloader.loadSubScript(url, this);
-    });
+    shutdown: function() {
+        Services.ww.unregisterNotification(Cmis.window);
 
-    Cmis.preferences.startup();
-    Cmis.window.startup();
-}
+        let windows = Services.wm.getEnumerator("navigator:browser");
 
-function shutdown(data, reason) {
-    if (Services.vc.compare(Services.appinfo.platformVersion, "10.0") < 0)
-        Components.manager.removeBootstrappedManifestLocation(data.installPath);
+        while (windows.hasMoreElements()) {
+            Cmis.window.remove(windows.getNext());
+        }
+    },
 
-    Cmis.preferences.shutdown();
-    Cmis.window.shutdown();
-}
+    add: function(window) {
+        window.addEventListener("contextmenu", Cmis.menu.quicksave, false);
 
-function install(data, reason) {
-    if (reason === 7 /* ADDON_UPGRADE */) {
-        if (Services.vc.compare(data.version, "20130129") <= 0)
-            Cmis.update.v20130129();
+        let context = window.document.getElementById("contentAreaContextMenu");
+
+        if (!context)
+            return;
+
+        context.addEventListener("popupshowing", Cmis.menu.display, false);
+
+        Cmis.menu.inject(window);
+    },
+
+    remove: function(window) {
+        window.removeEventListener("contextmenu", Cmis.menu.quicksave);
+
+        let context = window.document.getElementById("contentAreaContextMenu");
+
+        if (!context)
+            return;
+
+        context.removeEventListener("popupshowing", Cmis.menu.display, false);
+
+        Cmis.menu.wipe(context);
+    },
+
+    observe: function(subject, topic, data) {
+        if (topic === "domwindowopened") {
+            subject.addEventListener("load", function() {
+                Cmis.window.add(subject);
+            }, false);
+        }
     }
-}
-
-function uninstall(data, reason) {
-    if (reason === 6 /* ADDON_UNINSTALL */)
-        Cmis.preferences.uninstall();
-}
+};
