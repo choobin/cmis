@@ -562,6 +562,8 @@ let ItemsView = {
             item.open = true;
 
         this.updateVisible(row);
+
+        ItemsActions.update();
     },
 
     toggleSubmenus: function(open) {
