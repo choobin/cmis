@@ -103,6 +103,7 @@ let ItemsView = {
         return this.items[this.visible[index]];
     },
 
+    // Comutre the visible index array from the raw items
     computeVisible: function() {
         this.visible = [];
 

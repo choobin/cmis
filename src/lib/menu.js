@@ -151,12 +151,10 @@ Cmis.menu = {
 
                 // XXX translations for Image and Link
                 if (label.indexOf(ontype) == -1) {
-                    if (ontype === "Image") {
+                    if (ontype === "Image")
                         children[i].label = label.replace(/Link/, "Image");
-                    }
-                    else if (ontype === "Link") {
+                    else if (ontype === "Link")
                         children[i].label = label.replace(/Image/, "Link");
-                    }
                     // Otherwise... fuck it... :D
                 }
             }
@@ -175,9 +173,8 @@ Cmis.menu = {
         let children = context.childNodes;
 
         for (let i = children.length - 1; i >= 0; i--) {
-            if (children[i].id.indexOf("context-cmis-item-") == 0) {
+            if (children[i].id.indexOf("context-cmis-item-") == 0)
                 context.removeChild(children[i]);
-            }
         }
     },
 
@@ -209,12 +206,10 @@ Cmis.menu = {
 
         let url;
 
-        if (gContextMenu.onImage) {
+        if (gContextMenu.onImage)
             url = gContextMenu.imageURL;
-        }
-        else if (saveLinks && !gContextMenu.onImage && gContextMenu.onLink) {
+        else if (saveLinks && !gContextMenu.onImage && gContextMenu.onLink)
             url = gContextMenu.link;
-        }
 
         let saveas = false;
 

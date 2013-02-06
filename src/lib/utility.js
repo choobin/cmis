@@ -54,30 +54,32 @@ Cmis.utility = {
 
         let nsIFilePicker = Components.interfaces.nsIFilePicker;
 
-        let fp = Components.classes["@mozilla.org/filepicker;1"]
+        let filePicker = Components
+            .classes["@mozilla.org/filepicker;1"]
             .createInstance(nsIFilePicker);
 
-        fp.init(window, data.name, nsIFilePicker.modeSave);
+        filePicker.init(window, data.name, nsIFilePicker.modeSave);
 
-        fp.defaultString = filename;
+        filePicker.defaultString = filename;
 
-        fp.appendFilters(nsIFilePicker.filterAll);
+        filePicker.appendFilters(nsIFilePicker.filterAll);
 
         if (data.path !== "") {
-            let path = Components.classes["@mozilla.org/file/local;1"]
+            let path = Components
+                .classes["@mozilla.org/file/local;1"]
                 .createInstance(Components.interfaces.nsILocalFile);
 
             path.initWithPath(data.path);
 
-            fp.displayDirectory = path;
+            filePicker.displayDirectory = path;
         }
 
-        let res = fp.show();
+        let result = filePicker.show();
 
-        if (res == nsIFilePicker.returnCancel)
+        if (result == nsIFilePicker.returnCancel)
             return null;
 
-        return fp.file;
+        return filePicker.file;
     },
 
     prompt: function(path) {
@@ -194,9 +196,8 @@ Cmis.utility = {
                 }
             }
 
-            if (action == 1) {
+            if (action == 1)
                 path = Cmis.utility.uniq(path);
-            }
         }
 
         let target = NetUtil.newURI(path);
@@ -226,6 +227,8 @@ Cmis.utility = {
                 .getImgCacheForDocument(window.document);
         }
 
+        let nsISupportsCString = Components.interfaces.nsISupportsCString;
+
         let content_type = null;
 
         let content_disposition = null;
@@ -234,8 +237,8 @@ Cmis.utility = {
             let properties = cache.findEntryProperties(source);
 
             if (properties) {
-                content_type = properties.get("type", Components.interfaces.nsISupportsCString);
-                content_disposition = properties.get("content-disposition", Components.interfaces.nsISupportsCString);
+                content_type = properties.get("type", nsISupportsCString);
+                content_disposition = properties.get("content-disposition", nsISupportsCString);
             }
 
             let decoder = Components
