@@ -38,7 +38,7 @@ function $(x) {
 
 const PREFBRANCH = "extensions.cmis@moongiraffe.net.";
 
-var Utility = {
+let Utility = {
     fetchList: function() {
         let branch = Services.prefs.getBranch(PREFBRANCH);
 
