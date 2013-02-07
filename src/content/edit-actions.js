@@ -114,6 +114,10 @@ let EditActions = {
         if (path === "")
             path = window.arguments[0].previousPath;
 
+        let nsIFilePicker = Components.interfaces.nsIFilePicker;
+
+        let filePicker = Utility.filePicker(nsIFilePicker.modeGetFolder);
+
         if (path !== "") {
             let file = Components
                 .classes["@mozilla.org/file/local;1"]
@@ -126,12 +130,8 @@ let EditActions = {
                 return false;
             }
 
-            picker.displayDirectory = file;
+            filePicker.displayDirectory = file;
         }
-
-        let nsIFilePicker = Components.interfaces.nsIFilePicker;
-
-        let filePicker = Utility.filePicker(nsIFilePicker.modeGetFolder);
 
         let result = filePicker.show();
 
