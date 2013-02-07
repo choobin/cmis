@@ -60,6 +60,8 @@ Cmis.preferences = {
     defaults: function() {
         let branch = Services.prefs.getDefaultBranch(PREFBRANCH);
 
+        branch.setIntPref("directoryListVersion", 1);
+
         let string = Components
             .classes["@mozilla.org/supports-string;1"]
             .createInstance(Components.interfaces.nsISupportsString);

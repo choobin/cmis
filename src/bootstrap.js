@@ -46,6 +46,10 @@ function startup(data, reason) {
     });
 
     Cmis.preferences.startup();
+
+    if (Services.vc.compare(data.version, "20130207") <= 0)
+        Cmis.update.v20130207();
+
     Cmis.window.startup();
 }
 
@@ -58,10 +62,6 @@ function shutdown(data, reason) {
 }
 
 function install(data, reason) {
-    if (reason === 7 /* ADDON_UPGRADE */) {
-        if (Services.vc.compare(data.version, "20130207") <= 0)
-            Cmis.update.v20130207();
-    }
 }
 
 function uninstall(data, reason) {

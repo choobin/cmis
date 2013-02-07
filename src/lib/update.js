@@ -38,15 +38,18 @@ Cmis.update = {
     // "|" and "!"  characters and lead the way to easy importing and
     // exporting of CMIS settings.
     v20130207: function() {
-        let list = Cmis.preferences.value("directoryList");
+        let version = Cmis.preferences.value("directoryListVersion");
 
-        let items = [];
+        if (version > 1) return;
+
+        let list = Cmis.preferences.value("directoryList");
 
         // If the first character is a '[' it is safe :D to assume
         // that the directoryList has already been converted, i.e.,
         // user is running a -dev version.
-        if (list[0] == '[')
-            return;
+        if (list[0] === '[') return;
+
+        let items = [];
 
         // 99% of the time we need to translate the old directoryList format.
         let xs = list.split("|");
@@ -104,5 +107,7 @@ Cmis.update = {
         list = JSON.stringify(items);
 
         Cmis.preferences.value("directoryList", list);
+
+        Cmis.preferences.value("directoryListVersion", 2);
     }
 };
