@@ -56,7 +56,7 @@ Cmis.utility = {
         let next = Cmis.utility.dirname(string);
 
         while (next !== string) {
-            if (Utility.isValidPath(next))
+            if (Cmis.utility.isValidPath(next))
                 return next;
 
             string = next;
@@ -104,8 +104,8 @@ Cmis.utility = {
         filePicker.appendFilters(nsIFilePicker.filterAll);
 
         if (data.path !== "") {
-            if (!Utility.isValidPath(data.path))
-                data.path = Utility.nextValidPath(data.path);
+            if (!Cmis.utility.isValidPath(data.path))
+                data.path = Cmis.utility.nextValidPath(data.path);
 
             let path = Components
                 .classes["@mozilla.org/file/local;1"]
