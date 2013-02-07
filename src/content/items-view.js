@@ -587,6 +587,12 @@ let ItemsView = {
         if (orientation == 0 /* DROP_ON */)
             return false;
 
+        // Allow DROP_BEFORE _only_ on the first element of the
+        // treeview. This way we can insert items above the first
+        // element.
+        if (orientation == -1 /* DROP_BEFORE */ && index == 0)
+            return true;
+
         // Banned! DROP_BEFORE *ruined* Christmas! After countless
         // hours hacking at a custom treeview with DROP_BEFORE and
         // DROP_AFTER enabled, it was just too unpredictable... Well,
@@ -638,9 +644,9 @@ let ItemsView = {
 
         let offset = toitem.depth - fromitem.depth;
 
-        if (toitem.type === "submenu") {
-            // If we are inserting a new item or submenu after an _open_
-            // submenu we nest it inside the submenu.
+        if (orientation == 1 && toitem.type === "submenu") {
+            // If we are inserting a new item or submenu after an
+            // _open_ submenu we nest it inside the submenu.
             if (toitem.open) {
                 offset++;
             }
@@ -655,9 +661,10 @@ let ItemsView = {
 
         let fromitems = this.items.splice(fromindex, fromchildren + 1);
 
-        // Because we only allow DROP_AFTER we have to move to the
-        // next toindex position before splicing.
-        toindex++;
+        // DROP_AFTER orientation needs to move toindex to the next
+        // position before splicing.
+        if (orientation == 1 /* DROP_AFTER */)
+            toindex++;
 
         // If we are draging an item or submenu downwards we have to
         // adjust the to index once we splice fromitems.
