@@ -401,7 +401,7 @@ let ItemsView = {
 
         this.treebox.invalidate();
 
-        ItemsActions.select();
+        ItemsActions.selectItem();
     },
 
     insert: function(item) {
