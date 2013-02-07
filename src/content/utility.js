@@ -46,9 +46,6 @@ let Utility = {
             "directoryList",
             Components.interfaces.nsISupportsString).data;
 
-        if (list === "")
-            return [];
-
         return list;
     },
 
