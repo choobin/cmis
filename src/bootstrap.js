@@ -39,7 +39,7 @@ function startup(data, reason) {
     if (Services.vc.compare(Services.appinfo.platformVersion, "10.0") < 0)
         Components.manager.addBootstrappedManifestLocation(data.installPath);
 
-    ["window", "menu", "io", "preferences", "utility"].forEach(function (script) {
+    ["window", "menu", "io", "preferences", "utility", "update"].forEach(function (script) {
         let url = data.resourceURI.spec + "lib/" + script + ".js";
 
         Services.scriptloader.loadSubScript(url, this);
