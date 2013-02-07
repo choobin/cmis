@@ -123,6 +123,8 @@ let ItemsView = {
     },
 
     loadItems: function(list) {
+        if (list === "") return;
+
         let oldlength = this.visible.length;
 
         let data = JSON.parse(list);
