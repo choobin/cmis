@@ -40,9 +40,9 @@ let ItemsActions = {
     previousPath: "",
 
     load: function() {
-        this.stackpos = 0;
+        this.stackPos = 0;
 
-        this.stack[this.stackpos] = Utility.fetchList();
+        this.stack[this.stackPos] = Utility.fetchList();
     },
 
     update: function() {
