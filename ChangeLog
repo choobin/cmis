@@ -1,3 +1,7 @@
+2013-02-07  Christopher Hoobin  <hsirhc@gmail.com>
+
+	- Added sane handling of invalid paths in configuration file.
+
 2013-02-04  Christopher Hoobin  <hsirhc@gmail.com>
 
 	- Added drag and drop functionality to Treeview.
