@@ -697,13 +697,31 @@ let ItemsView = {
         ItemsActions.update();
     },
 
+    getCellProperties: function(row, column, properties) {
+        if (column.index != 1)
+            return;
+
+        let item = this.itemAt(row);
+
+        if (item.type !== "item")
+            return;
+
+        if (Utility.isValidPath(item.path))
+            return;
+
+        var nsIAtomService = Components
+            .classes["@mozilla.org/atom-service;1"]
+            .getService(Components.interfaces.nsIAtomService);
+
+        properties.AppendElement(nsIAtomService.getAtom("invalidPath"));
+    },
+
     cycleHeader: function(col, elem) {},
     selectionChanged: function() {},
     cycleCell: function(row, col) {},
     performActions: function(action) {},
     performActionsOnCell: function(action, row, col) {},
     getRowProperties: function(row,props) {},
-    getCellProperties: function(row,col,props) {},
     getColumnProperties: function(colid,col,props) {},
     getImageSrc: function(row, column) {},
 };

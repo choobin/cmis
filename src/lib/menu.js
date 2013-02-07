@@ -103,8 +103,14 @@ Cmis.menu = {
 
                 if (items[i].type === "settings")
                     item.addEventListener("command", Cmis.menu.loadoptions, false);
-                else // data.type === "item"
+                else { // data.type === "item"
                     item.addEventListener("command", Cmis.menu.save, false);
+
+                    if (!Cmis.utility.isValidPath(items[i].path)) {
+                        item.setAttribute("class", "menuitem-iconic");
+                        item.setAttribute("image", "chrome://cmis/skin/error.png");
+                    }
+                }
             }
 
             item.setAttribute("id", "context-cmis-item-" + i);

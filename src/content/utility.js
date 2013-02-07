@@ -39,6 +39,45 @@ function $(x) {
 const PREFBRANCH = "extensions.cmis@moongiraffe.net.";
 
 let Utility = {
+    isValidPath: function(string) {
+        try {
+            let path = Components
+                .classes["@mozilla.org/file/local;1"]
+                .createInstance(Components.interfaces.nsILocalFile);
+
+            path.initWithPath(string);
+
+            if (!path.exists() || !path.isDirectory() || !path.isWritable())
+                return false;
+        }
+        catch (e) {
+            return false; // NS_ERROR_FILE_UNRECOGNIZED_PATH
+        }
+
+        return true;
+    },
+
+    nextValidPath: function(string) {
+        let next = Utility.dirname(string);
+
+        while (next !== string) {
+            if (Utility.isValidPath(next))
+                return next;
+
+            string = next;
+
+            next = Utility.dirname(next);
+        }
+
+        // If that fails return a path to the users desktop.
+        var desktop = Components
+            .classes["@mozilla.org/file/directory_service;1"].
+            getService(Components.interfaces.nsIProperties).
+            get("Desk", Components.interfaces.nsIFile);
+
+        return desktop.path;
+    },
+
     fetchList: function() {
         let branch = Services.prefs.getBranch(PREFBRANCH);
 

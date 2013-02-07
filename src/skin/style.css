@@ -83,16 +83,6 @@ treechildren::-moz-tree-indentation {
     width: 20px;
 }
 
-/*
-treechildren::-moz-tree-image {
-  list-style-image: url("chrome://cmis/skin/browse.png");
+treechildren::-moz-tree-image(invalidPath) {
+  list-style-image: url("chrome://cmis/skin/error.png");
 }
-
-treechildren::-moz-tree-twisty {
-  list-style-image: url("chrome://cmis/skin/tree-closed.png");
-}
-
-treechildren::-moz-tree-twisty(open) {
-  list-style-image: url("chrome://cmis/skin/tree-open.png");
-}
-*/

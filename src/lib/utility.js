@@ -34,6 +34,45 @@ Components.utils.import("resource://gre/modules/Services.jsm");
 Components.utils.import("resource://gre/modules/NetUtil.jsm");
 
 Cmis.utility = {
+    isValidPath: function(string) {
+        try {
+            let path = Components
+                .classes["@mozilla.org/file/local;1"]
+                .createInstance(Components.interfaces.nsILocalFile);
+
+            path.initWithPath(string);
+
+            if (!path.exists() || !path.isDirectory() || !path.isWritable())
+                return false;
+        }
+        catch (e) {
+            return false; // NS_ERROR_FILE_UNRECOGNIZED_PATH
+        }
+
+        return true;
+    },
+
+    nextValidPath: function(string) {
+        let next = Cmis.utility.dirname(string);
+
+        while (next !== string) {
+            if (Utility.isValidPath(next))
+                return next;
+
+            string = next;
+
+            next = Cmis.utility.dirname(next);
+        }
+
+        // If that fails return a path to the users desktop.
+        var desktop = Components
+            .classes["@mozilla.org/file/directory_service;1"].
+            getService(Components.interfaces.nsIProperties).
+            get("Desk", Components.interfaces.nsIFile);
+
+        return desktop.path;
+    },
+
     buildpath: function(data, filename) {
         let path = Components
             .classes["@mozilla.org/file/local;1"]
@@ -42,7 +81,7 @@ Cmis.utility = {
         path.initWithPath(data.path);
 
         if (!path.exists())
-            path.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, parseInt("0700", 8));
+            return null;
 
         path.append(filename);
 
@@ -65,6 +104,9 @@ Cmis.utility = {
         filePicker.appendFilters(nsIFilePicker.filterAll);
 
         if (data.path !== "") {
+            if (!Utility.isValidPath(data.path))
+                data.path = Utility.nextValidPath(data.path);
+
             let path = Components
                 .classes["@mozilla.org/file/local;1"]
                 .createInstance(Components.interfaces.nsILocalFile);
@@ -163,6 +205,8 @@ Cmis.utility = {
         }
         else {
             path = Cmis.utility.buildpath(data, filename);
+
+            if (!path) return [null, null]; // The save path is invalid.
 
             Cmis.preferences.value("previousSaveAsDirectory", "");
         }

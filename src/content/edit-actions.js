@@ -53,10 +53,11 @@ let EditActions = {
             $("saveas").hidden = true;
         }
 
-        $("settings-explanation").hidden = true;
-
         if (item.type === "settings")
-            $("settings-explanation").hidden = false;
+            $("editmessage").hidden = false;
+
+        if (item.type === "item")
+            EditActions.validatePath();
     },
 
     accept: function() {
@@ -68,28 +69,6 @@ let EditActions = {
             let item = window.arguments[0].item;
             item.name = $("name").value;
             return true;
-        }
-
-        if ($("path").hidden === false &&
-            $("path").value.length == 0)
-            return false
-
-        let file;
-
-        try {
-            let file = Components
-                .classes["@mozilla.org/file/local;1"]
-                .createInstance(Components.interfaces.nsILocalFile);
-
-            file.initWithPath($("path").value);
-
-            if (!file.isDirectory() || !file.isWritable()) {
-                Utility.errorPrompt("errorPromptItemPath");
-                return false;
-            }
-        } catch(e) {
-            Utility.errorPrompt("errorPromptItemPath");
-            return false;
         }
 
         let item = window.arguments[0].item;
@@ -108,6 +87,31 @@ let EditActions = {
         return true;
     },
 
+    validatePath: function() {
+        let path = $("path").value;
+
+        let message = $("editmessage");
+
+        if (path === "" || Utility.isValidPath(path)) {
+            message.hidden = true;
+            return;
+        }
+
+        let bundle = Utility.stringBundle();
+
+        let label = bundle.GetStringFromName("errorPromptItemPath");
+
+        Services.strings.flushBundles();
+
+        message.value = label;
+
+        message.style.color = "red";
+
+        message.hidden = false;
+
+        window.sizeToContent();
+    },
+
     getPath: function() {
         let path = $("path").value;
 
@@ -119,16 +123,14 @@ let EditActions = {
         let filePicker = Utility.filePicker(nsIFilePicker.modeGetFolder);
 
         if (path !== "") {
+            if (!Utility.isValidPath(path))
+                path = Utility.nextValidPath(path);
+
             let file = Components
                 .classes["@mozilla.org/file/local;1"]
                 .createInstance(Components.interfaces.nsILocalFile);
 
             file.initWithPath(path);
-
-            if (!file.exists()) {
-                Utility.errorPrompt("errorPromptItemPath");
-                return false;
-            }
 
             filePicker.displayDirectory = file;
         }
@@ -153,6 +155,8 @@ let EditActions = {
 
             Services.strings.flushBundles();
         }
+
+        EditActions.validatePath();
 
         return true;
     }
