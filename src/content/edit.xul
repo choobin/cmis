@@ -9,14 +9,16 @@
         minwidth="600"
         title="&cmis.items.edit.title;"
         buttons="accept,cancel"
-        onload="moongiraffe.Cmis.menu.edit.load();"
-        ondialogaccept="moongiraffe.Cmis.menu.edit.accept();"
-        ondialogcancel="moongiraffe.Cmis.menu.edit.cancel();">
+        ondialogaccept="EditActions.accept();"
+        ondialogcancel="EditActions.cancel();">
 
-  <script src="edit.js"/>
+  <script type="application/x-javascript;version=1.7" src="edit-actions.js"/>
+  <script type="application/x-javascript;version=1.7" src="utility.js"/>
 
   <vbox align="center">
-    <label id="settings-explanation" class="small" value="&cmis.items.settingsExplanation;"/>
+    <label id="settings-explanation"
+           class="small"
+           value="&cmis.items.settingsExplanation;"/>
   </vbox>
 
   <grid>
@@ -29,6 +31,7 @@
         <hbox align="center">
           <label value="&cmis.items.name;"/>
         </hbox>
+
         <hbox align="center">
           <textbox flex="1" id="name"/>
         </hbox>
@@ -37,17 +40,22 @@
         <hbox align="center">
           <label id="pathlabel" value="&cmis.items.path;"/>
         </hbox>
+
         <hbox>
-          <textbox flex="1" id="path" editable="false"/>
+          <textbox flex="1"
+                   id="path"
+                   editable="false"/>
+
           <button class="browse"
                   id="browse"
-                  oncommand="moongiraffe.Cmis.menu.edit.getpath();"/>
+                  oncommand="EditActions.getPath();"/>
         </hbox>
       </row>
       <row>
         <hbox align="center">
           <label id="formatlabel" value="&cmis.items.format;"/>
         </hbox>
+
         <hbox align="center">
           <textbox flex="1" id="format"/>
         </hbox>
