@@ -37,42 +37,18 @@ Cmis.update = {
     // friendly(er) JSON. This will enable labels and paths to contain
     // "|" and "!"  characters and lead the way to easy importing and
     // exporting of CMIS settings.
-    v20130129: function() {
+    v20130207: function() {
         let list = Cmis.preferences.value("directoryList");
 
         let items = [];
 
-        // If the first character is a '[' it is safe to assume that
-        // the directoryList has already been converted, i.e., user is
-        // running a -dev version. Note: Saveas items have been merged
-        // with Item objects. That is, we still need to process the list.
-        if (list[0] == '[') {
-            let xs = JSON.parse(list);
-
-            xs.forEach(function (item) {
-                if (item.type === "item" &&
-                    item.saveas === undefined) {
-                    item.saveas = false;
-                }
-
-                if (item.type ==="saveas") {
-                    item.type = "item";
-                    item.format = "%DEFAULT";
-                    item.saveas = true;
-                }
-
-                items.push(item);
-            });
-
-            list = JSON.stringify(items);
-
-            Cmis.preferences.value("directoryList", list);
-
+        // If the first character is a '[' it is safe :D to assume
+        // that the directoryList has already been converted, i.e.,
+        // user is running a -dev version.
+        if (list[0] == '[')
             return;
-        }
 
-        // Otherwise we translate the old directoryList string
-        // and go from there.
+        // 99% of the time we need to translate the old directoryList format.
         let xs = list.split("|");
 
         xs.forEach(function (x) {
@@ -82,8 +58,8 @@ Cmis.update = {
             case '.':
                 let prefix = item[4];
 
-                // Append %DEFAULT to the old style prefix data, even
-                // if it is empty.
+                // Append %DEFAULT to the old style prefix
+                // data, even if it is empty.
                 prefix += "%DEFAULT"
 
                 items.push({
@@ -118,7 +94,8 @@ Cmis.update = {
                 items.push({
                     type: "submenu",
                     depth: parseInt(item[1]),
-                    name: item[2]
+                    name: item[2],
+                    open: true
                 });
                 break;
             }

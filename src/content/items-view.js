@@ -129,15 +129,6 @@ let ItemsView = {
 
         let data = JSON.parse(list);
 
-        data.forEach(function (item) {
-            // If a submenu item does not have an open field we set it
-            // to open. This will prevent the need to another update
-            // function in bootstrap.js.
-            if (item.type === "submenu" &&
-                item.open === undefined)
-                item.open = true;
-        });
-
         this.items = data;
 
         this.computeVisible();

@@ -59,8 +59,8 @@ function shutdown(data, reason) {
 
 function install(data, reason) {
     if (reason === 7 /* ADDON_UPGRADE */) {
-        if (Services.vc.compare(data.version, "20130129") <= 0)
-            Cmis.update.v20130129();
+        if (Services.vc.compare(data.version, "20130207") <= 0)
+            Cmis.update.v20130207();
     }
 }
 
