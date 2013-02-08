@@ -66,9 +66,9 @@ Cmis.utility = {
 
         // If that fails return a path to the users desktop.
         var desktop = Components
-            .classes["@mozilla.org/file/directory_service;1"].
-            getService(Components.interfaces.nsIProperties).
-            get("Desk", Components.interfaces.nsIFile);
+            .classes["@mozilla.org/file/directory_service;1"]
+            .getService(Components.interfaces.nsIProperties)
+            .get("Desk", Components.interfaces.nsIFile);
 
         return desktop.path;
     },
@@ -375,12 +375,10 @@ Cmis.utility = {
         let count = 0;
         while (path.exists()) {
             count++;
-            if (count == 1) {
+            if (count == 1)
                 path.leafName = path.leafName.replace(/(\.[^\.]*)?$/, "(2)$&");
-            }
-            else {
+            else
                 path.leafName = path.leafName.replace(/^(.*\()\d+\)/, "$1" + (count + 1) + ")");
-            }
         }
         return path;
     },
