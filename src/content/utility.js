@@ -70,10 +70,10 @@ let Utility = {
         }
 
         // If that fails return a path to the users desktop.
-        var desktop = Components
-            .classes["@mozilla.org/file/directory_service;1"].
-            getService(Components.interfaces.nsIProperties).
-            get("Desk", Components.interfaces.nsIFile);
+        let desktop = Components
+            .classes["@mozilla.org/file/directory_service;1"]
+            .getService(Components.interfaces.nsIProperties)
+            .get("Desk", Components.interfaces.nsIFile);
 
         return desktop.path;
     },

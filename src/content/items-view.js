@@ -173,7 +173,7 @@ let ItemsView = {
         }
     },
 
-    // Swaps two item in the tree (can be containers).
+    // Swaps two items in the tree (can be containers).
     shuffle: function(to, from) {
         if (from > to) {
             let temp = to;
@@ -709,7 +709,7 @@ let ItemsView = {
         if (Utility.isValidPath(item.path))
             return;
 
-        var nsIAtomService = Components
+        let nsIAtomService = Components
             .classes["@mozilla.org/atom-service;1"]
             .getService(Components.interfaces.nsIAtomService);
 
