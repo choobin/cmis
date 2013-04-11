@@ -189,6 +189,8 @@ Cmis.menu = {
 
         let gContextMenu = window.gContextMenu;
 
+        if (!gContextMenu) return;
+
         let context = window.document.getElementById("contentAreaContextMenu");
 
         let saveLinks = Cmis.preferences.value("saveLinks");
