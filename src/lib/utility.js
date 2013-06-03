@@ -416,9 +416,12 @@ Cmis.utility = {
             let gContextMenu = Services.ww.activeWindow.gContextMenu;
 
             if (gContextMenu)
-                result = result.replace(/%ALT/g, gContextMenu.target.alt);
-            else // gContextMenu is not created on quicksave
-                result = result.replace(/%ALT/g, alt);
+                alt = gContextMenu.target.alt;
+
+            if (!alt || alt.length === 0)
+               alt = "no-alt-text"
+
+           result = result.replace(/%ALT/g, alt);
         }
 
         return result;
