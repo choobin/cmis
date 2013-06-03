@@ -419,7 +419,7 @@ Cmis.utility = {
                 alt = gContextMenu.target.alt;
 
             if (!alt || alt.length === 0)
-               alt = "no-alt-text"
+               alt = "no-alt-text";
 
            result = result.replace(/%ALT/g, alt);
         }
