@@ -219,15 +219,13 @@ Cmis.menu = {
         else if (saveLinks && !gContextMenu.onImage && gContextMenu.onLink)
             url = gContextMenu.link;
 
-        let saveas = false;
-
         let source = NetUtil.newURI(url);
 
         let [target, filename] = Cmis.utility.target(event, index, source, null, false);
 
         if (!target) return;
 
-        Cmis.io.save(source, target, filename);
+        Cmis.io.save(window, source, target, filename);
 
         Cmis.preferences.value("previousDirectoryIndex", index);
     },
@@ -285,7 +283,7 @@ Cmis.menu = {
 
         if (!target) return;
 
-        Cmis.io.save(source, target, filename);
+        Cmis.io.save(window, source, target, filename);
 
         Cmis.preferences.value("previousDirectoryIndex", index);
     },

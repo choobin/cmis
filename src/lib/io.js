@@ -33,9 +33,7 @@
 Components.utils.import("resource://gre/modules/Services.jsm");
 
 Cmis.io = {
-    save: function(source, target, filename) {
-        let window = Services.ww.activeWindow;
-
+    save: function(window, source, target, filename) {
         let privacy_context = null;
 
         let is_private = false;
