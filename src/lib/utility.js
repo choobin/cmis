@@ -161,7 +161,7 @@ Cmis.utility = {
 
         let filename = Cmis.utility.filename(source);
 
-        filename = Cmis.utility.format(data.format, filename, alt);
+        filename = Cmis.utility.format(data.format, filename, source, alt);
 
         let path = null;
 
@@ -293,7 +293,7 @@ Cmis.utility = {
 
             name = decoder.getParameter(content_disposition, "filename", window.document.characterSet, true, unused);
 
-            return Cmis.utility.validate(name, content_type);
+            return Cmis.utility.validate(name, content_type, true);
         }
         catch (e) {
             // It is OK to fail fetching Content-Type and Content-Disposition headers
@@ -310,7 +310,7 @@ Cmis.utility = {
 
                 name = texttosuburi.unEscapeURIForUI(url.originCharset || "UTF-8", url.fileName);
 
-                return Cmis.utility.validate(name, content_type);
+                return Cmis.utility.validate(name, content_type, true);
             }
         }
         catch (e) {
@@ -321,26 +321,29 @@ Cmis.utility = {
         let data = source.path.match(/\/([^\/]+)\/$/);
 
         if (data && data.length > 1) {
-            return Cmis.utility.validate(data[1], content_type);
+            return Cmis.utility.validate(data[1], content_type, true);
         }
 
         // Otherwise we can extract the filename from the URL (and cross our fingers)
         name = source.path.replace(/.*\//, "");
 
-        return Cmis.utility.validate(name, content_type);
+        return Cmis.utility.validate(name, content_type, true);
     },
 
-    validate: function(name, content_type) {
+    validate: function(name, content_type, add_extension) {
         // firefox-5.0/omni/chrome/toolkit/content/global/contentAreaUtils.js:883
         name = name.replace(/[\\]+/g, "_");
         name = name.replace(/[\/]+/g, "_");
-        name = name.replace(/[\:]+/g, " ");
-        name = name.replace(/[\*]+/g, " ");
-        name = name.replace(/[\?]+/g, " ");
+        name = name.replace(/[\:]+/g, "_");
+        name = name.replace(/[\*]+/g, "_");
+        name = name.replace(/[\?]+/g, "_");
         name = name.replace(/[\"]+/g, "'");
         name = name.replace(/[\<]+/g, "(");
         name = name.replace(/[\>]+/g, ")");
         name = name.replace(/[\|]+/g, "_");
+
+        if (!add_extension)
+            return name;
 
         // XXX This was returning null sometimes. Is this supposed to ever happen?
         let mimeService = Components
@@ -349,7 +352,7 @@ Cmis.utility = {
 
         let extension = mimeService.getPrimaryExtension(content_type, null);
 
-                                    // Goodie goodie gumdrops!
+        // Goodie goodie gumdrops!
         if (extension === "jpe" ||  // Linux FF18 getPrimaryExtension("image/jpeg", null) returns "jpe"
             extension === "jpg" ||  // Windows 7 x86_64 FF18 returns "jpg"
             extension === "jpeg") { // Windows XP x86_64 FF17.1 returns "jpeg"
@@ -397,20 +400,28 @@ Cmis.utility = {
         return dir;
     },
 
-    format: function(format, filename, alt) {
+    format: function(format, filename, source, alt) {
         // An empty format string should correspond to a %DEFAULT
         // variable, i.e., the original filename.
         if (format.length == 0)
             return filename;
 
+        let window = Services.ww.activeWindow;
+
+        let document = window.gBrowser.contentDocument;
+
         let [tmp, name, extension] = filename.match(/^(.*?)\.(.*?)$/); // Really man?
 
-        let result = format
-            .replace(/%DEFAULT/g, filename)
-            .replace(/%NAME/g, name)
-            .replace(/%EXT/g, extension)
+        let result = Cmis.utility.date(format);
 
-        result = Cmis.utility.date(result);
+        if (result.match(/%DEFAULT/))
+            result = result.replace(/%DEFAULT/g, filename);
+
+        if (result.match(/%NAME/))
+            result = result.replace(/%NAME/g, name);
+
+        if (result.match(/%EXT/))
+            result = result.replace(/%EXT/g, extension);
 
         if (result.match(/%ALT/)) {
             let gContextMenu = Services.ww.activeWindow.gContextMenu;
@@ -419,12 +430,72 @@ Cmis.utility = {
                 alt = gContextMenu.target.alt;
 
             if (!alt || alt.length === 0)
-               alt = "no-alt-text";
+                alt = "no-alt-text";
 
-           result = result.replace(/%ALT/g, alt);
+            result = result.replace(/%ALT/g, alt);
         }
 
-        return result;
+        if (result.match(/%HOST/))
+            result = result.replace(/%HOST/g, source.host);
+
+        if (result.match(/%DOMAIN/)) {
+            let [tmp, subdomain, domain] = source.host.match(/^(.*?)\.(.*?)$/); // Yup. Did it again. Really?
+
+            result = result.replace(/%DOMAIN/g, domain);
+        }
+
+        if (result.match(/%URL/)) {
+            let [tmp, url] = document.URL.match(/:\/\/(.*)$/);
+
+            url = url.replace(/\//g, "_");
+
+            result = result.replace(/%URL/g, url);
+        }
+
+        if (result.match(/%TITLE/)) {
+            let title = document.getElementsByTagName("title")[0].innerHTML || "no-title-text";
+            result = result.replace(/%TITLE/g, title);
+        }
+
+        if (result.match(/%CLIPBOARD/)) {
+            let text = Cmis.utility.clipboard();
+
+            if (text.length === 0)
+                text = "no-clipboard-text";
+
+            result = result.replace(/%CLIPBOARD/g, text);
+        }
+
+        return Cmis.utility.validate(result, null, false);
+    },
+
+    clipboard: function() {
+        let clipboard = Components.classes["@mozilla.org/widget/clipboard;1"]
+            .getService(Components.interfaces.nsIClipboard);
+
+        if (!clipboard)
+            return "";
+
+        let transferable = Components.classes["@mozilla.org/widget/transferable;1"]
+            .createInstance(Components.interfaces.nsITransferable);
+
+        if (!transferable)
+            return "";
+
+        transferable.addDataFlavor("text/unicode");
+
+        clipboard.getData(transferable, clipboard.kGlobalClipboard);
+
+        let string = {};
+        let length = {};
+
+        transferable.getTransferData("text/unicode", string, length);
+
+        string = string.value.QueryInterface(Components.interfaces.nsISupportsString);
+
+        string = string.data.substring(0, length.value / 2);
+
+        return string;
     },
 
     date: function(str) {

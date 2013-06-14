@@ -111,6 +111,31 @@
         <hbox><label class="small" value="&cmis.items.format.alt;" flex="1"/></hbox>
       </row>
 
+      <row>
+        <hbox><label class="small" value="%HOST"/></hbox>
+        <hbox><label class="small" value="&cmis.items.format.host;" flex="1"/></hbox>
+      </row>
+
+      <row>
+        <hbox><label class="small" value="%DOMAIN"/></hbox>
+        <hbox><label class="small" value="&cmis.items.format.domain;" flex="1"/></hbox>
+      </row>
+
+      <row>
+        <hbox><label class="small" value="%URL"/></hbox>
+        <hbox><label class="small" value="&cmis.items.format.url;" flex="1"/></hbox>
+      </row>
+
+      <row>
+        <hbox><label class="small" value="%TITLE"/></hbox>
+        <hbox><label class="small" value="&cmis.items.format.title;" flex="1"/></hbox>
+      </row>
+
+      <row>
+        <hbox><label class="small" value="%CLIPBOARD"/></hbox>
+        <hbox><label class="small" value="&cmis.items.format.clipboard;" flex="1"/></hbox>
+      </row>
+
     </rows>
   </grid>
 
