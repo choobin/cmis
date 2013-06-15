@@ -43,7 +43,7 @@ let Utility = {
         try {
             let path = Components
                 .classes["@mozilla.org/file/local;1"]
-                .createInstance(Components.interfaces.nsILocalFile);
+                .createInstance(Components.interfaces.nsIFile);
 
             path.initWithPath(string);
 
