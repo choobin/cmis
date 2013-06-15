@@ -1,14 +1,22 @@
-2013-02-07  Christopher Hoobin  <hsirhc@gmail.com>
+2012-11-26  Christopher Hoobin  <christopher@hoob.in>
+
+	- Added a number of new format strings.
+
+	- Fixed issues with %ALT format string when it is empty.
+
+	- Fixed issue saving using the 'Save image as' dialog.
+
+2013-02-07  Christopher Hoobin  <christopher@hoob.in>
 
 	- Added sane handling of invalid paths in configuration file.
 
-2013-02-04  Christopher Hoobin  <hsirhc@gmail.com>
+2013-02-04  Christopher Hoobin  <christopher@hoob.in>
 
 	- Added drag and drop functionality to Treeview.
 
 	- Added submenu expand/collapse capability to the Treeview.
 
-2013-01-29  Christopher Hoobin  <hsirhc@gmail.com>
+2013-01-29  Christopher Hoobin  <christopher@hoob.in>
 
 	- Updated directoryList format from a delimited string to a JSON string.
 
@@ -36,7 +44,7 @@
 
 	- Added 'Display save notification in the status bar' option.
 
-2013-01-13  Christopher Hoobin  <hsirhc@gmail.com>
+2013-01-13  Christopher Hoobin  <christopher@hoob.in>
 
 	* bootstrap.js
 	* item.[js|xul]
@@ -46,19 +54,19 @@
 	- Added %DATE, %DATE{FORMAT} and %ALT variables to prefix string
 	creation.
 
-2013-01-05  Christopher Hoobin  <hsirhc@gmail.com>
+2013-01-05  Christopher Hoobin  <christopher@hoob.in>
 
 	* Cmis.io.save Updated addDownload and saveURL functions to deal
 	with FF18's per-window private browsing context.
 
-2013-01-03  Christopher Hoobin  <hsirhc@gmail.com>
+2013-01-03  Christopher Hoobin  <christopher@hoob.in>
 
 	* Cmis.util.filename Fixed issue where
 	nsIMIMEService.getPrimaryExtension("image/jpg", null) running XP
 	x86_64 was returning a different value to FF builds on Linux and
 	later versions of Windows.
 
-2012-12-29  Christopher Hoobin  <hsirhc@gmail.com>
+2012-12-29  Christopher Hoobin  <christopher@hoob.in>
 
 	* Cmis.util.filename
 	- As of FF18 there is no longer a single image cache. Cmis checks
@@ -70,18 +78,18 @@
 	missing it will append one acording to its Content-Type HTTP
 	header.
 
-2012-11-30  Christopher Hoobin  <hsirhc@gmail.com>
+2012-11-30  Christopher Hoobin  <christopher@hoob.in>
 
 	* bootstrap.js Prepending file name prefix was indexing the wrong
 	element fromm directory_data
 
-2012-11-29  Christopher Hoobin  <hsirhc@gmail.com>
+2012-11-29  Christopher Hoobin  <christopher@hoob.in>
 
 	* bootstrap.js nsIWebBrowserPersist.saveURI takes a seventh
 	argument which was neglected. This was causing a hang-up on FF18b2
 	and preventing it from saving anything.
 
-2012-08-28  Christopher Hoobin  <hsirhc@gmail.com>
+2012-08-28  Christopher Hoobin  <christopher@hoob.in>
 
 	* bootstrap.js
 	* edit.js
@@ -101,7 +109,7 @@
 	* install.rdf Updated minVersion to 8.0. Previous versions does
 	not handle manifest registration correctly.
 
-2012-08-27  Christopher Hoobin  <hsirhc@gmail.com>
+2012-08-27  Christopher Hoobin  <christopher@hoob.in>
 
 	* bootstrap.js Updated Cmis.menu.inject and Cmis.prefs functions
 	to deal with submenus.
@@ -112,7 +120,7 @@
 	* items.xul Added new submenu button. Treeview now adjusts size
 	when window is adjusted instead of being stuck at 12 items.
 
-2012-08-24  Christopher Hoobin  <hsirhc@gmail.com>
+2012-08-24  Christopher Hoobin  <christopher@hoob.in>
 
 	* bootstrap.js (Cmis.prefs) Fixed issue where preference branch
 	was being deleted on application upgrade. Now it will only delete
@@ -123,7 +131,7 @@
 	char preference type to a complex Ci.nsISupportsString type so we
 	can support unicode directories and menu labels.
 
-2012-08-22  Christopher Hoobin  <hsirhc@gmail.com>
+2012-08-22  Christopher Hoobin  <christopher@hoob.in>
 
 	* bootstrap.js (Cmis.io) Replaced call to Services.downloads with
 	Cc[nsIdownloadManager]...  Services.jsm states that it was
@@ -141,7 +149,7 @@
 	in contentAreaUtils.js. It replaces characters that do not belong
 	in filenames with valid characters.
 
-2012-08-16  Christopher Hoobin  <hsirhc@gmail.com>
+2012-08-16  Christopher Hoobin  <christopher@hoob.in>
 
 	* bootstrap.js (Cmis.io) Abstracted file name creation code to
 	Cmis.util.filename.
@@ -150,7 +158,7 @@
 	for a Content-Disposition HTTP header with a 'filename' parameter
 	before extracting the name from the URL string.
 
-2012-08-01  Christopher Hoobin  <hsirhc@gmail.com>
+2012-08-01  Christopher Hoobin  <christopher@hoob.in>
 
 	* bootstrap.js (Cmis.io) Using nsIWebBrowserPersist.saveURI instead
 	of the internalSave function from .../global/contentAreaUtils.js.
@@ -158,7 +166,7 @@
 	* bootstrap.js (Cmis.utility) Using Services.prompt.confirmEx instead
 	of a custom xul file and a window.openDialog call.
 
-2012-07-20  Christopher Hoobin  <hsirhc@gmail.com>
+2012-07-20  Christopher Hoobin  <christopher@hoob.in>
 
 	* Cmis Project is now a bootstrapped (no restart) add on.
 
@@ -170,7 +178,7 @@
 
 	* Update Version string changed to a more appropriate format.
 
-2011-10-27  Christopher Hoobin  <hsirhc@gmail.com>
+2011-10-27  Christopher Hoobin  <christopher@hoob.in>
 
 	* options.xul Replaced confirmOverwrite checkbox with
 	overwriteAction menu selection.
@@ -197,7 +205,7 @@
 
 	* install.rdf Updated em:version.
 
-2011-08-28  Christopher Hoobin  <hsirhc@gmail.com>
+2011-08-28  Christopher Hoobin  <christopher@hoob.in>
 
 	* editietm.js (onPickFolder) Updates menu item label on every
 	folder change (issue #1).
@@ -209,7 +217,7 @@
 
 	* install.rdf em:iconURL image renamed to icon.png
 
-2011-08-25  Christopher Hoobin  <hsirhc@gmail.com>
+2011-08-25  Christopher Hoobin  <christopher@hoob.in>
 
 	* overlay.js (showContextMenu) Using addEventListener in place of
 	setAtttribute to add oncommand callback.
@@ -231,7 +239,7 @@
 	* about.xul Removed about dialog. It is too hard to naivigate
 	to. Everything on there can be found on the AMO page.
 
-2011-08-07  Christopher Hoobin  <hsirhc@gmail.com>
+2011-08-07  Christopher Hoobin  <christopher@hoob.in>
 
 	* overlay.js (onQuickSave) Fixed event propagation issue during
 	quick save.
