@@ -699,30 +699,43 @@ let ItemsView = {
 
     getCellProperties: function(row, column, properties) {
         if (column.index != 1)
-            return;
+            return "";
 
         let item = this.itemAt(row);
 
         if (item.type !== "item")
-            return;
+            return "";
 
         if (Utility.isValidPath(item.path))
-            return;
+            return "";
 
-        let nsIAtomService = Components
-            .classes["@mozilla.org/atom-service;1"]
-            .getService(Components.interfaces.nsIAtomService);
+        // Prior to Gecko 22 the properties object that is passed as
+        // the last argument to the getCellProperties() is an XPCOM
+        // object that implements nsISupportsArray. It is really just
+        // an XPCOM version of an array. It contains a function
+        // AppendElement() which can be used to add an element to the
+        // array. We use the interface nsIAtomService to construct
+        // string atoms for the properties.
+        if (properties) {
+            let nsIAtomService = Components
+                .classes["@mozilla.org/atom-service;1"]
+                .getService(Components.interfaces.nsIAtomService);
 
-        properties.AppendElement(nsIAtomService.getAtom("invalidPath"));
+            properties.AppendElement(nsIAtomService.getAtom("invalidPath"));
+        }
+
+        // From Gecko 22 we can return a string of space-separated
+        // property names.
+        return "invalidPath";
     },
 
-    cycleHeader: function(col, elem) {},
+    cycleHeader: function(column, element) {},
     selectionChanged: function() {},
-    cycleCell: function(row, col) {},
+    cycleCell: function(row, column) {},
     performActions: function(action) {},
-    performActionsOnCell: function(action, row, col) {},
-    getRowProperties: function(row,props) {},
-    getColumnProperties: function(colid,col,props) {},
+    performActionsOnCell: function(action, row, column) {},
+    getRowProperties: function(row, properties) {},
+    getColumnProperties: function(index, column, properties) {},
     getImageSrc: function(row, column) {},
 };
 
