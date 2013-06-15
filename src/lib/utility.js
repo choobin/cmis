@@ -470,32 +470,43 @@ Cmis.utility = {
     },
 
     clipboard: function() {
-        let clipboard = Components.classes["@mozilla.org/widget/clipboard;1"]
-            .getService(Components.interfaces.nsIClipboard);
+        let text = "";
 
-        if (!clipboard)
-            return "";
+        try {
+            let clipboard = Components.classes["@mozilla.org/widget/clipboard;1"]
+                .getService(Components.interfaces.nsIClipboard);
 
-        let transferable = Components.classes["@mozilla.org/widget/transferable;1"]
-            .createInstance(Components.interfaces.nsITransferable);
+            if (!clipboard)
+                return "";
 
-        if (!transferable)
-            return "";
+            let transferable = Components.classes["@mozilla.org/widget/transferable;1"]
+                .createInstance(Components.interfaces.nsITransferable);
 
-        transferable.addDataFlavor("text/unicode");
+            if (!transferable)
+                return "";
 
-        clipboard.getData(transferable, clipboard.kGlobalClipboard);
+            if ('init' in transferable)
+                transferable.init(null);
 
-        let string = {};
-        let length = {};
+            transferable.addDataFlavor("text/unicode");
 
-        transferable.getTransferData("text/unicode", string, length);
+            clipboard.getData(transferable, clipboard.kGlobalClipboard);
 
-        string = string.value.QueryInterface(Components.interfaces.nsISupportsString);
+            let string = {};
+            let length = {};
 
-        string = string.data.substring(0, length.value / 2);
+            transferable.getTransferData("text/unicode", string, length);
 
-        return string;
+            string = string.value.QueryInterface(Components.interfaces.nsISupportsString);
+
+            text = string.data.substring(0, length.value / 2);
+        }
+        catch (e) {
+            // It is ok to fail. In most cases this is due
+            // to the clipboard being empty in Windows.
+        }
+
+        return text;
     },
 
     date: function(str) {
