@@ -34,19 +34,12 @@ Components.utils.import("resource://gre/modules/Services.jsm");
 
 Cmis.io = {
     save: function(window, source, target, filename) {
-        let privacy_context = null;
+        let privacy_context = window
+            .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+            .getInterface(Components.interfaces.nsIWebNavigation)
+            .QueryInterface(Components.interfaces.nsILoadContext);
 
-        let is_private = false;
-
-        // As of Firefox 18, the `addDownload` and `saveURL` functions
-        // have changed to support per-window private browsing.
-        if (Services.vc.compare(Services.appinfo.platformVersion, "18.0") >= 0) {
-            privacy_context = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-                .getInterface(Components.interfaces.nsIWebNavigation)
-                .QueryInterface(Components.interfaces.nsILoadContext);
-
-            is_private = privacy_context.usePrivateBrowsing;
-        }
+        let is_private = privacy_context.usePrivateBrowsing;
 
         // https://developer.mozilla.org/en/nsIWebBrowserPersist
         let persist = Components
