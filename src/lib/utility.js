@@ -38,7 +38,7 @@ Cmis.utility = {
         try {
             let path = Components
                 .classes["@mozilla.org/file/local;1"]
-                .createInstance(Components.interfaces.nsILocalFile);
+                .createInstance(Components.interfaces.nsIFile);
 
             path.initWithPath(string);
 
@@ -76,7 +76,7 @@ Cmis.utility = {
     buildpath: function(data, filename) {
         let path = Components
             .classes["@mozilla.org/file/local;1"]
-            .createInstance(Components.interfaces.nsILocalFile);
+            .createInstance(Components.interfaces.nsIFile);
 
         path.initWithPath(data.path);
 
@@ -109,7 +109,7 @@ Cmis.utility = {
 
             let path = Components
                 .classes["@mozilla.org/file/local;1"]
-                .createInstance(Components.interfaces.nsILocalFile);
+                .createInstance(Components.interfaces.nsIFile);
 
             path.initWithPath(data.path);
 
@@ -181,7 +181,7 @@ Cmis.utility = {
                 prevpath !== "") {
                 path = Components
                     .classes["@mozilla.org/file/local;1"]
-                    .createInstance(Components.interfaces.nsILocalFile);
+                    .createInstance(Components.interfaces.nsIFile);
 
                 path.initWithPath(prevpath);
 
