@@ -256,22 +256,10 @@ Cmis.utility = {
 
         let name = null;
 
-        let cache = null;
-
-        // Check for Content-Disposition and Content-Type HTTP headers
-        if (Services.vc.compare(Services.appinfo.platformVersion, "18.0") < 0) {
-            cache = Components
-                .classes["@mozilla.org/image/cache;1"]
-                .getService(Components.interfaces.imgICache)
-        }
-        else {
-            // As of Firefox 18, there is no longer a single image cache.
-            // https://developer.mozilla.org/en-US/docs/XPCOM_Interface_Reference/imgICache
-            cache = Components
-                .classes["@mozilla.org/image/tools;1"]
-                .getService(Components.interfaces.imgITools)
-                .getImgCacheForDocument(window.document);
-        }
+        let cache = Components
+            .classes["@mozilla.org/image/tools;1"]
+            .getService(Components.interfaces.imgITools)
+            .getImgCacheForDocument(window.document);
 
         let nsISupportsCString = Components.interfaces.nsISupportsCString;
 
