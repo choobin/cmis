@@ -163,6 +163,8 @@ Cmis.utility = {
 
         filename = Cmis.utility.format(data.format, filename, source, alt);
 
+        filename = Cmis.utility.validate(filename);
+
         let path = null;
 
         if (event.shiftKey)
@@ -254,10 +256,22 @@ Cmis.utility = {
 
         let name = null;
 
-        let cache = Components
-            .classes["@mozilla.org/image/tools;1"]
-            .getService(Components.interfaces.imgITools)
-            .getImgCacheForDocument(window.document);
+        let cache = null;
+
+        // Check for Content-Disposition and Content-Type HTTP headers
+        if (Services.vc.compare(Services.appinfo.platformVersion, "18.0") < 0) {
+            cache = Components
+                .classes["@mozilla.org/image/cache;1"]
+                .getService(Components.interfaces.imgICache)
+        }
+        else {
+            // As of Firefox 18, there is no longer a single image cache.
+            // https://developer.mozilla.org/en-US/docs/XPCOM_Interface_Reference/imgICache
+            cache = Components
+                .classes["@mozilla.org/image/tools;1"]
+                .getService(Components.interfaces.imgITools)
+                .getImgCacheForDocument(window.document);
+        }
 
         let nsISupportsCString = Components.interfaces.nsISupportsCString;
 
@@ -281,7 +295,9 @@ Cmis.utility = {
 
             name = decoder.getParameter(content_disposition, "filename", window.document.characterSet, true, unused);
 
-            return Cmis.utility.validate(name, content_type, true);
+            name = Cmis.utility.suffix(name, content_type);
+
+            return name;
         }
         catch (e) {
             // It is OK to fail fetching Content-Type and Content-Disposition headers
@@ -298,7 +314,9 @@ Cmis.utility = {
 
                 name = texttosuburi.unEscapeURIForUI(url.originCharset || "UTF-8", url.fileName);
 
-                return Cmis.utility.validate(name, content_type, true);
+                name = Cmis.utility.suffix(name, content_type);
+
+                return name;
             }
         }
         catch (e) {
@@ -315,10 +333,41 @@ Cmis.utility = {
         // Otherwise we can extract the filename from the URL (and cross our fingers)
         name = source.path.replace(/.*\//, "");
 
-        return Cmis.utility.validate(name, content_type, true);
+        name = Cmis.utility.suffix(name, content_type);
+
+        return name;
     },
 
-    validate: function(name, content_type, add_extension) {
+    suffix: function(name, content_type) {
+        // XXX This was returning null sometimes. Is this supposed to ever happen?
+        let mimeService = Components
+            .classes["@mozilla.org/mime;1"]
+            .getService(Components.interfaces.nsIMIMEService);
+
+        let suffix = mimeService.getPrimaryExtension(content_type, null);
+
+        // Goodie goodie gumdrops!
+        if (suffix === "jpe" ||  // Linux FF18 getPrimaryExtension("image/jpeg", null) returns "jpe"
+            suffix === "jpg" ||  // Windows 7 x86_64 FF18 returns "jpg"
+            suffix === "jpeg") { // Windows XP x86_64 FF17.1 returns "jpeg"
+            // In obscure parallel worlds .jpeg is sometimes used as the suffix
+            suffix = "jpe?g";
+        }
+
+        // Check for a correct file suffix
+        if (!name.match(new RegExp("\." + suffix + "$", "i"))) {
+            // If content_type is image/jpeg but the file suffix is missing we append jpg (removing e?)
+            if (suffix === "jpe?g") {
+                suffix = "jpg";
+            }
+
+            name = name + "." + suffix;
+        }
+
+        return name;
+    },
+
+    validate: function(name) {
         // firefox-5.0/omni/chrome/toolkit/content/global/contentAreaUtils.js:883
         name = name.replace(/[\\]+/g, "_");
         name = name.replace(/[\/]+/g, "_");
@@ -329,35 +378,6 @@ Cmis.utility = {
         name = name.replace(/[\<]+/g, "(");
         name = name.replace(/[\>]+/g, ")");
         name = name.replace(/[\|]+/g, "_");
-
-        if (!add_extension)
-            return name;
-
-        // XXX This was returning null sometimes. Is this supposed to ever happen?
-        let mimeService = Components
-            .classes["@mozilla.org/mime;1"]
-            .getService(Components.interfaces.nsIMIMEService);
-
-        let extension = mimeService.getPrimaryExtension(content_type, null);
-
-        // Goodie goodie gumdrops!
-        if (extension === "jpe" ||  // Linux FF18 getPrimaryExtension("image/jpeg", null) returns "jpe"
-            extension === "jpg" ||  // Windows 7 x86_64 FF18 returns "jpg"
-            extension === "jpeg") { // Windows XP x86_64 FF17.1 returns "jpeg"
-            // In obscure parallel worlds .jpeg is sometimes used as the suffix
-            extension = "jpe?g";
-        }
-
-        // Check for a correct file suffix
-        if (!name.match(new RegExp("\." + extension + "$", "i"))) {
-            // If content_type is image/jpeg but the file suffix is missing we append jpg (removing e?)
-            if (extension === "jpe?g") {
-                extension = "jpg";
-            }
-
-            name = name + "." + extension;
-        }
-
         return name;
     },
 
@@ -454,7 +474,7 @@ Cmis.utility = {
             result = result.replace(/%CLIPBOARD/g, text);
         }
 
-        return Cmis.utility.validate(result, null, false);
+        return result;
     },
 
     clipboard: function() {
