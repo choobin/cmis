@@ -32,6 +32,7 @@
 
 Components.utils.import("resource://gre/modules/Services.jsm");
 Components.utils.import("resource://gre/modules/NetUtil.jsm");
+Components.utils.import("resource://gre/modules/PrivateBrowsingUtils.jsm");
 
 Cmis.utility = {
     isValidPath: function(string) {
@@ -480,8 +481,15 @@ Cmis.utility = {
             if (!transferable)
                 return "";
 
-            if ('init' in transferable)
-                transferable.init(null);
+            // init was added to nsITransferable in FF16 for Private Browsing mode
+            // https://developer.mozilla.org/en-US/docs/Using_the_Clipboard
+            if ('init' in transferable) {
+                let window = Services.ww.activeWindow;
+
+                let privacy_context = PrivateBrowsingUtils.privacyContextFromWindow(window);
+
+                transferable.init(privacy_context);
+            }
 
             transferable.addDataFlavor("text/unicode");
 
