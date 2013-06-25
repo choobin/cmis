@@ -2,7 +2,7 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <Description about="urn:mozilla:install-manifest">
     <em:id>cmis@choobin</em:id>
-    <em:version>20130617</em:version>
+    <em:version>20130626</em:version>
     <em:name>Context Menu Image Saver</em:name>
     <em:description>Save images to custom locations.</em:description>
     <em:homepageURL>https://addons.mozilla.org/addon/context-menu-image-saver</em:homepageURL>
