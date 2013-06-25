@@ -38,8 +38,6 @@ Cmis.preferences = {
     startup: function() {
         Cmis.preferences.defaults();
 
-        Cmis.preferences.value("previousDirectoryIndex", -1);
-
         Services.prefs.addObserver(PREFBRANCH + "directoryList", Cmis.menu, false);
         Services.prefs.addObserver(PREFBRANCH + "itemPlacement", Cmis.menu, false);
 
