@@ -435,8 +435,7 @@ Cmis.utility = {
             result = result.replace(/%HOST/g, source.host);
 
         if (result.match(/%DOMAIN/)) {
-            let [tmp, subdomain, domain] = source.host.match(/^(.*?)\.(.*?)$/); // Yup. Did it again. Really?
-
+            let domain = Services.eTLD.getBaseDomainFromHost(source.host)
             result = result.replace(/%DOMAIN/g, domain);
         }
 
