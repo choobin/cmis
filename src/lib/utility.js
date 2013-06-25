@@ -449,7 +449,7 @@ Cmis.utility = {
         }
 
         if (result.match(/%TITLE/)) {
-            let title = document.getElementsByTagName("title")[0].innerHTML || "no-title-text";
+            let title = document.getElementsByTagName("title")[0].textContent || "no-title-text";
             result = result.replace(/%TITLE/g, title);
         }
 
