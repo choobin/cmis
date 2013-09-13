@@ -39,41 +39,66 @@ Cmis.io = {
             .getInterface(Components.interfaces.nsIWebNavigation)
             .QueryInterface(Components.interfaces.nsILoadContext);
 
-        let is_private = privacy_context.usePrivateBrowsing;
+        let isPrivate = privacy_context.usePrivateBrowsing;
 
-        // https://developer.mozilla.org/en/nsIWebBrowserPersist
-        let persist = Components
-            .classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"]
-            .createInstance(Components.interfaces.nsIWebBrowserPersist);
+        if (Services.vc.compare(Services.appinfo.platformVersion, "26.0a1") < 0) {
+            // https://developer.mozilla.org/en/nsIWebBrowserPersist
+            let persist = Components
+                .classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"]
+                .createInstance(Components.interfaces.nsIWebBrowserPersist);
 
-        const nsIWebBrowserPersist = Components.interfaces.nsIWebBrowserPersist;
+            const nsIWebBrowserPersist = Components.interfaces.nsIWebBrowserPersist;
 
-        persist.persistFlags =
-            nsIWebBrowserPersist.PERSIST_FLAGS_REPLACE_EXISTING_FILES |
-            nsIWebBrowserPersist.PERSIST_FLAGS_FROM_CACHE |
-            nsIWebBrowserPersist.PERSIST_FLAGS_CLEANUP_ON_FAILURE;
+            persist.persistFlags =
+                nsIWebBrowserPersist.PERSIST_FLAGS_REPLACE_EXISTING_FILES |
+                nsIWebBrowserPersist.PERSIST_FLAGS_FROM_CACHE |
+                nsIWebBrowserPersist.PERSIST_FLAGS_CLEANUP_ON_FAILURE;
 
-        const nsIDownloadManager = Components.interfaces.nsIDownloadManager;
+            const nsIDownloadManager = Components.interfaces.nsIDownloadManager;
 
-        // https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIDownloadManager
-        let manager = Components
-            .classes["@mozilla.org/download-manager;1"]
-            .getService(nsIDownloadManager);
+            // https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIDownloadManager
+            let manager = Components
+                .classes["@mozilla.org/download-manager;1"]
+                .getService(nsIDownloadManager);
 
-        let listener = manager.addDownload(
-            nsIDownloadManager.DOWNLOAD_TYPE_DOWNLOAD,
-            source,
-            target,
-            filename,
-            null, // mime info
-            null, // start time
-            null, // tmp file
-            persist,
-            is_private);
+            let listener = manager.addDownload(
+                nsIDownloadManager.DOWNLOAD_TYPE_DOWNLOAD,
+                source,
+                target,
+                filename,
+                null, // mime info
+                null, // start time
+                null, // tmp file
+                persist,
+                isPrivate);
 
-        persist.progressListener = listener;
+            persist.progressListener = listener;
 
-        persist.saveURI(source, null, null, null, null, target, privacy_context);
+            persist.saveURI(source, null, null, null, null, target, privacy_context);
+        }
+        else {
+            // https://developer.mozilla.org/en-US/docs/Mozilla/JavaScript_code_modules/Downloads.jsm
+            const {Downloads} = Components.utils.import("resource://gre/modules/Downloads.jsm", {});
+
+            let promise = Downloads.createDownload({
+                source: {
+                    url: source.spec,
+                    isPrivate: isPrivate
+                },
+                target: target
+            }).then(function (download) {
+                let list = "getPublicDownloadList";
+
+                if (isPrivate)
+                    list = "getPrivateDownloadList";
+
+                Downloads[list]().then(function (list) {
+		    list.add(download);
+		});
+
+                download.start();
+            });
+        }
 
         let notify = Cmis.preferences.value("statusbarNotification");
 
