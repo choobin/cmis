@@ -99,7 +99,7 @@ Cmis.preferences = {
 
                 branch.setComplexValue(key, Components.interfaces.nsISupportsString, string);
 
-                return;
+                return null;
             }
 
             return branch.getComplexValue(key, Components.interfaces.nsISupportsString).data;
@@ -118,7 +118,7 @@ Cmis.preferences = {
 
         if (value !== undefined) {
             set(key, value);
-            return;
+            return null;
         }
 
         return get(key);
