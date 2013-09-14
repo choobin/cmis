@@ -31,7 +31,6 @@
 */
 
 Components.utils.import("resource://gre/modules/Services.jsm");
-Components.utils.import("resource://gre/modules/NetUtil.jsm");
 Components.utils.import("resource://gre/modules/PrivateBrowsingUtils.jsm");
 
 Cmis.utility = {
@@ -161,7 +160,7 @@ Cmis.utility = {
         try {
             items = JSON.parse(list);
         } catch (e) {
-            return [null, null];
+            return null;
         }
 
         let data = items[index];
@@ -201,21 +200,19 @@ Cmis.utility = {
             else {
                 path = Cmis.utility.promptpath(data, filename);
 
-                if (!path) return [null, null]; // The cancel button was clicked.
+                if (!path) return null; // The cancel button was clicked.
 
                 let dir = Cmis.utility.dirname(path.path);
 
                 Cmis.preferences.value("previousSaveAsDirectory", dir);
 
-                let target = NetUtil.newURI(path);
-
-                return [target, path.leafName];
+                return path;
             }
         }
         else {
             path = Cmis.utility.buildpath(data, filename);
 
-            if (!path) return [null, null]; // The save path is invalid.
+            if (!path) return null; // The save path is invalid.
 
             Cmis.preferences.value("previousSaveAsDirectory", "");
         }
@@ -233,7 +230,7 @@ Cmis.utility = {
                 let result = Cmis.utility.prompt(path);
 
                 if (result == 2) {
-                    return [null, null];
+                    return null;
                 }
 
                 // Note: The prompt.confirmEx call from utility.prompt
@@ -253,9 +250,7 @@ Cmis.utility = {
                 path = Cmis.utility.uniq(path);
         }
 
-        let target = NetUtil.newURI(path);
-
-        return [target, path.leafName];
+        return path;
     },
 
     filename: function(source) {

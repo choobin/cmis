@@ -31,15 +31,18 @@
 */
 
 Components.utils.import("resource://gre/modules/Services.jsm");
+Components.utils.import("resource://gre/modules/NetUtil.jsm");
 
 Cmis.io = {
-    save: function(window, source, target, filename) {
+    save: function(window, source, target) {
         let privacy_context = window
             .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
             .getInterface(Components.interfaces.nsIWebNavigation)
             .QueryInterface(Components.interfaces.nsILoadContext);
 
         let isPrivate = privacy_context.usePrivateBrowsing;
+
+        let filename = target.leafName;
 
         if (Services.vc.compare(Services.appinfo.platformVersion, "26.0a1") < 0) {
             // https://developer.mozilla.org/en/nsIWebBrowserPersist
@@ -55,6 +58,8 @@ Cmis.io = {
                 nsIWebBrowserPersist.PERSIST_FLAGS_CLEANUP_ON_FAILURE;
 
             const nsIDownloadManager = Components.interfaces.nsIDownloadManager;
+
+            target = NetUtil.newURI(target);
 
             // https://developer.mozilla.org/en/XPCOM_Interface_Reference/nsIDownloadManager
             let manager = Components
@@ -80,24 +85,17 @@ Cmis.io = {
             // https://developer.mozilla.org/en-US/docs/Mozilla/JavaScript_code_modules/Downloads.jsm
             const {Downloads} = Components.utils.import("resource://gre/modules/Downloads.jsm", {});
 
-            let promise = Downloads.createDownload({
-                source: {
-                    url: source.spec,
-                    isPrivate: isPrivate
-                },
-                target: target
-            }).then(function (download) {
-                let list = "getPublicDownloadList";
-
-                if (isPrivate)
-                    list = "getPrivateDownloadList";
-
-                Downloads[list]().then(function (list) {
-		    list.add(download);
-		});
-
+            Downloads.createDownload({
+                source: source,
+                target: target,
+            }).then(download => {
                 download.start();
-            });
+                let list = Downloads.PUBLIC;
+                if (isPrivate) list = Downloads.PRIVATE;
+                Downloads.getList(list).then(list => {
+                    list.add(download);
+                });
+            }).then(null, Components.utils.reportError);
         }
 
         let notify = Cmis.preferences.value("statusbarNotification");

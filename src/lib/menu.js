@@ -229,11 +229,11 @@ Cmis.menu = {
 
         let source = NetUtil.newURI(url);
 
-        let [target, filename] = Cmis.utility.target(event, index, source, null, false);
+        let target = Cmis.utility.target(event, index, source, null, false);
 
         if (!target) return;
 
-        Cmis.io.save(window, source, target, filename);
+        Cmis.io.save(window, source, target);
 
         Cmis.preferences.value("previousDirectoryIndex", index);
     },
@@ -287,11 +287,11 @@ Cmis.menu = {
 
         let source = NetUtil.newURI(event.originalTarget.src);
 
-        let [target, filename] = Cmis.utility.target(event, index, source, alt, true);
+        let target = Cmis.utility.target(event, index, source, alt, true);
 
         if (!target) return;
 
-        Cmis.io.save(window, source, target, filename);
+        Cmis.io.save(window, source, target);
 
         Cmis.preferences.value("previousDirectoryIndex", index);
     },
