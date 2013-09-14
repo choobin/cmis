@@ -73,7 +73,16 @@ let ItemsIO = {
     exportSettings: function() {
         let list = Utility.fetchList();
 
-        let items = JSON.parse(list);
+        if (list === "") return;
+
+        let items = {};
+
+        try {
+            items = JSON.parse(list);
+        } catch (e) {
+            Utility.errorPrompt("errorPromptParseSettings");
+            return;
+        }
 
         // Translate the list into a pretty nested JSON object. This
         // will let us neglect the depth field when writing to the
@@ -178,7 +187,7 @@ let ItemsIO = {
             return;
 
         this._read(filePicker.file, function(data) {
-            let list = [];
+            let list = {};
 
             try {
                 list = JSON.parse(data);

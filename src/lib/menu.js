@@ -46,7 +46,15 @@ Cmis.menu = {
         if (list === "")
             return;
 
-        let items = JSON.parse(list);
+        let items = {};
+
+        try {
+            items = JSON.parse(list);
+        } catch (e) {
+            // The user will be prompted with an error message when
+            // they open the settings dialog.
+            return;
+        }
 
         let placement = Cmis.preferences.value("itemPlacement");
 

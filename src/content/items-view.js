@@ -122,14 +122,21 @@ let ItemsView = {
         }
     },
 
-    loadItems: function(list) {
-        if (list === "") return;
+    loadItems: function(data) {
+        if (data === "") return;
 
         let oldlength = this.visible.length;
 
-        let data = JSON.parse(list);
+        let list = {};
 
-        this.items = data;
+        try {
+            list = JSON.parse(data);
+        } catch (e) {
+            Utility.errorPrompt("invalidDirectoryData");
+            return;
+        }
+
+        this.items = list;
 
         this.computeVisible();
 

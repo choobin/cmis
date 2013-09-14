@@ -156,7 +156,13 @@ Cmis.utility = {
     target: function(event, index, source, alt, quicksave) {
         let list = Cmis.preferences.value("directoryList");
 
-        let items = JSON.parse(list);
+        let items = {};
+
+        try {
+            items = JSON.parse(list);
+        } catch (e) {
+            return [null, null];
+        }
 
         let data = items[index];
 
