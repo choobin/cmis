@@ -81,7 +81,8 @@ Cmis.window = {
 
     observe: function(subject, topic, data) {
         if (topic === "domwindowopened") {
-            subject.addEventListener("load", function() {
+            subject.addEventListener("load", function onload() {
+                subject.removeEventListener("load", onload, false);
                 Cmis.window.add(subject);
             }, false);
         }
