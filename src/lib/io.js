@@ -88,11 +88,11 @@ Cmis.io = {
             Downloads.createDownload({
                 source: source,
                 target: target,
-            }).then(download => {
+            }).then(function (download) {
                 download.start();
                 let list = Downloads.PUBLIC;
                 if (isPrivate) list = Downloads.PRIVATE;
-                Downloads.getList(list).then(list => {
+                Downloads.getList(list).then(function (list) {
                     list.add(download);
                 });
             }).then(null, Components.utils.reportError);
