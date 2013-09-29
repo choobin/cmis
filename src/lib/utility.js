@@ -358,16 +358,17 @@ Cmis.utility = {
     },
 
     validate: function(name) {
-        // firefox-5.0/omni/chrome/toolkit/content/global/contentAreaUtils.js:883
-        name = name.replace(/[\\]+/g, "_");
         name = name.replace(/[\/]+/g, "_");
-        name = name.replace(/[\:]+/g, "_");
-        name = name.replace(/[\*]+/g, "_");
-        name = name.replace(/[\?]+/g, "_");
-        name = name.replace(/[\"]+/g, "'");
-        name = name.replace(/[\<]+/g, "(");
-        name = name.replace(/[\>]+/g, ")");
-        name = name.replace(/[\|]+/g, "_");
+        if (Services.appinfo.OS === "WINNT") {
+            name = name.replace(/[\\]+/g, "_");
+            name = name.replace(/[\:]+/g, "_");
+            name = name.replace(/[\*]+/g, "_");
+            name = name.replace(/[\?]+/g, "_");
+            name = name.replace(/[\"]+/g, "'");
+            name = name.replace(/[\<]+/g, "(");
+            name = name.replace(/[\>]+/g, ")");
+            name = name.replace(/[\|]+/g, "_");
+        }
         return name;
     },
 
