@@ -409,7 +409,14 @@ Cmis.utility = {
 
         let document = window.gBrowser.contentDocument;
 
-        let [tmp, name, extension] = filename.match(/^(.*?)\.(.*?)$/); // Really man?
+        let index = filename.lastIndexOf(".");
+
+        if (index == -1)
+            index = filename.length;
+
+        let name = filename.substr(0, index);
+
+        let extension = filename.substr(index + 1, filename.length);
 
         let result = Cmis.utility.date(format);
 
