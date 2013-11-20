@@ -317,7 +317,7 @@ Cmis.utility = {
         let data = source.path.match(/\/([^\/]+)\/$/);
 
         if (data && data.length > 1) {
-            return Cmis.utility.validate(data[1], content_type, true);
+            return Cmis.utility.suffix(data[1], content_type);
         }
 
         // Otherwise we can extract the filename from the URL (and cross our fingers)
