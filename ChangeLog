@@ -1,4 +1,12 @@
-2012-11-26  Christopher Hoobin  <christopher@hoob.in>
+2013-11-20  Christopher Hoobin  <christopher@hoob.in>
+
+	- Fixed issue with %EXT format string replacing the incorrect file
+	suffix when there is more then one dot in the file name.
+
+	- Fixed issue determining file suffix when content disposition,
+	MIME and URI detection fails.
+
+2013-09-26  Christopher Hoobin  <christopher@hoob.in>
 
 	- Added a number of new format strings.
 
